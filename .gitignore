@@ -1,0 +1,19 @@
+# Godot-specific
+.import/
+.export/
+*.import
+*.translation
+*.pck
+*.zip
+*.exe
+*.apk
+*.aab
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Backup files
+*.tmp
+*.bak
+*.old

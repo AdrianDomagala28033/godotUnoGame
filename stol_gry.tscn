@@ -1,0 +1,26 @@
+[gd_scene load_steps=6 format=3 uid="uid://c0y0bdnpbf4xc"]
+
+[ext_resource type="Script" uid="uid://jkafcol28ggd" path="res://LogikaGry.cs" id="1_ufy4j"]
+[ext_resource type="PackedScene" uid="uid://cpu8louqpydkn" path="res://karta.tscn" id="2_rt8vw"]
+[ext_resource type="PackedScene" uid="uid://1xqegfpjwjmi" path="res://WyborKoloru.tscn" id="3_onr75"]
+[ext_resource type="Texture2D" uid="uid://cw7kkgcgsckqa" path="res://karty_grafika/back/rewers.png" id="3_seb48"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_seb48"]
+size = Vector2(167, 255)
+
+[node name="StolGry" type="Node2D"]
+script = ExtResource("1_ufy4j")
+SzablonKarty = ExtResource("2_rt8vw")
+SzablonWyboruKoloru = ExtResource("3_onr75")
+
+[node name="StosDobierania" type="Area2D" parent="."]
+position = Vector2(407.86597, 297.47678)
+
+[node name="Rewers" type="Sprite2D" parent="StosDobierania"]
+texture = ExtResource("3_seb48")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StosDobierania"]
+position = Vector2(0.5, 0.5)
+shape = SubResource("RectangleShape2D_seb48")
+
+[connection signal="input_event" from="StosDobierania" to="." method="_OnStosDobieraniaInputEvent"]

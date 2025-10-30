@@ -1,0 +1,17 @@
+C:\Users\adria\Documents\projekt-jeden\.godot\mono\temp\obj\Debug\projektJeden.csproj.AssemblyReference.cache
+C:\Users\adria\Documents\projekt-jeden\.godot\mono\temp\obj\Debug\projektJeden.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\adria\Documents\projekt-jeden\.godot\mono\temp\obj\Debug\projektJeden.AssemblyInfoInputs.cache
+C:\Users\adria\Documents\projekt-jeden\.godot\mono\temp\obj\Debug\projektJeden.AssemblyInfo.cs
+C:\Users\adria\Documents\projekt-jeden\.godot\mono\temp\obj\Debug\projektJeden.csproj.CoreCompileInputs.cache
+C:\Users\adria\Documents\projekt-jeden\.godot\mono\temp\bin\Debug\projektJeden.deps.json
+C:\Users\adria\Documents\projekt-jeden\.godot\mono\temp\bin\Debug\projektJeden.runtimeconfig.json
+C:\Users\adria\Documents\projekt-jeden\.godot\mono\temp\bin\Debug\projektJeden.dll
+C:\Users\adria\Documents\projekt-jeden\.godot\mono\temp\bin\Debug\projektJeden.pdb
+C:\Users\adria\Documents\projekt-jeden\.godot\mono\temp\bin\Debug\GodotSharp.dll
+C:\Users\adria\Documents\projekt-jeden\.godot\mono\temp\bin\Debug\GodotSharpEditor.dll
+C:\Users\adria\Documents\projekt-jeden\.godot\mono\temp\obj\Debug\projektJ.EAA71EF7.Up2Date
+C:\Users\adria\Documents\projekt-jeden\.godot\mono\temp\obj\Debug\projektJeden.dll
+C:\Users\adria\Documents\projekt-jeden\.godot\mono\temp\obj\Debug\refint\projektJeden.dll
+C:\Users\adria\Documents\projekt-jeden\.godot\mono\temp\obj\Debug\projektJeden.pdb
+C:\Users\adria\Documents\projekt-jeden\.godot\mono\temp\obj\Debug\projektJeden.genruntimeconfig.cache
+C:\Users\adria\Documents\projekt-jeden\.godot\mono\temp\obj\Debug\ref\projektJeden.dll

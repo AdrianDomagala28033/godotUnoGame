@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "NNl+Lc51REc=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\adria\\Documents\\projekt-jeden\\projektJeden.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\adria\\.nuget\\packages\\godot.sourcegenerators\\4.5.1\\godot.sourcegenerators.4.5.1.nupkg.sha512",
+    "C:\\Users\\adria\\.nuget\\packages\\godotsharp\\4.5.1\\godotsharp.4.5.1.nupkg.sha512",
+    "C:\\Users\\adria\\.nuget\\packages\\godotsharpeditor\\4.5.1\\godotsharpeditor.4.5.1.nupkg.sha512"
+  ],
+  "logs": []
+}
