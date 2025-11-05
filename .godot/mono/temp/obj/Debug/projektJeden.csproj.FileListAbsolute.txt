@@ -15,3 +15,4 @@ C:\Users\adria\Documents\projekt-jeden\.godot\mono\temp\obj\Debug\refint\projekt
 C:\Users\adria\Documents\projekt-jeden\.godot\mono\temp\obj\Debug\projektJeden.pdb
 C:\Users\adria\Documents\projekt-jeden\.godot\mono\temp\obj\Debug\projektJeden.genruntimeconfig.cache
 C:\Users\adria\Documents\projekt-jeden\.godot\mono\temp\obj\Debug\ref\projektJeden.dll
+C:\Users\adria\Documents\projekt-jeden\.godot\mono\temp\obj\Debug\projektJeden.sourcelink.json

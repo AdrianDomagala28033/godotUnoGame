@@ -1,9 +1,5 @@
-res://karta.gd
-res://karta.tscn
-res://menu.tscn
-res://Karta.cs
-res://karta.cs.tscn
-res://stol_gry.tscn
 res://LogikaGry.cs
+res://skrypty/managers/BotController.cs
+res://Karta.cs
 res://WyborKoloru.cs
-res://WyborKoloru.tscn
+res://UiBota.cs
