@@ -13,6 +13,7 @@ public partial class Karta : Area2D
 	private float oryginalnaPozycjaY;
 	private Tween _aktywnaAnimacja;
 	private bool jestZagrywana = false;
+	private CollisionShape2D ksztaltKolizji;
 
 
 	private Dictionary<string, string> mapowanieKolorow = new Dictionary<string, string>(){
@@ -48,6 +49,7 @@ public partial class Karta : Area2D
 	public override void _Ready()
 	{
 		_sprite = GetNode<Sprite2D>("Sprite2D");
+		ksztaltKolizji = GetNode<CollisionShape2D>("CollisionShape2D");
 		string sciezkaDoTekstury;
 		if (Kolor == "Rewers")
 		{
@@ -96,5 +98,9 @@ public partial class Karta : Area2D
 	{
 		_OnMouseExited();
 	}
+	public void UstawSkale(float skala)
+    {
+		ksztaltKolizji.Scale = new Vector2(skala, 1);
+    }
 
 }

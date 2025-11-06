@@ -1,5 +1,7 @@
 res://LogikaGry.cs
-res://skrypty/managers/BotController.cs
 res://Karta.cs
 res://WyborKoloru.cs
+res://skrypty/managers/BotController.cs
 res://UiBota.cs
+res://karta.tscn
+res://UIBota.tscn

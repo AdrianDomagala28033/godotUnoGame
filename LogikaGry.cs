@@ -9,53 +9,50 @@ public partial class LogikaGry : Node2D
     private WyborKoloru instancjaWyboruKoloru;
     private DeckManager talia;
     private TurnManager turnManager;
-
-    private List<Karta> rekaGracza = new List<Karta>();
-    private List<List<Karta>> receBotow = new List<List<Karta>>();
+	public List<List<Karta>> ReceGraczy = new List<List<Karta>>();
     private List<Karta> stosZagranych = new List<Karta>();
-    
     private BotGracz botAI = new BotGracz();
     private List<BotController> kontroleryBotow = new List<BotController>(); 
-
     private int licznikZIndexStosu = 100;
     private int iloscGraczy = 4;
     private string wymuszonyKolor = null;
-    
     [Export] private UiBota _uiBot1;
     [Export] private UiBota _uiBot2;
     [Export] private UiBota _uiBot3;
     [Export] private Label etykietaTuryGracza;
     private Vector2 pozycjaStosuZagranych = new Vector2(650, 375);
-    private Vector2 pozycjaStosuDobierania = new Vector2(810, 375);
+	private Vector2 pozycjaStosuDobierania = new Vector2(810, 375);
+	private int _licznikPrzetasowanWRundzie;
+	private bool[] stanUnoGraczy;
 	#region eventy
 	public event Action<Karta, int> OnKartaZagrano;
 	public event Action<int> OnKartaDobrano;
 	public event Action<int> OnTaliaPrzetasowano;
 	public event Action<int> OnRundaZakocznona;
-	private int _licznikPrzetasowanWRundzie;
-
+	#endregion
 	#region get set
 	public Karta GornaKartaNaStosie { get; private set; }
 	public int DlugDobierania {get { return turnManager.DlugDobierania; }}
 	#endregion
-#endregion
-
 
 	public override void _Ready()
 	{
 		turnManager = new TurnManager(iloscGraczy);
 		turnManager.OnTuraRozpoczeta += OnTuraRozpoczeta;
+		for (int i = 0; i < iloscGraczy; i++)
+		{
+			ReceGraczy.Add(new List<Karta>());
+		}
 
-		for (int i = 0; i < iloscGraczy - 1; i++)
-        {
-			var nowaRekaBota = new List<Karta>();
-			receBotow.Add(nowaRekaBota);
+		for (int i = 1; i < iloscGraczy; i++)
+		{
+			List<Karta> rekaBota = ReceGraczy[i];
 			BotController nowyController = new BotController();
-			nowyController.Inicjalizuj(this, i + 1, nowaRekaBota);
+			nowyController.Inicjalizuj(this, i, rekaBota);
 			kontroleryBotow.Add(nowyController);
 			AddChild(nowyController);
         }
-
+		stanUnoGraczy = new bool[iloscGraczy];
 		talia = new DeckManager(this, SzablonKarty);
 		talia.StworzTalie();
 		talia.PotasujTalie();
@@ -127,35 +124,60 @@ public partial class LogikaGry : Node2D
 
 	private void WystawPierwszaKarte()
 	{
-		Karta startowaKarta = talia.PobierzTalie()[talia.PobierzTalie().Count - 1];
-		talia.PobierzTalie().RemoveAt(talia.PobierzTalie().Count - 1);
+		Karta startowaKarta = null;
+		bool czyLegalnaKartaStartowa = false;
+
+		while (!czyLegalnaKartaStartowa)
+		{
+			if (talia.PobierzTalie().Count == 0) return;
+
+			startowaKarta = talia.PobierzTalie()[talia.PobierzTalie().Count - 1];
+			talia.PobierzTalie().RemoveAt(talia.PobierzTalie().Count - 1);
+
+			if (startowaKarta.Kolor != "DzikaKarta" &&
+			startowaKarta.Wartosc != "Stop" &&
+			startowaKarta.Wartosc != "+2" &&
+			startowaKarta.Wartosc != "ZmianaKierunku")
+			{
+				czyLegalnaKartaStartowa = true;
+			}
+			else
+			{
+				talia.PobierzTalie().Add(startowaKarta);
+				talia.PobierzTalie();
+			}
+		}
 		GornaKartaNaStosie = startowaKarta;
 		stosZagranych.Add(startowaKarta);
 		AddChild(startowaKarta);
-		startowaKarta.ZagrajNaStol(pozycjaStosuZagranych, licznikZIndexStosu);
+		if (startowaKarta.Wartosc == "ZmianaKierunku" || startowaKarta.Wartosc == "Stop")
+    {
+        GD.Print($"Zasada: Karta startowa {startowaKarta.Wartosc} aktywuje efekt.");
+        ZastosujEfektKarty(startowaKarta, false);
+        turnManager.ZakonczTure();
+    }
+    
+    startowaKarta.ZagrajNaStol(pozycjaStosuZagranych, licznikZIndexStosu);
 	}
 
 	private void RozdajKartyGraczowi(int ilosc)
 	{
 		for (int i = 0; i < ilosc; i++)
 		{
-			if (talia.PobierzTalie().Count > 0)
+			for (int indexGracza = 0; indexGracza < iloscGraczy; indexGracza++)
 			{
-				Karta startowaKarta = talia.PobierzTalie()[talia.PobierzTalie().Count - 1];
+				if (talia.PobierzTalie().Count == 0)
+					continue;
+				Karta karta = talia.PobierzTalie()[talia.PobierzTalie().Count - 1];
 				talia.PobierzTalie().RemoveAt(talia.PobierzTalie().Count - 1);
-				rekaGracza.Add(startowaKarta);
-				AddChild(startowaKarta);
-			}
-			for (int j = 0; j < receBotow.Count; j++)
-			{
-				if (talia.PobierzTalie().Count > 0)
+				ReceGraczy[indexGracza].Add(karta);
+				if (indexGracza == 0)
+					AddChild(karta);
+				else
 				{
-					Karta kartaBot = talia.PobierzTalie()[talia.PobierzTalie().Count - 1];
-					talia.PobierzTalie().RemoveAt(talia.PobierzTalie().Count - 1);
-					receBotow[j].Add(kartaBot);
-					kartaBot.InputPickable = false;
-					kartaBot.Hide();
-					AktualizujUILicznikBota(j);
+					karta.InputPickable = false;
+					karta.Hide();
+					AktualizujUILicznikBota(indexGracza);
 				}
 			}
 		}
@@ -192,20 +214,18 @@ public partial class LogikaGry : Node2D
     Karta kartaDoDobrania = talia.PobierzTalie()[talia.PobierzTalie().Count - 1];
     talia.PobierzTalie().RemoveAt(talia.PobierzTalie().Count - 1);
 
+		ReceGraczy[indexGracza].Add(kartaDoDobrania);
     if (indexGracza == 0)
     {
         AddChild(kartaDoDobrania);
-        rekaGracza.Add(kartaDoDobrania);
         kartaDoDobrania.Show();
         kartaDoDobrania.InputPickable = true;
         kartaDoDobrania.ZIndex = 10;
     }
     else
     {
-        // Logika dla bota
-        int indexRekiBota = indexGracza - 1;
-        receBotow[indexRekiBota].Add(kartaDoDobrania);
-        AktualizujUILicznikBota(indexRekiBota);
+			kartaDoDobrania.InputPickable = false;
+			AktualizujUILicznikBota(indexGracza);
     }
     
     OnKartaDobrano?.Invoke(indexGracza);
@@ -213,15 +233,42 @@ public partial class LogikaGry : Node2D
 
 	private void RozmiescKartyWRece()
 	{
+		List<Karta> rekaGracza = ReceGraczy[0];
 		int iloscKart = rekaGracza.Count;
-		float odstep = 80;
-		float pozycjaStartowaX = (GetViewportRect().Size.X / 2) - (iloscKart * odstep / 2) + (odstep / 2);
+		float szerokoscKarty = 150;
+		float szerokoscEkranu = GetViewportRect().Size.X;
+		float margines = 100;
+
+		float maxDostepnaSzerokosc = szerokoscEkranu - (2 * margines);
+		float wymaganaSzerokosc = iloscKart * szerokoscKarty;
+
+		float odstep;
+		float skala;
+
+		if (wymaganaSzerokosc > maxDostepnaSzerokosc)
+		{
+			odstep = (maxDostepnaSzerokosc - szerokoscKarty) / (iloscKart - 1);
+			odstep = Mathf.Max(odstep, 20);
+
+			skala = maxDostepnaSzerokosc / wymaganaSzerokosc;
+			skala = Mathf.Min(skala, 1.0f);
+		}
+		else
+		{
+			odstep = szerokoscKarty * 0.9f;
+			skala = 1.0f;
+		}
+		float szerokoscCalejReki = (iloscKart - 1) * odstep + szerokoscKarty;
+		float pozycjaStartowaX = (szerokoscEkranu / 2) - (szerokoscCalejReki / 2);
 		float pozycjaY = 780;
 
 		for (int i = 0; i < iloscKart; i++)
 		{
 			Karta karta = rekaGracza[i];
 			Vector2 nowaPozycja = new Vector2(pozycjaStartowaX + (i * odstep), pozycjaY);
+
+			karta.UstawSkale(skala);
+
 			karta.CreateTween().TweenProperty(karta, "position", nowaPozycja, 0.2);
 			karta.UstawOryginalnaPozycje(pozycjaY);
 			karta.ZIndex = 10 + i;
@@ -251,20 +298,36 @@ public partial class LogikaGry : Node2D
 		{
 			wymuszonyKolor = null;
 		}
+		List<Karta> rekaAktywnegoGracza = ReceGraczy[indexGracza];
+		rekaAktywnegoGracza.Remove(karta);
 		bool wygrana = false;
-		if (indexGracza == 0)
+		int iloscKartPoZagraniu = rekaAktywnegoGracza.Count;
+		if (iloscKartPoZagraniu == 1)
 		{
-			rekaGracza.Remove(karta);
-			RozmiescKartyWRece();
-			wygrana = (rekaGracza.Count == 0);
+			stanUnoGraczy[indexGracza] = true;
+			GD.Print($"Gracz {indexGracza} ma jedną kartę!");
 		}
 		else
 		{
-			int indexRekiBota = indexGracza - 1;
-			receBotow[indexRekiBota].Remove(karta);
-			AktualizujUILicznikBota(indexRekiBota);
-			wygrana = (receBotow[indexRekiBota].Count == 0);
+			stanUnoGraczy[indexGracza] = false;
 		}
+		if (indexGracza == 0)
+		{
+			RozmiescKartyWRece();
+			wygrana = (ReceGraczy[0].Count == 0);
+		}
+		else
+		{
+			AktualizujUILicznikBota(indexGracza);
+			wygrana = (ReceGraczy[indexGracza].Count == 0);
+		}
+		if(iloscKartPoZagraniu == 0)
+        {
+			GD.Print($"KONIEC GRY! Gracz {indexGracza} WYGRAŁ!");
+			//OnRundaZakoczona?.Invoke(graczIndex);
+			GetTree().Paused = true;
+			return;
+        }
 		OnKartaZagrano?.Invoke(karta, indexGracza);
 		stosZagranych.Add(karta);
 		GornaKartaNaStosie = karta;
@@ -273,16 +336,10 @@ public partial class LogikaGry : Node2D
         {
 			AddChild(karta);
         }
-		karta.ZagrajNaStol(pozycjaStosuZagranych, licznikZIndexStosu);
+		karta.CallDeferred("ZagrajNaStol",pozycjaStosuZagranych, licznikZIndexStosu);
 		if (indexGracza != 0)
 			karta.Show();
-		if (wygrana)
-		{
-			GD.Print($"KONIEC GRY! Gracz {indexGracza} WYGRAŁ!");
-			//OnRundaZakoczona?.Invoke(graczIndex);
-			GetTree().Paused = true;
-			return;
-		}
+		
 		bool jestCzlowiekiem = (indexGracza == 0);
 		ZastosujEfektKarty(karta, jestCzlowiekiem);
 		if (karta.Kolor == "DzikaKarta")
@@ -293,7 +350,7 @@ public partial class LogikaGry : Node2D
 			}
 			else
 			{
-				string wybranyKolor = botAI.WybierzKolor(receBotow[indexGracza - 1]);
+				string wybranyKolor = botAI.WybierzKolor(ReceGraczy[indexGracza - 1]);
 				wymuszonyKolor = wybranyKolor;
 				GD.Print($"Wybrano kolor {wymuszonyKolor}");
 				turnManager.ZakonczTure();
@@ -329,10 +386,11 @@ public partial class LogikaGry : Node2D
 
     private void AktualizujUILicznikBota(int indexBota)
 	{
-		int iloscKart = receBotow[indexBota].Count;
-		if (indexBota == 0) _uiBot1.AktualizujLicznik(iloscKart);
-		if (indexBota == 1) _uiBot2.AktualizujLicznik(iloscKart);
-		if (indexBota == 2) _uiBot3.AktualizujLicznik(iloscKart);
+		int indexKontrolera = indexBota - 1;
+		int iloscKart = ReceGraczy[indexBota].Count;
+		if (indexKontrolera == 0) _uiBot1.AktualizujLicznik(iloscKart);
+		if (indexKontrolera == 1) _uiBot2.AktualizujLicznik(iloscKart);
+		if (indexKontrolera == 2) _uiBot3.AktualizujLicznik(iloscKart);
 	}
 
 	private void ZastosujEfektKarty(Karta zagranaKarta, bool jestGraczemLudzkim)
