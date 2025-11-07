@@ -5,7 +5,11 @@ using System.Collections.Generic;
 public partial class LogikaGry : Node2D
 {
 	[Export] private PackedScene SzablonKarty;
-    [Export] private PackedScene SzablonWyboruKoloru;
+	[Export] private PackedScene SzablonWyboruKoloru;
+	[Export] private UiBota _uiBot1;
+    [Export] private UiBota _uiBot2;
+    [Export] private UiBota _uiBot3;
+    [Export] private Label etykietaTuryGracza;
     private WyborKoloru instancjaWyboruKoloru;
     private DeckManager talia;
     private TurnManager turnManager;
@@ -16,10 +20,6 @@ public partial class LogikaGry : Node2D
     private int licznikZIndexStosu = 100;
     private int iloscGraczy = 4;
     private string wymuszonyKolor = null;
-    [Export] private UiBota _uiBot1;
-    [Export] private UiBota _uiBot2;
-    [Export] private UiBota _uiBot3;
-    [Export] private Label etykietaTuryGracza;
     private Vector2 pozycjaStosuZagranych = new Vector2(650, 375);
 	private Vector2 pozycjaStosuDobierania = new Vector2(810, 375);
 	private int _licznikPrzetasowanWRundzie;
@@ -32,7 +32,8 @@ public partial class LogikaGry : Node2D
 	#endregion
 	#region get set
 	public Karta GornaKartaNaStosie { get; private set; }
-	public int DlugDobierania {get { return turnManager.DlugDobierania; }}
+	public int DlugDobierania { get { return turnManager.DlugDobierania; } }
+	public TurnManager TurnManager { get; set; }
 	#endregion
 
 	public override void _Ready()
@@ -83,6 +84,7 @@ public partial class LogikaGry : Node2D
 		_uiBot1.UstawAktywny(false);
 		_uiBot2.UstawAktywny(false);
 		_uiBot3.UstawAktywny(false);
+
 		if (indexGracza == 0)
 		{
 			etykietaTuryGracza.Show();
@@ -94,7 +96,6 @@ public partial class LogikaGry : Node2D
 			if (indexGracza == 1) _uiBot1.UstawAktywny(true);
 			if (indexGracza == 2) _uiBot2.UstawAktywny(true);
 			if (indexGracza == 3) _uiBot3.UstawAktywny(true);
-
 			int indexKontrolera = indexGracza - 1;
 
 			Timer timerBota = new Timer();
@@ -305,7 +306,7 @@ public partial class LogikaGry : Node2D
 		if (iloscKartPoZagraniu == 1)
 		{
 			stanUnoGraczy[indexGracza] = true;
-			GD.Print($"Gracz {indexGracza} ma jedną kartę!");
+			GetNode<PopupManager>("/root/PopupManager").PokazWiadomosc($"Gracz {indexGracza} ma jedną karte", karta.GlobalPosition);
 		}
 		else
 		{
@@ -352,7 +353,7 @@ public partial class LogikaGry : Node2D
 			{
 				string wybranyKolor = botAI.WybierzKolor(ReceGraczy[indexGracza - 1]);
 				wymuszonyKolor = wybranyKolor;
-				GD.Print($"Wybrano kolor {wymuszonyKolor}");
+				GetNode<PopupManager>("/root/PopupManager").PokazWiadomosc($"Zmieniam kolor na {wymuszonyKolor}", karta.GlobalPosition);
 				turnManager.ZakonczTure();
 			}
 		}
@@ -395,20 +396,25 @@ public partial class LogikaGry : Node2D
 
 	private void ZastosujEfektKarty(Karta zagranaKarta, bool jestGraczemLudzkim)
 	{
+		var popupManager = GetNode<PopupManager>("/root/PopupManager");
 		switch (zagranaKarta.Wartosc)
 		{
 			case "Stop":
 				turnManager.PominTure();
+				popupManager.PokazWiadomosc("STOP!", pozycjaStosuZagranych);
 				break;
 			case "ZmianaKierunku":
 				turnManager.ZmienKierunek();
+				popupManager.PokazWiadomosc("Zmiana kierunku!", pozycjaStosuZagranych);
 				break;
 			case "+2":
 				turnManager.DlugDobierania += 2;
+				popupManager.PokazWiadomosc("+2!", pozycjaStosuZagranych);
 				break;
 			case "ZmianaKoloru":
 				if (jestGraczemLudzkim)
 					instancjaWyboruKoloru.Show();
+					
 				break;
 			case "+4":
 				turnManager.DlugDobierania += 4;

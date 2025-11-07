@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://dauiutbc7k8r8"]
+
+[node name="StatusPanel" type="PanelContainer"]
+z_index = 200
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="LabelDlug" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Musisz dobrać 0 kart"
+
+[node name="LabelKolor" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Aktualny kolor to:"

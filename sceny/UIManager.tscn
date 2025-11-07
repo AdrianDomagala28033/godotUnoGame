@@ -1,0 +1,152 @@
+[gd_scene load_steps=2 format=3 uid="uid://bo84lu1p4sr2t"]
+
+[sub_resource type="CSharpScript" id="CSharpScript_ag50i"]
+script/source = "using Godot;
+using System;
+using System.Collections.Generic;
+
+public partial class UIManager : CanvasLayer
+{
+	[Export]
+	private PackedScene SzablonWyboruKoloru;
+	[Export]
+	private UiBota _uiBot1;
+	[Export]
+	private UiBota _uiBot2;
+	[Export]
+	private UiBota _uiBot3;
+	[Export]
+	private Label etykietaTuryGracza;
+	[Export]
+	private PanelContainer statusPanel;
+	private LogikaGry logikaGry;
+	private TurnManager turnManager;
+	private Label labelDlug;
+	private Label labelKolor;
+	public WyborKoloru instancjaWyboruKoloru;
+
+	public override void _Ready()
+	{
+		Callable.From(InicjalizujManagera).CallDeferred();
+	}
+	private void InicjalizujManagera()
+	{
+		logikaGry = GetParent() as LogikaGry;
+		if (logikaGry == null)
+		{
+			GD.PrintErr(\"❌ Nie znaleziono LogikaGry jako rodzica!\");
+			return;
+		}
+
+		turnManager = logikaGry.TurnManager;
+
+		if (statusPanel != null)
+		{
+			labelDlug = statusPanel.GetNode<Label>(\"VBoxContainer/labelDlug\");
+			labelKolor = statusPanel.GetNode<Label>(\"VBoxContainer/labelKolor\");
+			statusPanel.Hide();
+		}
+
+		instancjaWyboruKoloru = (WyborKoloru)SzablonWyboruKoloru.Instantiate();
+		AddChild(instancjaWyboruKoloru);
+		instancjaWyboruKoloru.Hide();
+		instancjaWyboruKoloru.KolorWybrany += _OnGraczWybralKolor;
+		GD.Print($\"[UIManager] logikaGry={logikaGry != null}, turnManager={turnManager != null}, SzablonWyboruKoloru={SzablonWyboruKoloru != null}\");
+		turnManager.OnTuraRozpoczeta += OnTuraRozpoczeta;
+		logikaGry.OnKartaZagrano += OnKartaZagrano;
+		logikaGry.OnKartaDobrano += OnKartaDobrano;
+		logikaGry.OnWymaganyWyborKoloru += OnWymaganyWyborKoloru;
+
+		RozmiescKartyWRece();
+	}
+    public override void _UnhandledInput(InputEvent @event)
+    {
+		if (@event.IsActionPressed(\"ui_focus_next\"))
+		{
+			AktualizujStatusPanel();
+			statusPanel.Show();
+		}
+		else if (@event.IsActionReleased(\"ui_focus_next\"))
+		{
+			statusPanel.Hide();
+		}
+    }
+	private void AktualizujStatusPanel()
+	{
+		if (logikaGry == null) return;
+		GD.Print($\"[UIManager] StatusPanel={statusPanel != null}, labelDlug={labelDlug != null}, labelKolor={labelKolor != null}\");
+
+		labelDlug.Text = $\"Dlug: {logikaGry.DlugDobierania}\";
+		string kolor = \"brak\";
+		if (logikaGry.WymuszonyKolor != null)
+		{
+			kolor = logikaGry.WymuszonyKolor;
+		}
+		else if (logikaGry.GornaKartaNaStosie != null)
+		{
+			kolor = logikaGry.GornaKartaNaStosie.Kolor;
+		}
+		labelKolor.Text = $\"Aktualny kolor to: {kolor}\";
+	}
+	private void OnTuraRozpoczeta(int indexGracza)
+    {
+		etykietaTuryGracza.Hide();
+        _uiBot1.UstawAktywny(false);
+        _uiBot2.UstawAktywny(false);
+        _uiBot3.UstawAktywny(false);
+        
+        if(indexGracza == 0)
+        {
+            etykietaTuryGracza.Show();
+        }
+        else
+        {
+            if (indexGracza == 1) _uiBot1.UstawAktywny(true);
+            if (indexGracza == 2) _uiBot2.UstawAktywny(true);
+            if (indexGracza == 3) _uiBot3.UstawAktywny(true);
+        }
+        AktualizujStatusPanel();
+    }
+
+    private void OnKartaZagrano(Karta karta, int indexGracza)
+    {
+        if(indexGracza == 0)
+        {
+            RozmiescKartyWRece();
+        }
+        else
+        {
+            AktualizujUILicznikBota(indexGracza);
+        }
+        AktualizujStatusPanel();
+    }
+
+    private void OnKartaDobrano(int indexGracza)
+    {
+        if(indexGracza == 0)
+        {
+            RozmiescKartyWRece();
+        }
+        else
+        {
+            AktualizujUILicznikBota(indexGracza);
+        }
+        AktualizujStatusPanel();
+    }
+
+    private void OnWymaganyWyborKoloru()
+    {
+        instancjaWyboruKoloru.Show();
+    }
+
+	private void _OnGraczWybralKolor(string kolor)
+	{
+		//logikaGry.UstawWybranyKolor(kolor);
+	}
+	
+	
+}
+"
+
+[node name="UIManager" type="CanvasLayer"]
+script = SubResource("CSharpScript_ag50i")

@@ -44,7 +44,7 @@ public partial class Karta : Area2D
 		InputPickable = false;
 		ZIndex = nowyZIndex;
 		_aktywnaAnimacja = CreateTween();
-		_aktywnaAnimacja.TweenProperty(this, "position", pozycjaCelu, 0.3);
+		_aktywnaAnimacja.TweenProperty(this, "global_position", pozycjaCelu, 0.3);
 	}
 	public override void _Ready()
 	{
