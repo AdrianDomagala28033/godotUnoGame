@@ -15,10 +15,16 @@ public partial class BotController : Node
 		this.rekaBota = rekaBota;
     }
 	public void RozpocznijTure()
+	{
+		if (rekaBota == null || rekaBota.Count == 0)
     {
+        GD.PrintErr($"Bot {indexBota} nie ma kart do zagrania!");
+        logikaGry.SprobujDobracKarte(indexBota);
+        return;
+    }
 		Karta gornaKarta = logikaGry.GornaKartaNaStosie;
 		int dlug = logikaGry.DlugDobierania;
-		Karta decyzja = mozgAI.WybierzKarteDoZagrania(rekaBota, gornaKarta, dlug, (k, g, d) => logikaGry.CzyRuchJestLegalny(k, g, d));
+		Karta decyzja = mozgAI.WybierzKarteDoZagrania(rekaBota, dlug, (k, d) => logikaGry.UnoManager.CzyRuchJestLegalny(k, d));
 		if (decyzja != null)
         {
 			logikaGry.SprobujZagracKarte(decyzja, indexBota);
