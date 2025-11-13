@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://1xqegfpjwjmi"]
 
-[ext_resource type="Script" uid="uid://b0pco4w2sp3a5" path="res://WyborKoloru.cs" id="1_dvxcr"]
+[ext_resource type="Script" uid="uid://b0pco4w2sp3a5" path="res://skrypty/WyborKoloru.cs" id="1_dvxcr"]
 
 [node name="WyborKoloru" type="CanvasLayer"]
 script = ExtResource("1_dvxcr")

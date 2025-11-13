@@ -41,7 +41,6 @@ public class DeckManager
 			StworzKarte("DzikaKarta", "ZmianaKoloru");
 			StworzKarte("DzikaKarta", "+4");
 		}
-		GD.Print($"Stworzono talię Uno! Liczba kart: {talia.Count}");
 	}
 
 	private void StworzKarte(string kolor, string wartosc)

@@ -26,6 +26,8 @@ public partial class UnoRules : Node
 			return true;
 		if (kartaDoZagrania.Wartosc == logikaGry.GornaKartaNaStosie.Wartosc)
 			return true;
+		if (logikaGry.JokerManager.CzyJokerPozwalaNaZagranie(kartaDoZagrania, logikaGry))
+			return true;
 		return false;
 	}
 	public void ZastosujEfektKarty(Karta zagranaKarta, bool jestGraczemLudzkim)
@@ -35,33 +37,25 @@ public partial class UnoRules : Node
 		{
 			case "Stop":
 				turnManager.PominTure();
-				turnManager.ZakonczTure();
 				//popupManager.PokazWiadomosc("STOP!", logikaGry.PozycjaStosuZagranych);
 				break;
 			case "ZmianaKierunku":
 				turnManager.ZmienKierunek();
-				turnManager.ZakonczTure();
 				//popupManager.PokazWiadomosc("Zmiana kierunku!", logikaGry.PozycjaStosuZagranych);
 				break;
 			case "+2":
 				turnManager.DlugDobierania += 2;
 				uIManager.UstawDlug(turnManager.DlugDobierania);
-				turnManager.ZakonczTure();
 				//popupManager.PokazWiadomosc("+2!", logikaGry.PozycjaStosuZagranych);
 				break;
 			case "ZmianaKoloru":
 				if (jestGraczemLudzkim)
 					logikaGry.InstancjaWyboruKoloru.Show();
-				else
-					turnManager.ZakonczTure();
-							break;
+				break;
 			case "+4":
 				turnManager.DlugDobierania += 4;
-				GD.Print($"[LogikaGry] +4: DlugDobierania nowy = {turnManager.DlugDobierania}");
 				if (jestGraczemLudzkim)
 					logikaGry.InstancjaWyboruKoloru.Show();
-				else
-					turnManager.ZakonczTure();
 				break;
 		}
 	}

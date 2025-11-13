@@ -8,14 +8,26 @@ public class TurnManager
     public int KierunekGry { get; private set; } = 1;
     public int IloscGraczy { get; private set; }
     public int DlugDobierania { get; set; }
+    public int DodatkoweRuchy { get; set; } = 0;
+    public List<Gracz> ListaGraczy { get; private set; }
+    
 
     public event Action<int> OnTuraRozpoczeta;
     public event Action<int> OnTuraZakonczona;
 
-    public TurnManager(int iloscGraczy)
+    public TurnManager(List<Gracz> listaGraczy)
     {
-        IloscGraczy = iloscGraczy;
+        ListaGraczy = listaGraczy;
+        IloscGraczy = listaGraczy.Count;
         AktualnyGraczIndex = 0;
+    }
+
+    public Gracz AktualnyGracz => ListaGraczy[AktualnyGraczIndex];
+
+    public void UstawWybranegoGracza(int index)
+    {
+        if (index >= 0 && index <= ListaGraczy.Count)
+            AktualnyGraczIndex = index;
     }
 
     public void ZmienKierunek()
@@ -36,13 +48,16 @@ public class TurnManager
         UporzadkujIndex();
         OnTuraRozpoczeta?.Invoke(AktualnyGraczIndex);
     }
-
-	private void UporzadkujIndex()
-	{
-		if (AktualnyGraczIndex >= IloscGraczy)
-			AktualnyGraczIndex = 0;
-		else if (AktualnyGraczIndex < 0)
-			AktualnyGraczIndex = IloscGraczy - 1;
-	}
+    public void RozpocznijTure()
+    {
+        OnTuraRozpoczeta?.Invoke(AktualnyGraczIndex);
+    }
+    public void UporzadkujIndex()
+    {
+        if (AktualnyGraczIndex >= IloscGraczy)
+            AktualnyGraczIndex = 0;
+        else if (AktualnyGraczIndex < 0)
+            AktualnyGraczIndex = IloscGraczy - 1;
+    }
 
 }

@@ -16,7 +16,6 @@ public partial class WyborKoloru : CanvasLayer
 
     private void _OnPrzyciskKoloruNacisniety(string kolor)
     {
-		GD.Print($"Wybrano kolor: {kolor}");
 		EmitSignal(SignalName.KolorWybrany, kolor);
 		this.Hide();
     }

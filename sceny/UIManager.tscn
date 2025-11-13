@@ -1,4 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://bo84lu1p4sr2t"]
+[gd_scene load_steps=3 format=3 uid="uid://bo84lu1p4sr2t"]
+
+[ext_resource type="PackedScene" uid="uid://dauiutbc7k8r8" path="res://sceny/StatusPanel.tscn" id="1_4e8ua"]
 
 [sub_resource type="CSharpScript" id="CSharpScript_ag50i"]
 script/source = "using Godot;
@@ -7,16 +9,7 @@ using System.Collections.Generic;
 
 public partial class UIManager : CanvasLayer
 {
-	[Export]
-	private PackedScene SzablonWyboruKoloru;
-	[Export]
-	private UiBota _uiBot1;
-	[Export]
-	private UiBota _uiBot2;
-	[Export]
-	private UiBota _uiBot3;
-	[Export]
-	private Label etykietaTuryGracza;
+	
 	[Export]
 	private PanelContainer statusPanel;
 	private LogikaGry logikaGry;
@@ -51,7 +44,6 @@ public partial class UIManager : CanvasLayer
 		AddChild(instancjaWyboruKoloru);
 		instancjaWyboruKoloru.Hide();
 		instancjaWyboruKoloru.KolorWybrany += _OnGraczWybralKolor;
-		GD.Print($\"[UIManager] logikaGry={logikaGry != null}, turnManager={turnManager != null}, SzablonWyboruKoloru={SzablonWyboruKoloru != null}\");
 		turnManager.OnTuraRozpoczeta += OnTuraRozpoczeta;
 		logikaGry.OnKartaZagrano += OnKartaZagrano;
 		logikaGry.OnKartaDobrano += OnKartaDobrano;
@@ -74,7 +66,6 @@ public partial class UIManager : CanvasLayer
 	private void AktualizujStatusPanel()
 	{
 		if (logikaGry == null) return;
-		GD.Print($\"[UIManager] StatusPanel={statusPanel != null}, labelDlug={labelDlug != null}, labelKolor={labelKolor != null}\");
 
 		labelDlug.Text = $\"Dlug: {logikaGry.DlugDobierania}\";
 		string kolor = \"brak\";
@@ -148,5 +139,18 @@ public partial class UIManager : CanvasLayer
 }
 "
 
-[node name="UIManager" type="CanvasLayer"]
+[node name="UIManager" type="Control"]
+layout_mode = 3
+anchors_preset = 0
 script = SubResource("CSharpScript_ag50i")
+
+[node name="EtykietaTuryGracza" type="Label" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="StatusPanel" parent="." instance=ExtResource("1_4e8ua")]
+layout_mode = 1
+offset_left = 1.0
+offset_right = 161.0
+offset_bottom = 50.0

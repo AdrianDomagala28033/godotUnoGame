@@ -44,8 +44,8 @@ public partial class UIManager : Control
 		logikaGry.OnAktualizujLicznikBota += (idx, count) => AktualizujUILicznikBota(idx, count);
 		logikaGry.OnKolorDoUstawienia += (kolor) => UstawKolor(kolor);
 		logikaGry.OnReceZmienione += () => {
-			if (logikaGry != null && logikaGry.ReceGraczy != null && logikaGry.ReceGraczy.Count > 0)
-				RozmiescKartyWRece(logikaGry.ReceGraczy[0]);
+			if (logikaGry != null && logikaGry.ListaGraczy[0].rekaGracza != null && logikaGry.ListaGraczy[0].rekaGracza.Count > 0)
+				RozmiescKartyWRece(logikaGry.ListaGraczy[0].rekaGracza);
 		};
 	}
     private void HandleKolorDoUstawienia(string kolor)
@@ -61,7 +61,6 @@ public partial class UIManager : Control
 			GD.PrintErr("[UIManager] PokazKarteNaStosie: karta == null");
 			return;
 		}
-		GD.Print($"[UIManager] Pokazuję kartę {karta.Wartosc} zagrana przez gracza {indexGracza}");
 	}
 
 	public void DodajKarteNaStos(Karta karta, Vector2 pozycjaStosu, int zIndex, int indexGracza)
@@ -72,7 +71,6 @@ public partial class UIManager : Control
 		karta.Show();
 		karta.ZIndex = zIndex;
 		karta.CallDeferred("ZagrajNaStol", pozycjaStosu, zIndex);
-		GD.Print($"[UIManager] Dodano kartę {karta.Wartosc} {karta.Kolor} na stos.");
 	}
 
 	private void HandleKartaZagrano(Karta karta, int graczIndex)
@@ -87,8 +85,8 @@ public partial class UIManager : Control
 	{
 		if (statusPanel == null) return;
 		statusPanel.CallDeferred("UstawDlug", logikaGry.DlugDobierania);
-		if (logikaGry != null && logikaGry.ReceGraczy != null && logikaGry.ReceGraczy.Count > 0)
-			RozmiescKartyWRece(logikaGry.ReceGraczy[0]);
+		if (logikaGry != null && logikaGry.ListaGraczy[0].rekaGracza != null && logikaGry.ListaGraczy[0].rekaGracza.Count > 0)
+			RozmiescKartyWRece(logikaGry.ListaGraczy[0].rekaGracza);
 	}
 
 	private void HandleTaliaPrzetasowano(int ile)
@@ -113,7 +111,6 @@ public partial class UIManager : Control
 	{
 		if (statusPanel == null) return;
 		statusPanel.CallDeferred("UstawKolor", nazwaKoloru);
-		GD.Print($"wybrano kolor: {nazwaKoloru}");
 	}
 
 	public void PokazTureGracza(bool widoczna)
@@ -206,7 +203,7 @@ public partial class UIManager : Control
 	private void RozmiescKartyWRece()
 	{
 		if (logikaGry == null) return;
-		if (logikaGry.ReceGraczy == null || logikaGry.ReceGraczy.Count == 0) return;
-		RozmiescKartyWRece(logikaGry.ReceGraczy[0]);
+		if (logikaGry.ListaGraczy[0].rekaGracza == null || logikaGry.ListaGraczy[0].rekaGracza.Count == 0) return;
+			RozmiescKartyWRece(logikaGry.ListaGraczy[0].rekaGracza);
 	}
 }

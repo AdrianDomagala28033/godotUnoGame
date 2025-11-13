@@ -1,25 +1,22 @@
-[gd_scene load_steps=10 format=3 uid="uid://c0y0bdnpbf4xc"]
+[gd_scene load_steps=11 format=3 uid="uid://c0y0bdnpbf4xc"]
 
-[ext_resource type="Script" uid="uid://jkafcol28ggd" path="res://LogikaGry.cs" id="1_kci41"]
+[ext_resource type="Script" uid="uid://jkafcol28ggd" path="res://skrypty/LogikaGry.cs" id="1_kci41"]
 [ext_resource type="PackedScene" uid="uid://cpu8louqpydkn" path="res://sceny/karta.tscn" id="2_q35ey"]
 [ext_resource type="PackedScene" uid="uid://1xqegfpjwjmi" path="res://sceny/WyborKoloru.tscn" id="3_tr8kh"]
 [ext_resource type="Texture2D" uid="uid://dd6fo8yyafdto" path="res://karty_grafika/background.png" id="4_j3572"]
 [ext_resource type="Texture2D" uid="uid://cw7kkgcgsckqa" path="res://karty_grafika/back/rewers.png" id="5_3je2s"]
 [ext_resource type="PackedScene" uid="uid://bhv751evtd0gm" path="res://sceny/UIBota.tscn" id="6_rl20y"]
+[ext_resource type="Script" uid="uid://b8wba46pi72hn" path="res://skrypty/managers/UIManager.cs" id="7_3je2s"]
 [ext_resource type="PackedScene" uid="uid://caohktpi46dti" path="res://sceny/Rewers.tscn" id="7_411w7"]
 [ext_resource type="PackedScene" uid="uid://dauiutbc7k8r8" path="res://sceny/StatusPanel.tscn" id="7_j3572"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_seb48"]
 size = Vector2(126, 187)
 
-[node name="StolGry" type="Node2D" node_paths=PackedStringArray("_uiBot1", "_uiBot2", "_uiBot3", "etykietaTuryGracza")]
+[node name="StolGry" type="Node2D"]
 script = ExtResource("1_kci41")
 SzablonKarty = ExtResource("2_q35ey")
 SzablonWyboruKoloru = ExtResource("3_tr8kh")
-_uiBot1 = NodePath("InterfejsGry/UIBota")
-_uiBot2 = NodePath("InterfejsGry/UIBota2")
-_uiBot3 = NodePath("InterfejsGry/UIBota3")
-etykietaTuryGracza = NodePath("InterfejsGry/EtykietaTuryGracza")
 
 [node name="Tlo" type="TextureRect" parent="."]
 offset_left = 1283.0
@@ -40,9 +37,17 @@ texture = ExtResource("5_3je2s")
 position = Vector2(-20, -33.5)
 shape = SubResource("RectangleShape2D_seb48")
 
-[node name="InterfejsGry" type="CanvasLayer" parent="."]
+[node name="UIManager" type="Control" parent="." node_paths=PackedStringArray("etykietaTuryGracza")]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("7_3je2s")
+etykietaTuryGracza = NodePath("InterfejsGry/EtykietaTuryGracza")
 
-[node name="UIBota" parent="InterfejsGry" instance=ExtResource("6_rl20y")]
+[node name="InterfejsGry" type="CanvasLayer" parent="UIManager"]
+
+[node name="UIBota" parent="UIManager/InterfejsGry" instance=ExtResource("6_rl20y")]
 offset_left = 91.0
 offset_top = 326.0
 offset_right = 131.0
@@ -51,7 +56,7 @@ rotation = 1.5707964
 SzablonRewersu = ExtResource("7_411w7")
 metadata/_edit_use_anchors_ = true
 
-[node name="UIBota2" parent="InterfejsGry" instance=ExtResource("6_rl20y")]
+[node name="UIBota2" parent="UIManager/InterfejsGry" instance=ExtResource("6_rl20y")]
 offset_left = 683.0
 offset_top = 110.0
 offset_right = 723.0
@@ -60,7 +65,7 @@ rotation = 3.1415927
 SzablonRewersu = ExtResource("7_411w7")
 metadata/_edit_use_anchors_ = true
 
-[node name="UIBota3" parent="InterfejsGry" instance=ExtResource("6_rl20y")]
+[node name="UIBota3" parent="UIManager/InterfejsGry" instance=ExtResource("6_rl20y")]
 offset_left = 1184.0
 offset_top = 376.0
 offset_right = 1224.0
@@ -69,7 +74,7 @@ rotation = -1.5707964
 SzablonRewersu = ExtResource("7_411w7")
 metadata/_edit_use_anchors_ = true
 
-[node name="EtykietaTuryGracza" type="Label" parent="InterfejsGry"]
+[node name="EtykietaTuryGracza" type="Label" parent="UIManager/InterfejsGry"]
 anchors_preset = -1
 anchor_left = 0.453125
 anchor_top = 0.9638889
@@ -85,8 +90,14 @@ theme_override_font_sizes/font_size = 35
 text = "Twoja tura"
 metadata/_edit_use_anchors_ = true
 
-[node name="StatusPanel" parent="." instance=ExtResource("7_j3572")]
-offset_left = -160.0
-offset_top = -50.0
+[node name="StatusPanel" parent="UIManager" instance=ExtResource("7_j3572")]
+layout_mode = 1
+offset_left = 1081.0
+offset_top = 629.0
+offset_right = 1241.0
+offset_bottom = 679.0
+
+[node name="StosKart" type="Node2D" parent="."]
+position = Vector2(588, 347)
 
 [connection signal="input_event" from="StosDobierania" to="." method="_OnStosDobieraniaInputEvent"]

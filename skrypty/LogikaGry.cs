@@ -9,9 +9,7 @@ public partial class LogikaGry : Node2D
 	private WyborKoloru instancjaWyboruKoloru;
 	private DeckManager talia;
 	private TurnManager turnManager;
-	public List<List<Karta>> ReceGraczy = new List<List<Karta>>();
 	private List<Karta> stosZagranych = new List<Karta>();
-	private BotGracz botAI = new BotGracz();
 	private List<BotController> kontroleryBotow = new List<BotController>();
 	private int licznikZIndexStosu = 100;
 	private int iloscGraczy = 4;
@@ -42,31 +40,39 @@ public partial class LogikaGry : Node2D
 	public Vector2 PozycjaStosuZagranych { get; set; }
 	public WyborKoloru InstancjaWyboruKoloru { get; set; }
 	public UnoRules UnoManager { get; set; }
+	public JokerManager JokerManager { get; set; }
+	public DeckManager Talia { get; set; }
+	public List<Gracz> ListaGraczy { get; set; }
+	public UIManager UIManager { get; set; }
 
 	public override void _Ready()
 	{
-		uIManager = GetNode<UIManager>("UIManager");
-		uIManager.Inicjalizuj(this);
-
-		turnManager = new TurnManager(iloscGraczy);
-		turnManager.OnTuraRozpoczeta += OnTuraRozpoczeta;
-
-		
-
-		for (int i = 0; i < iloscGraczy; i++)
-			ReceGraczy.Add(new List<Karta>());
+		ListaGraczy = new List<Gracz>();
+		var graczCzlowiek = new Gracz("ty", true, 0);
+		ListaGraczy.Add(graczCzlowiek);
 
 		for (int i = 1; i < iloscGraczy; i++)
 		{
-			List<Karta> rekaBota = ReceGraczy[i];
+			var bot = new Gracz($"Bot {i}", false, i);
+			ListaGraczy.Add(bot);
+
 			BotController nowyController = new BotController();
-			nowyController.Inicjalizuj(this, i, rekaBota);
+			nowyController.Inicjalizuj(this, ListaGraczy);
+			nowyController.UstawIndexBota(i);
 			kontroleryBotow.Add(nowyController);
 			AddChild(nowyController);
 		}
 
+		uIManager = GetNode<UIManager>("UIManager");
+		uIManager.Inicjalizuj(this);
+
+		turnManager = new TurnManager(ListaGraczy);
+		turnManager.OnTuraRozpoczeta += OnTuraRozpoczeta;
+
+
 		stanUnoGraczy = new bool[iloscGraczy];
 		talia = new DeckManager(this, SzablonKarty);
+		this.Talia = talia;
 		talia.StworzTalie();
 		talia.PotasujTalie();
 		talia.OnTaliaPrzetasowano += _OnTaliaPrzetasowano;
@@ -88,6 +94,8 @@ public partial class LogikaGry : Node2D
 
 		Area2D stosDobierania = GetNode<Area2D>("StosDobierania");
 		stosDobierania.Position = pozycjaStosuDobierania;
+
+		JokerManager = new JokerManager();
 
 		stosDobierania.InputPickable = true;
 
@@ -176,15 +184,15 @@ public partial class LogikaGry : Node2D
 
 				Karta karta = talia.PobierzTalie()[talia.PobierzTalie().Count - 1];
 				talia.PobierzTalie().RemoveAt(talia.PobierzTalie().Count - 1);
-				ReceGraczy[indexGracza].Add(karta);
+				ListaGraczy[indexGracza].rekaGracza.Add(karta);
 				if (indexGracza != 0)
-					OnAktualizujLicznikBota?.Invoke(indexGracza, ReceGraczy[indexGracza].Count);
+					OnAktualizujLicznikBota?.Invoke(indexGracza, ListaGraczy[indexGracza].rekaGracza.Count);
 			}
 		}
-		OnRozmiescKarty?.Invoke(ReceGraczy[0]);
+		OnRozmiescKarty?.Invoke(ListaGraczy[0].rekaGracza);
 	}
 
-	private void DobierzJednaKarte(int indexGracza)
+	private void DobierzJednaKarte(Gracz gracz)
 	{
 		if (talia.PobierzTalie().Count == 0)
 		{
@@ -196,12 +204,12 @@ public partial class LogikaGry : Node2D
 		Karta kartaDoDobrania = talia.PobierzTalie()[talia.PobierzTalie().Count - 1];
 		talia.PobierzTalie().RemoveAt(talia.PobierzTalie().Count - 1);
 
-		ReceGraczy[indexGracza].Add(kartaDoDobrania);
-		OnKartaDobrano?.Invoke(indexGracza);
-		if (indexGracza != 0)
-			OnAktualizujLicznikBota?.Invoke(indexGracza, ReceGraczy[indexGracza].Count);
+		gracz.rekaGracza.Add(kartaDoDobrania);
+		OnKartaDobrano?.Invoke(gracz.Index);
+		if (!gracz.JestCzlowiekiem)
+			OnAktualizujLicznikBota?.Invoke(gracz.Index, gracz.rekaGracza.Count);
 		else
-			OnRozmiescKarty?.Invoke(ReceGraczy[0]);
+			OnRozmiescKarty?.Invoke(ListaGraczy[0].rekaGracza);
 	}
 
 	private void ObslozKlikniecieKarty(Karta kliknietaKarta)
@@ -218,7 +226,7 @@ public partial class LogikaGry : Node2D
 		if (karta.Kolor != "DzikaKarta")
 			wymuszonyKolor = null;
 
-		List<Karta> rekaAktywnegoGracza = ReceGraczy[indexGracza];
+		List<Karta> rekaAktywnegoGracza = ListaGraczy[indexGracza].rekaGracza;
 		rekaAktywnegoGracza.Remove(karta);
 
 		int iloscKartPoZagraniu = rekaAktywnegoGracza.Count;
@@ -240,6 +248,8 @@ public partial class LogikaGry : Node2D
 		GornaKartaNaStosie = karta;
 		licznikZIndexStosu++;
 		OnDodajKarteNaStos?.Invoke(karta, pozycjaStosuZagranych, licznikZIndexStosu, indexGracza);
+		if(JokerManager != null)
+			JokerManager.SprawdzAktywacje(karta, this);
 
 		bool jestCzlowiekiem = (indexGracza == 0);
 		unoManager.ZastosujEfektKarty(karta, jestCzlowiekiem);
@@ -252,7 +262,7 @@ public partial class LogikaGry : Node2D
 			}
 			else
 			{
-				string wybranyKolor = botAI.WybierzKolor(ReceGraczy[indexGracza - 1]);
+				string wybranyKolor = ListaGraczy[indexGracza].WybierzKolor(ListaGraczy[indexGracza].rekaGracza);
 				wymuszonyKolor = wybranyKolor;
 				GornaKartaNaStosie.Kolor = wybranyKolor;
 				OnKolorZmieniony?.Invoke(wybranyKolor);
@@ -267,7 +277,6 @@ public partial class LogikaGry : Node2D
 
 	public void SprobujDobracKarte(int indexGracza)
 	{
-		GD.Print($"Kliknięcie na stos przez gracza {indexGracza}. Aktualny gracz: {turnManager.AktualnyGraczIndex}. Panel koloru widoczny: {instancjaWyboruKoloru.Visible}");
 		if (turnManager.AktualnyGraczIndex != indexGracza)
 			return;
 		if (instancjaWyboruKoloru.Visible)
@@ -275,13 +284,13 @@ public partial class LogikaGry : Node2D
 		if (turnManager.DlugDobierania > 0)
 		{
 			for (int i = 0; i < turnManager.DlugDobierania; i++)
-				DobierzJednaKarte(indexGracza);
+				DobierzJednaKarte(ListaGraczy[indexGracza]);
 			turnManager.DlugDobierania = 0;
 		}
 		else
-			DobierzJednaKarte(indexGracza);
+			DobierzJednaKarte(ListaGraczy[indexGracza]);
 
-		OnRozmiescKarty?.Invoke(ReceGraczy[0]);
+		OnRozmiescKarty?.Invoke(ListaGraczy[0].rekaGracza);
 		turnManager.ZakonczTure();
 	}
 	private void _OnStosDobieraniaInputEvent(Node viewport, InputEvent @event, long shapeIdx)
