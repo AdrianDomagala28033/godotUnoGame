@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://caohktpi46dti"]
 
-[ext_resource type="Texture2D" uid="uid://cw7kkgcgsckqa" path="res://karty_grafika/back/rewers.png" id="1_xfadl"]
+[ext_resource type="Texture2D" uid="uid://cw7kkgcgsckqa" path="res://grafika/karty_grafika/back/rewers.png" id="1_xfadl"]
 
 [node name="Sprite2D" type="Sprite2D"]
 position = Vector2(58, 92.99999)

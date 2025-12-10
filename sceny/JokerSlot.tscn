@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://cdm7ryq3coem0"]
+
+[ext_resource type="Script" uid="uid://bg5pgtepayjdc" path="res://skrypty/JokerSlot.cs" id="1_w6r7s"]
+[ext_resource type="Texture2D" uid="uid://drolva0ipyfxh" path="res://grafika/jokery/IMG_0125.PNG" id="2_iy373"]
+
+[node name="JokerSlot" type="TextureRect"]
+custom_minimum_size = Vector2(60, 80)
+offset_left = -12.0
+offset_top = -10.0
+offset_right = 48.0
+offset_bottom = 90.0
+mouse_filter = 0
+texture = ExtResource("2_iy373")
+expand_mode = 1
+script = ExtResource("1_w6r7s")
+
+[connection signal="mouse_entered" from="." to="." method="OnMouseEntered"]
+[connection signal="mouse_exited" from="." to="." method="OnMouseExited"]

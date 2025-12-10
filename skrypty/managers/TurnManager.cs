@@ -26,7 +26,7 @@ public class TurnManager
 
     public void UstawWybranegoGracza(int index)
     {
-        if (index >= 0 && index <= ListaGraczy.Count)
+        if (index >= 0 && index < ListaGraczy.Count)
             AktualnyGraczIndex = index;
     }
 

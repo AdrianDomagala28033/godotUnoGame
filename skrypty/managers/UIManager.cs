@@ -6,6 +6,7 @@ public partial class UIManager : Control
 {
 	private LogikaGry logikaGry;
 	[Export] private Label etykietaTuryGracza;
+	[Export] private JokerPanel jokerPanel;
 	private StatusPanel statusPanel;
 	private Control koniecRundyPanel;
 	private UiBota _uiBot1;
@@ -38,6 +39,7 @@ public partial class UIManager : Control
 		logikaGry.OnKartaZagrana += PokazKarteNaStosie;
 		logikaGry.OnKolorDoUstawienia += HandleKolorDoUstawienia;
 		logikaGry.OnDodajKarteNaStos += DodajKarteNaStos;
+		logikaGry.OnJokerZdobyty += HandleJokerZdobyty;
 
 		logikaGry.OnRozmiescKarty += (reka) => RozmiescKartyWRece(reka);
 		logikaGry.OnDodajKarteNaStos += (karta, pos, z, idx) => DodajKarteNaStos(karta, pos, z, idx);
@@ -47,7 +49,12 @@ public partial class UIManager : Control
 			if (logikaGry != null && logikaGry.ListaGraczy[0].rekaGracza != null && logikaGry.ListaGraczy[0].rekaGracza.Count > 0)
 				RozmiescKartyWRece(logikaGry.ListaGraczy[0].rekaGracza);
 		};
+		logikaGry.OnJokerZdobyty += (joker) => jokerPanel.DodajJokeraDoWidoku(joker);
 	}
+	private void HandleJokerZdobyty(Joker joker)
+    {
+        GD.Print($"[UI] Dostałem info o jokerze: {joker.Nazwa}. Dodaję do panelu.");
+    }
     private void HandleKolorDoUstawienia(string kolor)
     {
         if (statusPanel != null)
@@ -178,7 +185,7 @@ public partial class UIManager : Control
 
 		float szerokoscCalejReki = (iloscKart - 1) * odstep + szerokoscKarty;
 		float pozycjaStartowaX = (szerokoscEkranu / 2) - (szerokoscCalejReki / 2);
-		float pozycjaY = 780;
+		float pozycjaY = GetViewportRect().Size.Y + 50;
 
 		for (int i = 0; i < iloscKart; i++)
 		{

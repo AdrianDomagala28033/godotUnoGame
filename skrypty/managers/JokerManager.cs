@@ -4,33 +4,25 @@ using System.Collections.Generic;
 
 public class JokerManager
 {
-    public List<Joker> listaJokerow;
 
     public JokerManager()
     {
-        listaJokerow = new List<Joker>();
+        
     }
-    public void DodajJokera(Joker joker)
+    public void SprawdzAktywacje(Karta karta, LogikaGry logikaGry, Gracz gracz)
     {
-        listaJokerow.Add(joker);
-    }
-    public void UsunJokera(Joker joker)
-    {
-        listaJokerow.Remove(joker);
-    }
-    public void SprawdzAktywacje(Karta karta, LogikaGry logikaGry)
-    {
-        foreach (Joker joker in listaJokerow)
+        foreach (Joker joker in gracz.PosiadaneJokery)
         {
             if (joker.CzySpelniaWarunek(karta))
             {
+                GD.Print($"[JokerManager] Aktywacja '{joker.Nazwa}' u gracza {gracz.Index}!");
                 joker.Efekt?.Invoke(logikaGry);
             }
         }
     }
-    public bool CzyJokerPozwalaNaZagranie(Karta karta, LogikaGry logikaGry)
+    public bool CzyJokerPozwalaNaZagranie(Karta karta, LogikaGry logikaGry, Gracz gracz)
     {
-        foreach (Joker joker in listaJokerow)
+        foreach (Joker joker in gracz.PosiadaneJokery)
         {
             if (joker.CzyPozwalaNaZagranie(karta, logikaGry))
                 return true;

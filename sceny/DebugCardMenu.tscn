@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=3 uid="uid://djthiqtleo256"]
+
+[ext_resource type="Script" uid="uid://bwvmhybiygfg8" path="res://DebugCardMenu.cs" id="1_dsxn4"]
+
+[node name="DebugCardMenu" type="CanvasLayer"]
+layer = 101
+script = ExtResource("1_dsxn4")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.44705883)
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GridContainer" type="GridContainer" parent="ScrollContainer"]
+layout_mode = 2
+columns = 5

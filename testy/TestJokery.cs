@@ -1,57 +1,115 @@
-using Godot;
-using System;
-using System.Collections.Generic;
+// using Godot;
+// using System;
+// using System.Collections.Generic;
 
-public partial class TestJokery : Node
-{
-    private JokerManager jokerManager;
-    private LogikaGry logikaGry;
-    private TurnManager turnManager;
+// public partial class TestJokery : Node
+// {
+//     private JokerManager jokerManager;
+//     private LogikaGry logikaGry;
+//     private TurnManager turnManager;
 
-    public override void _Ready()
-    {
-        GD.Print("TEST JOKEROW");
+//     public override void _Ready()
+//     {
+//         GD.Print("=== TEST JOKEROW ===");
 
-        var gracze = new List<Gracz>
-        {
-            new Gracz("bot1", false, 0),
-            new Gracz("bot2", false, 1),
-            new Gracz("bot3", false, 2)
-        };
+//         var gracze = new List<Gracz>
+//         {
+//             new Gracz("bot1", false, 0),
+//             new Gracz("bot2", false, 1),
+//             new Gracz("bot3", false, 2)
+//         };
 
-        turnManager = new TurnManager(gracze);
+//         turnManager = new TurnManager(gracze);
 
-        logikaGry = new LogikaGry();
-        AddChild(logikaGry);
-        logikaGry.ListaGraczy = gracze;
-        logikaGry.TurnManager = turnManager;
-        logikaGry.JokerManager = jokerManager;
+//         logikaGry = new LogikaGry();
+//         logikaGry.TurnManager = turnManager;
+//         logikaGry.ListaGraczy = gracze;
 
-        jokerManager = new JokerManager();
-        JokerFactory.StworzJokery(jokerManager);
+//         AddChild(logikaGry);
 
-        try
-        {
-            logikaGry.UIManager.Inicjalizuj(logikaGry);
-        }
-        catch (Exception) { }
+//         jokerManager = new JokerManager();
+//         JokerFactory.StworzJokery();
+//         logikaGry.JokerManager = jokerManager;
 
-        GD.Print($"Dodano jokery: {jokerManager.listaJokerow.Count}");
+//         TestSprint();
+//         TestPierwszyJoker();
+//         TestOdbicie();
+//         TestOminMnie();
+//     }
 
-        var sprintJoker = jokerManager.listaJokerow.Find(j => j.Nazwa == "Sprint");
-        var aktualnyGracz = turnManager.AktualnyGracz;
+//     private void TestSprint()
+//     {
+//         GD.Print("\n--- TEST: Sprint ---");
 
-        for (int i = 0; i < 11; i++)
-            aktualnyGracz.rekaGracza.Add(new Karta());
+//         var gracz = turnManager.AktualnyGracz;
 
-        if (sprintJoker.CzyPozwalaNaZagranie(null, logikaGry))
-            GD.Print("Joker 'Sprint' można zagrać");
-        else
-            GD.Print("Joker 'Sprint' nie można zagrać");
+//         for (int i = 0; i < 11; i++)
+//             gracz.rekaGracza.Add(new Karta());
 
-        var pierwszyJoker = jokerManager.listaJokerow.Find(j => j.Nazwa == "Pierwszy joker");
-        GD.Print($"Dług do dobrania przed jokerem: {turnManager.DlugDobierania}");
-        pierwszyJoker.Efekt(logikaGry);
-        GD.Print($"Dług do dobrania po jokerze: {turnManager.DlugDobierania}");
-    }
-}
+//         var sprint = jokerManager.listaJokerow.Find(j => j.Nazwa == "Sprint");
+
+//         GD.Print("Można zagrać? -> " + sprint.CzyPozwalaNaZagranie(null, logikaGry));
+
+//         int przed = turnManager.AktualnyGraczIndex;
+//         sprint.Efekt(logikaGry);
+//         int po = turnManager.AktualnyGraczIndex;
+
+//         GD.Print($"Index przed: {przed}, index po: {po}");
+//     }
+
+
+//     private void TestPierwszyJoker()
+//     {
+//         GD.Print("\n--- TEST: Pierwszy Joker ---");
+
+//         var j = jokerManager.listaJokerow.Find(j => j.Nazwa == "Pierwszy joker");
+
+//         turnManager.DlugDobierania = 0;
+//         GD.Print("Przed: " + turnManager.DlugDobierania);
+
+//         j.Efekt(logikaGry);
+
+//         GD.Print("Po: " + turnManager.DlugDobierania);
+//     }
+
+
+//     private void TestOdbicie()
+//     {
+//         GD.Print("\n--- TEST: Odbicie ---");
+
+//         var j = jokerManager.listaJokerow.Find(j => j.Nazwa == "Odbicie");
+
+//         turnManager.DlugDobierania = 3;
+//         int kierunekPrzed = turnManager.KierunekGry;
+
+//         var karta = new Karta();
+//         karta.Wartosc = "ZmianaKierunku";
+
+//         GD.Print("Można zagrać? -> " + j.CzyPozwalaNaZagranie(karta, logikaGry));
+//         j.Efekt(logikaGry);
+
+//         GD.Print($"Kierunek przed: {kierunekPrzed}, po: {turnManager.KierunekGry}");
+//     }
+
+
+//     private void TestOminMnie()
+//     {
+//         GD.Print("\n--- TEST: Omiń mnie! ---");
+
+//         var j = jokerManager.listaJokerow.Find(j => j.Nazwa == "Omiń mnie!");
+
+//         turnManager.DlugDobierania = 2;
+
+//         var karta = new Karta();
+//         karta.Wartosc = "Stop";
+
+//         GD.Print("Można zagrać? -> " + j.CzyPozwalaNaZagranie(karta, logikaGry));
+
+//         int przed = turnManager.AktualnyGraczIndex;
+//         j.Efekt(logikaGry);
+//         int po = turnManager.AktualnyGraczIndex;
+
+//         GD.Print($"Gracz przed: {przed}, gracz po: {po}");
+//     }
+
+// }

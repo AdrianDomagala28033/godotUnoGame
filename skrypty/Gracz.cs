@@ -8,6 +8,7 @@ public class Gracz
     public bool JestCzlowiekiem { get; set; }
     public List<Karta> rekaGracza { get; set; } = new List<Karta>();
     public int Index { get; set; }
+    public List<Joker> PosiadaneJokery {get; set;} = new List<Joker>();
     public Gracz(string nazwa, bool jestCzlowiekiem, int index)
     {
         Nazwa = nazwa;
@@ -30,5 +31,9 @@ public class Gracz
         string[] kolory = ["Czerwony", "Niebieski", "Zolty", "Zielony"];
         Random random = new Random();
         return kolory[random.Next(kolory.Length)];
+    }
+    public void DodajJokera(Joker joker)
+    {
+        PosiadaneJokery.Add(joker);
     }
 }

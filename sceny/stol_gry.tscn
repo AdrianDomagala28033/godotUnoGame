@@ -1,14 +1,15 @@
-[gd_scene load_steps=11 format=3 uid="uid://c0y0bdnpbf4xc"]
+[gd_scene load_steps=12 format=3 uid="uid://c0y0bdnpbf4xc"]
 
 [ext_resource type="Script" uid="uid://jkafcol28ggd" path="res://skrypty/LogikaGry.cs" id="1_kci41"]
 [ext_resource type="PackedScene" uid="uid://cpu8louqpydkn" path="res://sceny/karta.tscn" id="2_q35ey"]
 [ext_resource type="PackedScene" uid="uid://1xqegfpjwjmi" path="res://sceny/WyborKoloru.tscn" id="3_tr8kh"]
-[ext_resource type="Texture2D" uid="uid://dd6fo8yyafdto" path="res://karty_grafika/background.png" id="4_j3572"]
-[ext_resource type="Texture2D" uid="uid://cw7kkgcgsckqa" path="res://karty_grafika/back/rewers.png" id="5_3je2s"]
+[ext_resource type="Texture2D" uid="uid://dd6fo8yyafdto" path="res://grafika/karty_grafika/background.png" id="4_j3572"]
+[ext_resource type="Texture2D" uid="uid://cw7kkgcgsckqa" path="res://grafika/karty_grafika/back/rewers.png" id="5_3je2s"]
 [ext_resource type="PackedScene" uid="uid://bhv751evtd0gm" path="res://sceny/UIBota.tscn" id="6_rl20y"]
 [ext_resource type="Script" uid="uid://b8wba46pi72hn" path="res://skrypty/managers/UIManager.cs" id="7_3je2s"]
 [ext_resource type="PackedScene" uid="uid://caohktpi46dti" path="res://sceny/Rewers.tscn" id="7_411w7"]
 [ext_resource type="PackedScene" uid="uid://dauiutbc7k8r8" path="res://sceny/StatusPanel.tscn" id="7_j3572"]
+[ext_resource type="PackedScene" uid="uid://dp4mbvqxfa7jc" path="res://sceny/JokerPanel.tscn" id="10_j3572"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_seb48"]
 size = Vector2(126, 187)
@@ -37,13 +38,14 @@ texture = ExtResource("5_3je2s")
 position = Vector2(-20, -33.5)
 shape = SubResource("RectangleShape2D_seb48")
 
-[node name="UIManager" type="Control" parent="." node_paths=PackedStringArray("etykietaTuryGracza")]
+[node name="UIManager" type="Control" parent="." node_paths=PackedStringArray("etykietaTuryGracza", "jokerPanel")]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("7_3je2s")
 etykietaTuryGracza = NodePath("InterfejsGry/EtykietaTuryGracza")
+jokerPanel = NodePath("../WarstwaUI/JokerPanel")
 
 [node name="InterfejsGry" type="CanvasLayer" parent="UIManager"]
 
@@ -99,5 +101,11 @@ offset_bottom = 679.0
 
 [node name="StosKart" type="Node2D" parent="."]
 position = Vector2(588, 347)
+
+[node name="WarstwaUI" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="JokerPanel" parent="WarstwaUI" instance=ExtResource("10_j3572")]
+offset_right = 4.0
 
 [connection signal="input_event" from="StosDobierania" to="." method="_OnStosDobieraniaInputEvent"]

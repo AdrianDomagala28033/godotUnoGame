@@ -53,14 +53,14 @@ public partial class Karta : Area2D
 		string sciezkaDoTekstury;
 		if (Kolor == "Rewers")
 		{
-			sciezkaDoTekstury = "res://karty_grafika/back/rewers.png";
+			sciezkaDoTekstury = "res://grafika/karty_grafika/back/rewers.png";
 		}
 		else
 		{
 			string nazwaFolderu = mapowanieKolorow[Kolor];
 			string nazwaWartosci = mapowanieWartosci[Wartosc];
 
-			sciezkaDoTekstury = $"res://karty_grafika/{nazwaFolderu}/{nazwaWartosci}_{nazwaFolderu}.png";
+			sciezkaDoTekstury = $"res://grafika/karty_grafika/{nazwaFolderu}/{nazwaWartosci}_{nazwaFolderu}.png";
 		}
 		_sprite.Texture = (Texture2D)ResourceLoader.Load(sciezkaDoTekstury);
 	}

@@ -13,9 +13,13 @@ public partial class UnoRules : Node
 		this.logikaGry = logikaGry;
 		this.turnManager = turnManager;
 		this.uIManager = uIManager;
+		turnManager.OnTuraRozpoczeta += ObsluzPoczatekTury;
 	}
 	public bool CzyRuchJestLegalny(Karta kartaDoZagrania, int dlug)
 	{
+		Gracz aktualnyGracz = logikaGry.TurnManager.AktualnyGracz;
+		if (logikaGry.JokerManager.CzyJokerPozwalaNaZagranie(kartaDoZagrania, logikaGry, aktualnyGracz))
+			return true;
 		if (dlug > 0)
 			return kartaDoZagrania.Wartosc == "+2" || kartaDoZagrania.Wartosc == "+4";
 		if (kartaDoZagrania.Kolor == "DzikaKarta")
@@ -25,8 +29,6 @@ public partial class UnoRules : Node
 		if (kartaDoZagrania.Kolor == logikaGry.GornaKartaNaStosie.Kolor)
 			return true;
 		if (kartaDoZagrania.Wartosc == logikaGry.GornaKartaNaStosie.Wartosc)
-			return true;
-		if (logikaGry.JokerManager.CzyJokerPozwalaNaZagranie(kartaDoZagrania, logikaGry))
 			return true;
 		return false;
 	}
@@ -59,4 +61,12 @@ public partial class UnoRules : Node
 				break;
 		}
 	}
+	public void ObsluzPoczatekTury(int indexGracza)
+    {
+        foreach (Joker joker in logikaGry.ListaGraczy[indexGracza].PosiadaneJokery)
+		{
+			joker.Efekt(logikaGry);
+		}
+		uIManager.UstawDlug(logikaGry.DlugDobierania);
+    }
 }

@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://cpu8louqpydkn"]
 
 [ext_resource type="Script" uid="uid://dxe8e5cy06l0j" path="res://skrypty/Karta.cs" id="1_0omm4"]
-[ext_resource type="Texture2D" uid="uid://b57k7gfx88m0q" path="res://karty_grafika/blue/0_blue.png" id="1_cx4og"]
+[ext_resource type="Texture2D" uid="uid://b57k7gfx88m0q" path="res://grafika/karty_grafika/blue/0_blue.png" id="1_cx4og"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pkjhe"]
 size = Vector2(124.5, 190.5)
