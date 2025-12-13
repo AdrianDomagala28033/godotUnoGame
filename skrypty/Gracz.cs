@@ -43,4 +43,8 @@ public class Gracz
     {
         this.Wynik += (listaGraczy.Count - Miejsce) * 10;
     }
+    public void DodajPunkty(int iloscPkt)
+    {
+        this.Wynik += iloscPkt;
+    }
 }

@@ -16,6 +16,7 @@ public class JokerManager
             if (joker.CzySpelniaWarunek(karta))
             {
                 GD.Print($"[JokerManager] Aktywacja '{joker.Nazwa}' u gracza {gracz.Index}!");
+                gracz.DodajPunkty(3);
                 joker.Efekt?.Invoke(logikaGry);
             }
         }

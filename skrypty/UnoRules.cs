@@ -39,25 +39,30 @@ public partial class UnoRules : Node
 		{
 			case "Stop":
 				turnManager.PominTure();
+				turnManager.AktualnyGracz.DodajPunkty(1);
 				//popupManager.PokazWiadomosc("STOP!", logikaGry.PozycjaStosuZagranych);
 				break;
 			case "ZmianaKierunku":
 				turnManager.ZmienKierunek();
+				turnManager.AktualnyGracz.DodajPunkty(1);
 				//popupManager.PokazWiadomosc("Zmiana kierunku!", logikaGry.PozycjaStosuZagranych);
 				break;
 			case "+2":
 				turnManager.DlugDobierania += 2;
 				uIManager.UstawDlug(turnManager.DlugDobierania);
+				turnManager.AktualnyGracz.DodajPunkty(2);
 				//popupManager.PokazWiadomosc("+2!", logikaGry.PozycjaStosuZagranych);
 				break;
 			case "ZmianaKoloru":
 				if (jestGraczemLudzkim)
 					logikaGry.InstancjaWyboruKoloru.Show();
+				turnManager.AktualnyGracz.DodajPunkty(1);
 				break;
 			case "+4":
 				turnManager.DlugDobierania += 4;
 				if (jestGraczemLudzkim)
 					logikaGry.InstancjaWyboruKoloru.Show();
+				turnManager.AktualnyGracz.DodajPunkty(4);
 				break;
 		}
 	}

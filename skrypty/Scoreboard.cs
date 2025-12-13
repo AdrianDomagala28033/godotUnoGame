@@ -8,6 +8,9 @@ public partial class Scoreboard : Control
     [Export] private VBoxContainer wyniki;
     //[Export] private Button przycisk;
     public event Action onGuzikKlikniety;
+    public bool wyswietlaRankingOgolny = false;
+    public LogikaGry logikaGry;
+    public int numerRundy;
 
     public override void _Ready()
     {
@@ -18,11 +21,17 @@ public partial class Scoreboard : Control
 
     private void ObslugaKlikniecia()
     {
-        onGuzikKlikniety?.Invoke();
+        if (!wyswietlaRankingOgolny)
+        {
+            wyswietlaRankingOgolny = true;
+            WyswietlWyniki();
+        }
+        else
+            onGuzikKlikniety?.Invoke();
     }
 
 
-    public void WyswietlWyniki(List<Gracz> listaGraczy, int numerRundy)
+    public void WyswietlWyniki()
     {
         this.Show();
         foreach (var child in wyniki.GetChildren())
@@ -31,17 +40,43 @@ public partial class Scoreboard : Control
         }
         HBoxContainer naglowek = new HBoxContainer();
         Label info = new Label();
-        info.Text = $"Koniec rundy {numerRundy}";
+        List<Gracz> graczePosortowani;
+        string typWyswietlania;
+        var guzik = GetNode<Button>("Panel/LayoutGlowny/Button");
+        if (!wyswietlaRankingOgolny)
+        {
+            info.Text = $"Koniec rundy {numerRundy}";
+            graczePosortowani = logikaGry.ListaGraczy.OrderBy(g => g.Miejsce).ToList();
+            typWyswietlania = "miejsce";
+        }
+        else
+        {
+            info.Text = $"Klasyfikacja generalna"; 
+            graczePosortowani = logikaGry.ListaGraczy.OrderByDescending(g => g.Wynik).ToList();
+            typWyswietlania = "wynik";
+            guzik.Text = "Rozpocznij następną turę";
+        }
         naglowek.AddChild(info);
         wyniki.AddChild(naglowek);
-        List<Gracz> graczePosortowani = listaGraczy.OrderBy(g => g.Miejsce).ToList();
-        foreach (Gracz gracz in graczePosortowani)
+        WypelnijListe(graczePosortowani, typWyswietlania);
+    }
+    public void WypelnijListe(List<Gracz> listaGraczy, string parametr)
+    {
+        foreach (Gracz gracz in listaGraczy)
         {
             HBoxContainer dane = new HBoxContainer();
             Label wynik = new Label();
-            wynik.Text = $"{gracz.Nazwa} --------------------------- miejsce {gracz.Miejsce}";
+            if(parametr == "miejsce")
+                wynik.Text = $"{gracz.Miejsce}. {gracz.Nazwa} --------------------------- miejsce {gracz.Miejsce}";
+            else if(parametr == "wynik")
+                wynik.Text = $"{gracz.Miejsce}. {gracz.Nazwa} --------------------------- {gracz.Wynik} pkt";
             dane.AddChild(wynik);
             wyniki.AddChild(dane);
         }
+    }
+    public void ZresetujStan()
+    {
+        wyswietlaRankingOgolny = false;
+        this.Hide();
     }
 }

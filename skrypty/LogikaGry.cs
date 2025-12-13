@@ -102,7 +102,11 @@ public partial class LogikaGry : Node2D
 			debugCards.Inicjalizuj(this);
 		}
 		if(ScoreboardPanel != null)
+		{
+			ScoreboardPanel.numerRundy = 1;
+			ScoreboardPanel.logikaGry = this;
 			ScoreboardPanel.onGuzikKlikniety += RozpocznijKolejnaRunde;
+		}
 	}
 
 	private void _OnTaliaPrzetasowano()
@@ -351,10 +355,13 @@ public partial class LogikaGry : Node2D
         {
             GD.Print("=== KONIEC GRY! ZOSTAŁ TYLKO JEDEN GRACZ ===");
 			foreach (Gracz gracz in ListaGraczy)
-				if(!gracz.CzyUkonczyl)
+				if (!gracz.CzyUkonczyl)
+				{
 					gracz.Miejsce = ListaGraczy.Count;
+					gracz.PrzypiszPunktyZaMiejsce(ListaGraczy);
+				}
         	GetTree().Paused = true;
-			ScoreboardPanel.WyswietlWyniki(ListaGraczy, 0);
+			ScoreboardPanel.WyswietlWyniki();
 			return true;
         }
 		return false;
@@ -393,7 +400,7 @@ public partial class LogikaGry : Node2D
 	}
 	private void RozpocznijKolejnaRunde()
 	{
-		ScoreboardPanel.Hide();
+		ScoreboardPanel.ZresetujStan();
 		foreach (Karta karta in stosZagranych)
 			karta.QueueFree();
 		stosZagranych.Clear();
@@ -410,5 +417,6 @@ public partial class LogikaGry : Node2D
 		deckManager.talia.Clear();
 		RozpocznijRunde();
 		OnTuraRozpoczeta(turnManager.AktualnyGraczIndex);
+		ScoreboardPanel.numerRundy++;
 	}
 }
