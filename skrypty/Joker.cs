@@ -12,7 +12,8 @@ public enum WarunekAktywacji
     Wartosc,
     SpecjalnaKarta,
     Kombinacja,
-    Inne
+    Inne,
+    Pasywny
 }
 public class Joker
 {
@@ -51,7 +52,12 @@ public class Joker
             case WarunekAktywacji.Kombinacja:
                 // przykładowy format parametru: "Niebieski_7"
                 string[] dane = Parametr.Split('_');
-                return karta.Kolor == dane[0] && karta.Wartosc == dane[1];
+                for (int i = 0; i < dane.Length; i += 2)
+                {
+                    if(karta.Kolor == dane[i] && karta.Wartosc == dane[i+1])
+                        return true;
+                }
+                return false; 
             default:
                 return false;
         }

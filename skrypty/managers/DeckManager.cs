@@ -7,7 +7,7 @@ public class DeckManager
 	private Node _parent;
 	private PackedScene SzablonKarty;
 	private Random _random = new Random();
-	private List<Karta> talia = new List<Karta>();
+	public List<Karta> talia = new List<Karta>();
 	public event Action OnTaliaPrzetasowano;
 
 	public DeckManager(Node parent, PackedScene szablonKarty)
@@ -70,7 +70,9 @@ public class DeckManager
 		foreach (Karta karta in aktualnyStos)
 		{
 			talia.Add(karta);
+			karta.ZrestartujStanKarty();
 			karta.Hide();
+			karta.InputPickable = true;
 			if (karta.Wartosc == "ZmianaKoloru" || karta.Wartosc == "+4")
 			{
 				karta.Kolor = "DzikaKarta";

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://djthiqtleo256"]
 
-[ext_resource type="Script" uid="uid://bwvmhybiygfg8" path="res://DebugCardMenu.cs" id="1_dsxn4"]
+[ext_resource type="Script" uid="uid://bwvmhybiygfg8" path="res://skrypty/DebugCardMenu.cs" id="1_dsxn4"]
 
 [node name="DebugCardMenu" type="CanvasLayer"]
 layer = 101

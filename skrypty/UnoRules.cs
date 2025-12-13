@@ -4,7 +4,7 @@ using System;
 public partial class UnoRules : Node
 {
 	private LogikaGry logikaGry;
-	private TurnManager turnManager;
+	public TurnManager turnManager;
 	private UIManager uIManager;
 	//private JokerManager jokerManager;
 
@@ -65,7 +65,8 @@ public partial class UnoRules : Node
     {
         foreach (Joker joker in logikaGry.ListaGraczy[indexGracza].PosiadaneJokery)
 		{
-			joker.Efekt(logikaGry);
+			if(joker.WarunekAktywacji == WarunekAktywacji.Pasywny)
+				joker.Efekt(logikaGry);
 		}
 		uIManager.UstawDlug(logikaGry.DlugDobierania);
     }

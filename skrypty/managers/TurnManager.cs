@@ -44,8 +44,11 @@ public class TurnManager
     public void ZakonczTure()
     {
         OnTuraZakonczona?.Invoke(AktualnyGraczIndex);
-        AktualnyGraczIndex += KierunekGry;
-        UporzadkujIndex();
+        do
+        {
+            AktualnyGraczIndex += KierunekGry;
+            UporzadkujIndex();   
+        } while (AktualnyGracz.CzyUkonczyl);
         OnTuraRozpoczeta?.Invoke(AktualnyGraczIndex);
     }
     public void RozpocznijTure()

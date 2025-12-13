@@ -6,8 +6,9 @@ public partial class LogikaGry : Node2D
 {
 	[Export] private PackedScene SzablonKarty;
 	[Export] private PackedScene SzablonWyboruKoloru;
+	[Export] private Scoreboard ScoreboardPanel;
 	private WyborKoloru instancjaWyboruKoloru;
-	private DeckManager talia;
+	private DeckManager deckManager;
 	private TurnManager turnManager;
 	private List<Karta> stosZagranych = new List<Karta>();
 	private List<BotController> kontroleryBotow = new List<BotController>();
@@ -42,7 +43,7 @@ public partial class LogikaGry : Node2D
 	public WyborKoloru InstancjaWyboruKoloru { get; set; }
 	public UnoRules UnoManager { get; set; }
 	public JokerManager JokerManager { get; set; }
-	public DeckManager Talia { get; set; }
+	public DeckManager DeckManager { get; set; }
 	public List<Gracz> ListaGraczy { get; set; }
 	public UIManager UIManager { get; set; }
 
@@ -68,22 +69,7 @@ public partial class LogikaGry : Node2D
 		uIManager = GetNode<UIManager>("UIManager");
 		uIManager.Inicjalizuj(this);
 
-		turnManager = new TurnManager(ListaGraczy);
-		turnManager.OnTuraRozpoczeta += OnTuraRozpoczeta;
-
-
-		stanUnoGraczy = new bool[iloscGraczy];
-		talia = new DeckManager(this, SzablonKarty);
-		this.Talia = talia;
-		talia.StworzTalie();
-		talia.PotasujTalie();
-		talia.OnTaliaPrzetasowano += _OnTaliaPrzetasowano;
-
-		foreach (var k in talia.PobierzTalie())
-			k.OnKartaKliknieta += ObslozKlikniecieKarty;
-
-		RozdajKartyGraczowi(7);
-		WystawPierwszaKarte();
+		RozpocznijRunde();
 
 		instancjaWyboruKoloru = (WyborKoloru)SzablonWyboruKoloru.Instantiate();
 		AddChild(instancjaWyboruKoloru);
@@ -115,7 +101,8 @@ public partial class LogikaGry : Node2D
 			AddChild(debugCards);
 			debugCards.Inicjalizuj(this);
 		}
-
+		if(ScoreboardPanel != null)
+			ScoreboardPanel.onGuzikKlikniety += RozpocznijKolejnaRunde;
 	}
 
 	private void _OnTaliaPrzetasowano()
@@ -166,10 +153,10 @@ public partial class LogikaGry : Node2D
 
 		while (!czyLegalnaKartaStartowa)
 		{
-			if (talia.PobierzTalie().Count == 0) return;
+			if (deckManager.PobierzTalie().Count == 0) return;
 
-			startowaKarta = talia.PobierzTalie()[talia.PobierzTalie().Count - 1];
-			talia.PobierzTalie().RemoveAt(talia.PobierzTalie().Count - 1);
+			startowaKarta = deckManager.PobierzTalie()[deckManager.PobierzTalie().Count - 1];
+			deckManager.PobierzTalie().RemoveAt(deckManager.PobierzTalie().Count - 1);
 
 			if (startowaKarta.Kolor != "DzikaKarta" &&
 				startowaKarta.Wartosc != "Stop" &&
@@ -177,7 +164,7 @@ public partial class LogikaGry : Node2D
 				startowaKarta.Wartosc != "ZmianaKierunku")
 				czyLegalnaKartaStartowa = true;
 			else
-				talia.PobierzTalie().Add(startowaKarta);
+				deckManager.PobierzTalie().Add(startowaKarta);
 		}
 		GornaKartaNaStosie = startowaKarta;
 		OnKolorDoUstawienia?.Invoke(startowaKarta.Kolor);
@@ -197,11 +184,11 @@ public partial class LogikaGry : Node2D
 		{
 			for (int indexGracza = 0; indexGracza < iloscGraczy; indexGracza++)
 			{
-				if (talia.PobierzTalie().Count == 0)
+				if (deckManager.PobierzTalie().Count == 0)
 					continue;
 
-				Karta karta = talia.PobierzTalie()[talia.PobierzTalie().Count - 1];
-				talia.PobierzTalie().RemoveAt(talia.PobierzTalie().Count - 1);
+				Karta karta = deckManager.PobierzTalie()[deckManager.PobierzTalie().Count - 1];
+				deckManager.PobierzTalie().RemoveAt(deckManager.PobierzTalie().Count - 1);
 				ListaGraczy[indexGracza].rekaGracza.Add(karta);
 				if (indexGracza != 0)
 					OnAktualizujLicznikBota?.Invoke(indexGracza, ListaGraczy[indexGracza].rekaGracza.Count);
@@ -212,15 +199,15 @@ public partial class LogikaGry : Node2D
 
 	private void DobierzJednaKarte(Gracz gracz)
 	{
-		if (talia.PobierzTalie().Count == 0)
+		if (deckManager.PobierzTalie().Count == 0)
 		{
-			talia.PrzetasujStosZagranych(stosZagranych, GornaKartaNaStosie);
+			deckManager.PrzetasujStosZagranych(stosZagranych, GornaKartaNaStosie);
 		}
 
-		if (talia.PobierzTalie().Count == 0) return;
+		if (deckManager.PobierzTalie().Count == 0) return;
 
-		Karta kartaDoDobrania = talia.PobierzTalie()[talia.PobierzTalie().Count - 1];
-		talia.PobierzTalie().RemoveAt(talia.PobierzTalie().Count - 1);
+		Karta kartaDoDobrania = deckManager.PobierzTalie()[deckManager.PobierzTalie().Count - 1];
+		deckManager.PobierzTalie().RemoveAt(deckManager.PobierzTalie().Count - 1);
 
 		gracz.rekaGracza.Add(kartaDoDobrania);
 		OnKartaDobrano?.Invoke(gracz.Index);
@@ -259,8 +246,12 @@ public partial class LogikaGry : Node2D
 
 		if (iloscKartPoZagraniu == 0)
 		{
-			GetTree().Paused = true;
-			return;
+			GD.Print($"!!! {kto} UKOŃCZYŁ GRĘ !!!");
+			TurnManager.AktualnyGracz.CzyUkonczyl = true;
+			turnManager.AktualnyGracz.Miejsce = UstalMiejsce();
+			turnManager.AktualnyGracz.PrzypiszPunktyZaMiejsce(ListaGraczy);
+			if (SprawdzCzyKoniecCałejGry())
+				return;
 		}
 
 		OnKartaZagrana?.Invoke(karta, indexGracza);
@@ -268,6 +259,7 @@ public partial class LogikaGry : Node2D
 		GornaKartaNaStosie = karta;
 		licznikZIndexStosu++;
 		OnDodajKarteNaStos?.Invoke(karta, pozycjaStosuZagranych, licznikZIndexStosu, indexGracza);
+		karta.InputPickable = false;
 		if(JokerManager != null)
 			JokerManager.SprawdzAktywacje(karta, this, ListaGraczy[indexGracza]);
 
@@ -294,6 +286,7 @@ public partial class LogikaGry : Node2D
 			turnManager.ZakonczTure();
 		}
 		GD.Print($"[SUKCES] {kto} zagrał kartę. Zostaje mu kart: {(indexGracza == 0 ? ListaGraczy[indexGracza].rekaGracza.Count - 1 : ListaGraczy[indexGracza].rekaGracza.Count)}");
+		GD.Print(deckManager.talia.Count);
 	}
 
 	public void SprobujDobracKarte(int indexGracza)
@@ -348,4 +341,74 @@ public partial class LogikaGry : Node2D
 		OnRozmiescKarty?.Invoke(ListaGraczy[0].rekaGracza);
 		GD.Print($"[CHEAT] Dodano kartę: {kolor} {wartosc}");
     }
+	private bool SprawdzCzyKoniecCałejGry()
+    {
+        int liczbaAktywnychGraczy = 0;
+		foreach (var gracz in ListaGraczy)
+			if(!gracz.CzyUkonczyl)
+				liczbaAktywnychGraczy++;
+		if(liczbaAktywnychGraczy <= 1)
+        {
+            GD.Print("=== KONIEC GRY! ZOSTAŁ TYLKO JEDEN GRACZ ===");
+			foreach (Gracz gracz in ListaGraczy)
+				if(!gracz.CzyUkonczyl)
+					gracz.Miejsce = ListaGraczy.Count;
+        	GetTree().Paused = true;
+			ScoreboardPanel.WyswietlWyniki(ListaGraczy, 0);
+			return true;
+        }
+		return false;
+    }
+	public int UstalMiejsce()
+	{
+		int miejsce = 0;
+		foreach(Gracz gracz in ListaGraczy)
+		{
+			if(gracz.CzyUkonczyl)
+				miejsce++;
+			
+		}
+		return miejsce;
+	}
+	public void RozpocznijRunde()
+	{
+		GetTree().Paused = false;
+
+		turnManager = new TurnManager(ListaGraczy);
+		turnManager.OnTuraRozpoczeta += OnTuraRozpoczeta;
+
+
+		stanUnoGraczy = new bool[iloscGraczy];
+		deckManager = new DeckManager(this, SzablonKarty);
+		this.DeckManager = deckManager;
+		deckManager.StworzTalie();
+		deckManager.PotasujTalie();
+		deckManager.OnTaliaPrzetasowano += _OnTaliaPrzetasowano;
+
+		foreach (var k in deckManager.PobierzTalie())
+			k.OnKartaKliknieta += ObslozKlikniecieKarty;
+
+		RozdajKartyGraczowi(7);
+		WystawPierwszaKarte();
+	}
+	private void RozpocznijKolejnaRunde()
+	{
+		ScoreboardPanel.Hide();
+		foreach (Karta karta in stosZagranych)
+			karta.QueueFree();
+		stosZagranych.Clear();
+		foreach (Gracz gracz in ListaGraczy)
+		{
+			foreach (Karta karta in gracz.rekaGracza)
+				karta.QueueFree();
+
+			gracz.rekaGracza.Clear();
+			gracz.CzyUkonczyl = false;
+		}
+		foreach (Karta karta in deckManager.talia)
+			karta.QueueFree();
+		deckManager.talia.Clear();
+		RozpocznijRunde();
+		OnTuraRozpoczeta(turnManager.AktualnyGraczIndex);
+	}
 }

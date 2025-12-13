@@ -9,7 +9,7 @@ public static class JokerFactory
         List<Joker> lista = new List<Joker>();
     #region ukonczone jokery
         lista.Add(new Joker("Pierwszy joker", "Przy zagraniu karty +4 gracz musi dobrać 5 kart", RzadkoscJokera.Zwykly, WarunekAktywacji.SpecjalnaKarta,
-        (logikaGry) => logikaGry.TurnManager.DlugDobierania = 1, "+4")); // dziala
+        (logikaGry) => logikaGry.TurnManager.DlugDobierania += 4, "+4")); // dziala
 
         lista.Add(new Joker("Odbicie",
         "Jeśli masz dług do dobrania, możesz zagrać kartę odwrócenia, która odbije dług", RzadkoscJokera.Zwykly, WarunekAktywacji.SpecjalnaKarta,
@@ -78,7 +78,7 @@ public static class JokerFactory
             }
         });
         
-        lista.Add(new Joker("Pomocna ręka", "Anuluje twój dług", RzadkoscJokera.Rzadki, WarunekAktywacji.Inne,
+        lista.Add(new Joker("Pomocna ręka", "Anuluje twój dług", RzadkoscJokera.Rzadki, WarunekAktywacji.Pasywny,
         (logikaGry) =>
         {
             if(logikaGry.TurnManager.DlugDobierania > 0)
@@ -92,23 +92,84 @@ public static class JokerFactory
                 return logikaGry.TurnManager.DlugDobierania > 0 && karta.Kolor == logikaGry.GornaKartaNaStosie.Kolor;
             }
         });
+    
+        lista.Add(new Joker("Red joker", "Przy zagraniu czerwonej karty gracz musi dobrać +1 kartę", RzadkoscJokera.Zwykly, WarunekAktywacji.Kolor,
+            (logikaGry) => {
+                logikaGry.TurnManager.DlugDobierania += 1;
+                logikaGry.TurnManager.ZakonczTure();
+            }, "Czerwony"));
+        lista.Add(new Joker("Blue joker", "Przy zagraniu niebieskiej karty gracz musi dobrać +1 kartę", RzadkoscJokera.Zwykly, WarunekAktywacji.Kolor,
+            (logikaGry) => {
+                logikaGry.TurnManager.DlugDobierania += 1;
+                logikaGry.TurnManager.ZakonczTure();
+            }, "Niebieski"));
+        lista.Add(new Joker("Yellow joker", "Każda żółta parzysta karta zmniejsza dług o 1", RzadkoscJokera.Zwykly, WarunekAktywacji.Pasywny,
+            (logikaGry) => {
+                foreach (Karta karta in logikaGry.ListaGraczy[logikaGry.TurnManager.AktualnyGraczIndex].rekaGracza)
+                {
+                    int.TryParse(karta.Wartosc, out int wartosc);
+                    if(wartosc % 2 == 0 && logikaGry.DlugDobierania > 0)
+                    {
+                        logikaGry.TurnManager.DlugDobierania -= 1;
+                        if(logikaGry.DlugDobierania == 0)
+                            break;
+                    }
+                }
+            }, "Zolty"));
+        lista.Add(new Joker("Green joker", "Każda zielone nieparzysta karta zmniejsza dług o 1", RzadkoscJokera.Zwykly, WarunekAktywacji.Pasywny,
+            (logikaGry) => {
+                foreach (Karta karta in logikaGry.ListaGraczy[logikaGry.TurnManager.AktualnyGraczIndex].rekaGracza)
+                {
+                    int.TryParse(karta.Wartosc, out int wartosc);
+                    if(wartosc % 2 == 0 && logikaGry.DlugDobierania > 0)
+                    {
+                        logikaGry.TurnManager.DlugDobierania -= 1;
+                        if(logikaGry.DlugDobierania == 0)
+                            break;
+                    }
+                }
+            }, "Zielony"));
+        lista.Add(new Joker("Mały pożar", "Każda zagrana czerwona karta dodaje +1 do długu za każde czerwone 0,1,2,3,4 w ręce", RzadkoscJokera.Zwykly, WarunekAktywacji.Kolor,
+        (logikaGry) => {
+            foreach (Karta karta in logikaGry.ListaGraczy[logikaGry.TurnManager.AktualnyGraczIndex].rekaGracza)
+            {
+                int.TryParse(karta.Wartosc, out int wartosc);
+                if(wartosc < 5 && karta.Kolor == "Czerwony")
+                {
+                    logikaGry.TurnManager.DlugDobierania += 1;
+                }
+            }
+        }, "Czerwony"));
+        lista.Add(new Joker("Wysoka fala", "Każda zagrana niebieska karta dodaje +1 do długu za każdą niebieską 5,6,7,8,9 w ręce", RzadkoscJokera.Zwykly, WarunekAktywacji.Kolor,
+        (logikaGry) => {
+            foreach (Karta karta in logikaGry.ListaGraczy[logikaGry.TurnManager.AktualnyGraczIndex].rekaGracza)
+            {
+                int.TryParse(karta.Wartosc, out int wartosc);
+                if(wartosc > 4 && wartosc < 10 && karta.Kolor == "Niebieski")
+                {
+                    logikaGry.TurnManager.DlugDobierania += 1;
+                }
+            }
+        }, "Niebieski"));
+        lista.Add(new Joker("RGB", "Każda zagrana czerwona 2, zielona 4 i niebieska 8 dodaje połowe wartości zagranej karty", RzadkoscJokera.Zwykly, WarunekAktywacji.Kombinacja,
+        (logikaGry) => {
+            int.TryParse(logikaGry.GornaKartaNaStosie.Wartosc, out int wartosc);
+            logikaGry.TurnManager.DlugDobierania += wartosc / 2;
+        }, "Czerwony_2_Zielony_4_Niebieski_8"));
+        lista.Add(new Joker("Bumerang", "Każda zagrana 7 odwraca kokejke", RzadkoscJokera.Zwykly, WarunekAktywacji.Wartosc,
+        (logikaGry) => {
+            int.TryParse(logikaGry.GornaKartaNaStosie.Wartosc, out int wartosc);
+            if(wartosc == 7)
+                logikaGry.TurnManager.ZmienKierunek();
+        }, "7"));
+        lista.Add(new Joker("Cztery ściany", "Każda zagrana 4 blokuje następnego gracza", RzadkoscJokera.Zwykly, WarunekAktywacji.Wartosc,
+        (logikaGry) => {
+            int.TryParse(logikaGry.GornaKartaNaStosie.Wartosc, out int wartosc);
+            if(wartosc == 4)
+                logikaGry.TurnManager.PominTure();
+        }, "4"));
+    
     #endregion
-
-        lista.Add(new Joker("Mieszacz", "Możesz zamienić swoje karty z kartami innego gracza (możliwy raz do wykorzystania)", RzadkoscJokera.Rzadki, WarunekAktywacji.Inne,
-        (logikaGry) => { return; }, "kliknieto"));
-
-        lista.Add(new Joker("Szpieg", "Możesz podejrzeć karty innego gracza (możliwy raz do wykorzystania)", RzadkoscJokera.Rzadki, WarunekAktywacji.Inne,
-        (logikaGry) => { return; }, "kliknieto"));
-
-        lista.Add(new Joker("Kolorowy chaos", "Jeśli gracz zagra zmianę koloru, następny gracz też musi wybrać nowy kolor", RzadkoscJokera.Zwykly, WarunekAktywacji.Kolor,
-        (logikaGry) => { return; }, "kolor"));
-
-        lista.Add(new Joker("Zamiana koloru", "Pozwala na zamianę koloru bez dzikiej karty jeśli masz jedną kartę", RzadkoscJokera.Legendarny, WarunekAktywacji.Inne,
-        (logikaGry) => { return; }, "zmien kolor"));
-
-        lista.Add(new Joker("Przeskok", "Wybierz gracza od którego zacznie się kolejna tura (ilość użyć: 5)", RzadkoscJokera.Rzadki, WarunekAktywacji.Inne,
-        (logikaGry) => { return; }, "klikniecie"));
-
         return lista;
     }
 }

@@ -26,6 +26,17 @@ public partial class UIManager : Control
 		_uiBot3 = GetNode<UiBota>("InterfejsGry/UIBota3");
 
 		stosKart = GetNode<Node2D>("/root/StolGry/StosKart");
+
+		if (_uiBot1 != null) _uiBot1.MouseFilter = Control.MouseFilterEnum.Ignore;
+    	if (_uiBot2 != null) _uiBot2.MouseFilter = Control.MouseFilterEnum.Ignore;
+		if (_uiBot3 != null) _uiBot3.MouseFilter = Control.MouseFilterEnum.Ignore;
+
+		var interfejs = GetNodeOrNull<Control>("InterfejsGry");
+		if (interfejs != null) 
+			interfejs.MouseFilter = Control.MouseFilterEnum.Ignore;
+
+		if (jokerPanel != null)
+        	jokerPanel.MouseFilter = Control.MouseFilterEnum.Pass;
 	}
     public void Inicjalizuj(LogikaGry gra)
 	{

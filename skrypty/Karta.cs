@@ -102,5 +102,13 @@ public partial class Karta : Area2D
     {
 		ksztaltKolizji.Scale = new Vector2(skala, 1);
     }
-
+	public void ZrestartujStanKarty()
+	{
+		InputPickable = true;
+		jestZagrywana = false;
+		ZatrzymajAktywnaAnimacje();
+		Rotation = 0;
+		Scale = Vector2.One;
+		Show();
+	}
 }

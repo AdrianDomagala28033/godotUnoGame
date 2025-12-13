@@ -1,8 +1,9 @@
-[gd_scene load_steps=12 format=3 uid="uid://c0y0bdnpbf4xc"]
+[gd_scene load_steps=13 format=3 uid="uid://c0y0bdnpbf4xc"]
 
 [ext_resource type="Script" uid="uid://jkafcol28ggd" path="res://skrypty/LogikaGry.cs" id="1_kci41"]
 [ext_resource type="PackedScene" uid="uid://cpu8louqpydkn" path="res://sceny/karta.tscn" id="2_q35ey"]
 [ext_resource type="PackedScene" uid="uid://1xqegfpjwjmi" path="res://sceny/WyborKoloru.tscn" id="3_tr8kh"]
+[ext_resource type="PackedScene" uid="uid://cjmlf41tyn7in" path="res://sceny/scoreboard.tscn" id="4_3je2s"]
 [ext_resource type="Texture2D" uid="uid://dd6fo8yyafdto" path="res://grafika/karty_grafika/background.png" id="4_j3572"]
 [ext_resource type="Texture2D" uid="uid://cw7kkgcgsckqa" path="res://grafika/karty_grafika/back/rewers.png" id="5_3je2s"]
 [ext_resource type="PackedScene" uid="uid://bhv751evtd0gm" path="res://sceny/UIBota.tscn" id="6_rl20y"]
@@ -14,10 +15,11 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_seb48"]
 size = Vector2(126, 187)
 
-[node name="StolGry" type="Node2D"]
+[node name="StolGry" type="Node2D" node_paths=PackedStringArray("ScoreboardPanel")]
 script = ExtResource("1_kci41")
 SzablonKarty = ExtResource("2_q35ey")
 SzablonWyboruKoloru = ExtResource("3_tr8kh")
+ScoreboardPanel = NodePath("CanvasLayer/Scoreboard")
 
 [node name="Tlo" type="TextureRect" parent="."]
 offset_left = 1283.0
@@ -107,5 +109,10 @@ layer = 10
 
 [node name="JokerPanel" parent="WarstwaUI" instance=ExtResource("10_j3572")]
 offset_right = 4.0
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Scoreboard" parent="CanvasLayer" instance=ExtResource("4_3je2s")]
+visible = false
 
 [connection signal="input_event" from="StosDobierania" to="." method="_OnStosDobieraniaInputEvent"]
