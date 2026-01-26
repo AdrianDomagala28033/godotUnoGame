@@ -1,0 +1,56 @@
+[gd_scene load_steps=2 format=3 uid="uid://ck6hga721qdop"]
+
+[ext_resource type="Script" uid="uid://byh5cbeqjxyq7" path="res://skrypty/Sklep.cs" id="1_vk1p6"]
+
+[node name="Sklep" type="Control" node_paths=PackedStringArray("KtoWybiera", "ListaJokerow", "ButtonGotowosci")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_vk1p6")
+KtoWybiera = NodePath("VBoxContainer/LabelKtoWybiera")
+ListaJokerow = NodePath("VBoxContainer/ListaJokerow")
+ButtonGotowosci = NodePath("PrzyciskGotowosci")
+
+[node name="Tlo" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.04755766, 0.047557645, 0.047557645, 1)
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LabelKtoWybiera" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="ListaJokerow" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="PrzyciskGotowosci" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -102.0
+offset_top = -31.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "Gotowy"

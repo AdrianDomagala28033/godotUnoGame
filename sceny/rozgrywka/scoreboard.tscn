@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bn6nhynrxas5k" path="res://skrypty/Scoreboard.cs" id="1_jeshg"]
 
-[node name="Scoreboard" type="Control" node_paths=PackedStringArray("wyniki")]
+[node name="Scoreboard" type="Control" node_paths=PackedStringArray("wyniki", "przycisk", "labelOczekiwania")]
 process_mode = 2
 layout_mode = 3
 anchors_preset = 15
@@ -12,6 +12,8 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_jeshg")
 wyniki = NodePath("Panel/LayoutGlowny/ListaWynikow")
+przycisk = NodePath("Panel/LayoutGlowny/Button")
+labelOczekiwania = NodePath("Panel/LabelOczekiwania")
 
 [node name="Panel" type="Panel" parent="."]
 layout_mode = 1
@@ -20,10 +22,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 1
 
 [node name="LayoutGlowny" type="VBoxContainer" parent="Panel"]
 layout_mode = 1
-anchors_preset = 8
+anchors_preset = -1
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -42,5 +45,15 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Button" type="Button" parent="Panel/LayoutGlowny"]
+process_mode = 3
 layout_mode = 2
 text = "Dalej"
+
+[node name="LabelOczekiwania" type="Label" parent="Panel"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 690.0
+offset_right = 148.0
+offset_bottom = 713.0
+
+[connection signal="pressed" from="Panel/LayoutGlowny/Button" to="." method="_on_button_pressed"]

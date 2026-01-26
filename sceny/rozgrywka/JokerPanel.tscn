@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://dp4mbvqxfa7jc"]
 
 [ext_resource type="Script" uid="uid://c180pp4twn5em" path="res://skrypty/JokerPanel.cs" id="1_p5j2b"]
-[ext_resource type="PackedScene" uid="uid://cdm7ryq3coem0" path="res://sceny/JokerSlot.tscn" id="2_tynux"]
+[ext_resource type="PackedScene" uid="uid://cdm7ryq3coem0" path="res://sceny/rozgrywka/JokerSlot.tscn" id="2_tynux"]
 
 [sub_resource type="Animation" id="Animation_tynux"]
 resource_name = "WysunPanel"

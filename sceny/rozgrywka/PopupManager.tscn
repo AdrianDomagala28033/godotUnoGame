@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://03onslqkd5mb"]
 
 [ext_resource type="Script" uid="uid://buu3j0iiyojxd" path="res://skrypty/managers/PopupManager.cs" id="1_6a14w"]
-[ext_resource type="PackedScene" uid="uid://11obhhh41iic" path="res://sceny/PopupWiadomosc.tscn" id="2_a2cht"]
+[ext_resource type="PackedScene" uid="uid://11obhhh41iic" path="res://sceny/rozgrywka/PopupWiadomosc.tscn" id="2_a2cht"]
 
 [node name="PopupManager" type="CanvasLayer"]
 script = ExtResource("1_6a14w")

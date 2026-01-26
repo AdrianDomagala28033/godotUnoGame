@@ -1,32 +1,31 @@
 [gd_scene load_steps=13 format=3 uid="uid://c0y0bdnpbf4xc"]
 
-[ext_resource type="Script" uid="uid://jkafcol28ggd" path="res://skrypty/LogikaGry.cs" id="1_kci41"]
-[ext_resource type="PackedScene" uid="uid://cpu8louqpydkn" path="res://sceny/karta.tscn" id="2_q35ey"]
-[ext_resource type="PackedScene" uid="uid://1xqegfpjwjmi" path="res://sceny/WyborKoloru.tscn" id="3_tr8kh"]
-[ext_resource type="PackedScene" uid="uid://cjmlf41tyn7in" path="res://sceny/scoreboard.tscn" id="4_3je2s"]
-[ext_resource type="Texture2D" uid="uid://dd6fo8yyafdto" path="res://grafika/karty_grafika/background.png" id="4_j3572"]
-[ext_resource type="Texture2D" uid="uid://cw7kkgcgsckqa" path="res://grafika/karty_grafika/back/rewers.png" id="5_3je2s"]
-[ext_resource type="PackedScene" uid="uid://bhv751evtd0gm" path="res://sceny/UIBota.tscn" id="6_rl20y"]
-[ext_resource type="Script" uid="uid://b8wba46pi72hn" path="res://skrypty/managers/UIManager.cs" id="7_3je2s"]
-[ext_resource type="PackedScene" uid="uid://caohktpi46dti" path="res://sceny/Rewers.tscn" id="7_411w7"]
-[ext_resource type="PackedScene" uid="uid://dauiutbc7k8r8" path="res://sceny/StatusPanel.tscn" id="7_j3572"]
-[ext_resource type="PackedScene" uid="uid://dp4mbvqxfa7jc" path="res://sceny/JokerPanel.tscn" id="10_j3572"]
+[ext_resource type="Script" uid="uid://cco2uosw6i3gr" path="res://skrypty/GameClient.cs" id="1_4mdl4"]
+[ext_resource type="PackedScene" uid="uid://cpu8louqpydkn" path="res://sceny/rozgrywka/karta.tscn" id="2_8iax1"]
+[ext_resource type="PackedScene" uid="uid://1xqegfpjwjmi" path="res://sceny/rozgrywka/WyborKoloru.tscn" id="3_uspq2"]
+[ext_resource type="Texture2D" uid="uid://dd6fo8yyafdto" path="res://grafika/karty_grafika/background.png" id="4_o10b8"]
+[ext_resource type="Texture2D" uid="uid://cw7kkgcgsckqa" path="res://grafika/karty_grafika/back/rewers.png" id="5_2wd8g"]
+[ext_resource type="Script" uid="uid://b8wba46pi72hn" path="res://skrypty/managers/UIManager.cs" id="6_50u0d"]
+[ext_resource type="PackedScene" uid="uid://bhv751evtd0gm" path="res://sceny/rozgrywka/UIBota.tscn" id="7_sy1yg"]
+[ext_resource type="PackedScene" uid="uid://caohktpi46dti" path="res://sceny/rozgrywka/Rewers.tscn" id="8_7u23e"]
+[ext_resource type="PackedScene" uid="uid://dauiutbc7k8r8" path="res://sceny/rozgrywka/StatusPanel.tscn" id="9_5t8w8"]
+[ext_resource type="PackedScene" uid="uid://dp4mbvqxfa7jc" path="res://sceny/rozgrywka/JokerPanel.tscn" id="10_iwafj"]
+[ext_resource type="PackedScene" uid="uid://cjmlf41tyn7in" path="res://sceny/rozgrywka/scoreboard.tscn" id="11_asxmy"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_seb48"]
 size = Vector2(126, 187)
 
-[node name="StolGry" type="Node2D" node_paths=PackedStringArray("ScoreboardPanel")]
-script = ExtResource("1_kci41")
-SzablonKarty = ExtResource("2_q35ey")
-SzablonWyboruKoloru = ExtResource("3_tr8kh")
-ScoreboardPanel = NodePath("CanvasLayer/Scoreboard")
+[node name="StolGry" type="Node2D"]
+script = ExtResource("1_4mdl4")
+SzablonKarty = ExtResource("2_8iax1")
+SzablonWyboruKoloru = ExtResource("3_uspq2")
 
 [node name="Tlo" type="TextureRect" parent="."]
 offset_left = 1283.0
 offset_right = 2003.0
 offset_bottom = 1280.0
 rotation = 1.5707964
-texture = ExtResource("4_j3572")
+texture = ExtResource("4_o10b8")
 
 [node name="StosDobierania" type="Area2D" parent="."]
 position = Vector2(811, 374)
@@ -34,7 +33,7 @@ position = Vector2(811, 374)
 [node name="Rewers" type="Sprite2D" parent="StosDobierania"]
 position = Vector2(-19.999979, -32.249992)
 scale = Vector2(0.75609773, 0.7470588)
-texture = ExtResource("5_3je2s")
+texture = ExtResource("5_2wd8g")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StosDobierania"]
 position = Vector2(-20, -33.5)
@@ -45,37 +44,37 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
-script = ExtResource("7_3je2s")
+script = ExtResource("6_50u0d")
 etykietaTuryGracza = NodePath("InterfejsGry/EtykietaTuryGracza")
 jokerPanel = NodePath("../WarstwaUI/JokerPanel")
 
 [node name="InterfejsGry" type="CanvasLayer" parent="UIManager"]
 
-[node name="UIBota" parent="UIManager/InterfejsGry" instance=ExtResource("6_rl20y")]
+[node name="UIBota" parent="UIManager/InterfejsGry" instance=ExtResource("7_sy1yg")]
 offset_left = 91.0
 offset_top = 326.0
 offset_right = 131.0
 offset_bottom = 366.0
 rotation = 1.5707964
-SzablonRewersu = ExtResource("7_411w7")
+SzablonRewersu = ExtResource("8_7u23e")
 metadata/_edit_use_anchors_ = true
 
-[node name="UIBota2" parent="UIManager/InterfejsGry" instance=ExtResource("6_rl20y")]
+[node name="UIBota2" parent="UIManager/InterfejsGry" instance=ExtResource("7_sy1yg")]
 offset_left = 683.0
 offset_top = 110.0
 offset_right = 723.0
 offset_bottom = 150.0
 rotation = 3.1415927
-SzablonRewersu = ExtResource("7_411w7")
+SzablonRewersu = ExtResource("8_7u23e")
 metadata/_edit_use_anchors_ = true
 
-[node name="UIBota3" parent="UIManager/InterfejsGry" instance=ExtResource("6_rl20y")]
+[node name="UIBota3" parent="UIManager/InterfejsGry" instance=ExtResource("7_sy1yg")]
 offset_left = 1184.0
 offset_top = 376.0
 offset_right = 1224.0
 offset_bottom = 416.0
 rotation = -1.5707964
-SzablonRewersu = ExtResource("7_411w7")
+SzablonRewersu = ExtResource("8_7u23e")
 metadata/_edit_use_anchors_ = true
 
 [node name="EtykietaTuryGracza" type="Label" parent="UIManager/InterfejsGry"]
@@ -94,7 +93,7 @@ theme_override_font_sizes/font_size = 35
 text = "Twoja tura"
 metadata/_edit_use_anchors_ = true
 
-[node name="StatusPanel" parent="UIManager" instance=ExtResource("7_j3572")]
+[node name="StatusPanel" parent="UIManager" instance=ExtResource("9_5t8w8")]
 layout_mode = 1
 offset_left = 1081.0
 offset_top = 629.0
@@ -107,12 +106,12 @@ position = Vector2(588, 347)
 [node name="WarstwaUI" type="CanvasLayer" parent="."]
 layer = 10
 
-[node name="JokerPanel" parent="WarstwaUI" instance=ExtResource("10_j3572")]
+[node name="JokerPanel" parent="WarstwaUI" instance=ExtResource("10_iwafj")]
 offset_right = 4.0
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="Scoreboard" parent="CanvasLayer" instance=ExtResource("4_3je2s")]
-visible = false
+[node name="Scoreboard" parent="CanvasLayer" node_paths=PackedStringArray("labelOczekiwania") instance=ExtResource("11_asxmy")]
+labelOczekiwania = NodePath("")
 
 [connection signal="input_event" from="StosDobierania" to="." method="_OnStosDobieraniaInputEvent"]

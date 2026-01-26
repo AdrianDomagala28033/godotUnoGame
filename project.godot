@@ -11,12 +11,13 @@ config_version=5
 [application]
 
 config/name="projektJeden"
-run/main_scene="uid://c0y0bdnpbf4xc"
+run/main_scene="uid://bccn0pjl5jjer"
 config/features=PackedStringArray("4.5", "C#", "Forward Plus")
 
 [autoload]
 
-PopupManager="*res://sceny/PopupManager.tscn"
+PopupManager="*res://sceny/rozgrywka/PopupManager.tscn"
+NetworkManager="*res://skrypty/managers/network/NetworkManager.cs"
 
 [display]
 

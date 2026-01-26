@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://bo84lu1p4sr2t"]
 
-[ext_resource type="PackedScene" uid="uid://dauiutbc7k8r8" path="res://sceny/StatusPanel.tscn" id="1_4e8ua"]
+[ext_resource type="PackedScene" uid="uid://dauiutbc7k8r8" path="res://sceny/rozgrywka/StatusPanel.tscn" id="1_4e8ua"]
 
 [sub_resource type="CSharpScript" id="CSharpScript_ag50i"]
 script/source = "using Godot;

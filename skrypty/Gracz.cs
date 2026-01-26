@@ -5,17 +5,20 @@ using System.Collections.Generic;
 public class Gracz
 {
     public string Nazwa { get; set; }
-    public bool JestCzlowiekiem { get; set; }
+    public bool CzyToGraczLokalny { get; set; }
     public List<Karta> rekaGracza { get; set; } = new List<Karta>();
     public int Index { get; set; }
     public List<Joker> PosiadaneJokery {get; set;} = new List<Joker>();
     public bool CzyUkonczyl {get; set;} = false;
     public int Wynik {get; set;}
     public int Miejsce {get; set;}
-    public Gracz(string nazwa, bool jestCzlowiekiem, int index)
+    public long IdGracza {get; set;}
+    public bool CzyGotowy {get; set;} = false;
+    public Gracz(string nazwa, long idGracza, bool czyToGraczLokalny, int index)
     {
         Nazwa = nazwa;
-        JestCzlowiekiem = jestCzlowiekiem;
+        IdGracza = idGracza;
+        CzyToGraczLokalny = czyToGraczLokalny;
         Index = index;
     }
     public Karta WybierzKarteDoZagrania(List<Karta> reka, int dlug, Func<Karta, int, bool> funkcjaSprawdzajacaRuch)
@@ -35,16 +38,5 @@ public class Gracz
         Random random = new Random();
         return kolory[random.Next(kolory.Length)];
     }
-    public void DodajJokera(Joker joker)
-    {
-        PosiadaneJokery.Add(joker);
-    }
-    public void PrzypiszPunktyZaMiejsce(List<Gracz> listaGraczy)
-    {
-        this.Wynik += (listaGraczy.Count - Miejsce) * 10;
-    }
-    public void DodajPunkty(int iloscPkt)
-    {
-        this.Wynik += iloscPkt;
-    }
+    
 }

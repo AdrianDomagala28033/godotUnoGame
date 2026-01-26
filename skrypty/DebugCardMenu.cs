@@ -3,13 +3,13 @@ using System;
 
 public partial class DebugCardMenu : CanvasLayer
 {
-    private LogikaGry logikaGry;
+    private GameClient logikaGry;
     private Control grid;
 
     private string[] kolory = { "Czerwony", "Niebieski", "Zielony", "Zolty" };
     private string[] wartosci = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "Stop", "ZmianaKierunku", "+2" };
 
-    public void Inicjalizuj(LogikaGry logika)
+    public void Inicjalizuj(GameClient logika)
     {
         logikaGry = logika;
         WygenerujPrzyciski();
@@ -49,7 +49,7 @@ public partial class DebugCardMenu : CanvasLayer
 
         btn.Pressed += () =>
         {
-            logikaGry.Debug_DodajKarte(kolor, wartosc);
+            //logikaGry.Debug_DodajKarte(kolor, wartosc);
         };
         grid.AddChild(btn);
     }

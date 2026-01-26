@@ -1,78 +1,100 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 public partial class UnoRules : Node
 {
-	private LogikaGry logikaGry;
+	private GameServer gameServer;
 	public TurnManager turnManager;
-	private UIManager uIManager;
 	//private JokerManager jokerManager;
 
-	public UnoRules(LogikaGry logikaGry, TurnManager turnManager, UIManager uIManager)
+	public UnoRules(GameServer gameServer, TurnManager turnManager)
 	{
-		this.logikaGry = logikaGry;
+		this.gameServer = gameServer;
 		this.turnManager = turnManager;
-		this.uIManager = uIManager;
 		turnManager.OnTuraRozpoczeta += ObsluzPoczatekTury;
 	}
-	public bool CzyRuchJestLegalny(Karta kartaDoZagrania, int dlug)
+	public bool CzyRuchJestLegalny(List<DaneKarty> kartyDoZagrania, int dlug)
 	{
-		Gracz aktualnyGracz = logikaGry.TurnManager.AktualnyGracz;
-		if (logikaGry.JokerManager.CzyJokerPozwalaNaZagranie(kartaDoZagrania, logikaGry, aktualnyGracz))
-			return true;
+		if (!CzyZestawJestSpojny(kartyDoZagrania))
+		{
+			GD.Print("[RULES] Zestaw niespójny!");
+			return false;
+		}
+		// if (gameServer.JokerManager.CzyJokerPozwalaNaZagranie(kartaDoZagrania, logikaGry, aktualnyGracz))
+		//  	return true;
 		if (dlug > 0)
-			return kartaDoZagrania.Wartosc == "+2" || kartaDoZagrania.Wartosc == "+4";
-		if (kartaDoZagrania.Kolor == "DzikaKarta")
+		{
+			bool wynik = kartyDoZagrania[0].Wartosc == "+2" || kartyDoZagrania[0].Wartosc == "+4";
+			if (!wynik) GD.Print("[RULES] Trwa dobieranie! Musisz rzucić +2/+4."); // 👈
+			return wynik;		
+		}
+		if (kartyDoZagrania[0].Kolor == "DzikaKarta")
 			return true;
-		if (logikaGry.WymuszonyKolor != null)
-			return kartaDoZagrania.Kolor == logikaGry.WymuszonyKolor;
-		if (kartaDoZagrania.Kolor == logikaGry.GornaKartaNaStosie.Kolor)
+		if (gameServer.WymuszonyKolor != null)
+			return kartyDoZagrania[0].Kolor == gameServer.WymuszonyKolor;
+		if (kartyDoZagrania[0].Kolor == gameServer.GornaKartaNaStosie.Kolor)
 			return true;
-		if (kartaDoZagrania.Wartosc == logikaGry.GornaKartaNaStosie.Wartosc)
+		if (kartyDoZagrania[0].Wartosc == gameServer.GornaKartaNaStosie.Wartosc)
 			return true;
+		GD.Print($"[RULES] Ruch nielegalny! Karta: {kartyDoZagrania[0].Kolor} {kartyDoZagrania[0].Wartosc} vs Stół: {gameServer.GornaKartaNaStosie.Kolor} {gameServer.GornaKartaNaStosie.Wartosc}");
 		return false;
 	}
-	public void ZastosujEfektKarty(Karta zagranaKarta, bool jestGraczemLudzkim)
+	public void ZastosujEfektKarty(DaneKarty zagranaKarta, bool jestGraczemLudzkim)
 	{
 		//var popupManager = GetNode<PopupManager>("/root/PopupManager");
+		long idGracza = turnManager.AktualnyGraczId;
 		switch (zagranaKarta.Wartosc)
 		{
 			case "Stop":
 				turnManager.PominTure();
-				turnManager.AktualnyGracz.DodajPunkty(1);
+				gameServer.ListaGraczy[idGracza].DodajPunkty(1);
 				//popupManager.PokazWiadomosc("STOP!", logikaGry.PozycjaStosuZagranych);
 				break;
 			case "ZmianaKierunku":
 				turnManager.ZmienKierunek();
-				turnManager.AktualnyGracz.DodajPunkty(1);
+				gameServer.ListaGraczy[idGracza].DodajPunkty(1);
 				//popupManager.PokazWiadomosc("Zmiana kierunku!", logikaGry.PozycjaStosuZagranych);
 				break;
 			case "+2":
 				turnManager.DlugDobierania += 2;
-				uIManager.UstawDlug(turnManager.DlugDobierania);
-				turnManager.AktualnyGracz.DodajPunkty(2);
+				gameServer.ListaGraczy[idGracza].DodajPunkty(2);
 				//popupManager.PokazWiadomosc("+2!", logikaGry.PozycjaStosuZagranych);
 				break;
 			case "ZmianaKoloru":
 				if (jestGraczemLudzkim)
-					logikaGry.InstancjaWyboruKoloru.Show();
-				turnManager.AktualnyGracz.DodajPunkty(1);
+					gameServer.GetParent<NetworkManager>().RpcId(idGracza, nameof(NetworkManager.PokazWyborKoloru));
+				gameServer.ListaGraczy[idGracza].DodajPunkty(1);
 				break;
 			case "+4":
 				turnManager.DlugDobierania += 4;
 				if (jestGraczemLudzkim)
-					logikaGry.InstancjaWyboruKoloru.Show();
-				turnManager.AktualnyGracz.DodajPunkty(4);
+					gameServer.GetParent<NetworkManager>().RpcId(idGracza, nameof(NetworkManager.PokazWyborKoloru));
+				gameServer.ListaGraczy[idGracza].DodajPunkty(4);
 				break;
 		}
 	}
 	public void ObsluzPoczatekTury(int indexGracza)
     {
-        foreach (Joker joker in logikaGry.ListaGraczy[indexGracza].PosiadaneJokery)
+		long idGracza = turnManager.ListaGraczyId[indexGracza];
+		if (gameServer.ListaGraczy.ContainsKey(idGracza))
 		{
-			if(joker.WarunekAktywacji == WarunekAktywacji.Pasywny)
-				joker.Efekt(logikaGry);
+			foreach (Joker joker in gameServer.ListaGraczy[idGracza].PosiadaneJokery)
+			{
+				if(joker.WarunekAktywacji == WarunekAktywacji.Pasywny)
+					joker.Efekt(gameServer);
+			}
 		}
-		uIManager.UstawDlug(logikaGry.DlugDobierania);
     }
+	private bool CzyZestawJestSpojny(List<DaneKarty> karty)
+	{
+		foreach (DaneKarty karta in karty)
+		{
+			if(karty[0].Wartosc == karta.Wartosc)
+				continue;
+			else
+				return false;
+		}
+		return true;
+	}
 }

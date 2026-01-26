@@ -4,17 +4,10 @@ using System.Collections.Generic;
 
 public class DeckManager
 {
-	private Node _parent;
-	private PackedScene SzablonKarty;
 	private Random _random = new Random();
-	public List<Karta> talia = new List<Karta>();
+	public List<DaneKarty> talia = new List<DaneKarty>();
 	public event Action OnTaliaPrzetasowano;
 
-	public DeckManager(Node parent, PackedScene szablonKarty)
-	{
-		_parent = parent;
-		SzablonKarty = szablonKarty;
-	}
 
 	public void StworzTalie()
 	{
@@ -45,9 +38,7 @@ public class DeckManager
 
 	private void StworzKarte(string kolor, string wartosc)
 	{
-		Karta nowaKarta = (Karta)SzablonKarty.Instantiate();
-		nowaKarta.Kolor = kolor;
-		nowaKarta.Wartosc = wartosc;
+		DaneKarty nowaKarta = new DaneKarty(kolor, wartosc);
 		talia.Add(nowaKarta);
 	}
 
@@ -58,21 +49,18 @@ public class DeckManager
 		{
 			n--;
 			int k = _random.Next(n + 1);
-			Karta karta = talia[k];
+			DaneKarty karta = talia[k];
 			talia[k] = talia[n];
 			talia[n] = karta;
 		}
 	}
 
-	public void PrzetasujStosZagranych(List<Karta> aktualnyStos, Karta gornaKarta)
+	public void PrzetasujStosZagranych(List<DaneKarty> aktualnyStos, DaneKarty gornaKarta)
 	{
 		aktualnyStos.Remove(gornaKarta);
-		foreach (Karta karta in aktualnyStos)
+		foreach (DaneKarty karta in aktualnyStos)
 		{
 			talia.Add(karta);
-			karta.ZrestartujStanKarty();
-			karta.Hide();
-			karta.InputPickable = true;
 			if (karta.Wartosc == "ZmianaKoloru" || karta.Wartosc == "+4")
 			{
 				karta.Kolor = "DzikaKarta";
@@ -83,6 +71,12 @@ public class DeckManager
 		PotasujTalie();
 		OnTaliaPrzetasowano?.Invoke();
 	}
+	public DaneKarty WydajKarte()
+	{
+		DaneKarty karta = talia[0];
+		talia.RemoveAt(0);
+		return karta;
+	}
 
-	public List<Karta> PobierzTalie() => talia;
+	public List<DaneKarty> PobierzTalie() => talia;
 }

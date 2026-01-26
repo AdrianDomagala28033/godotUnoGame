@@ -8,12 +8,13 @@ public partial class Karta : Area2D
 	public string Kolor { get; set; }
 	[Export]
 	public string Wartosc { get; set; }
-	public event Action<Karta> OnKartaKliknieta;
+	public event Action<Karta, int> OnKartaKliknieta;
 	private Sprite2D _sprite;
 	private float oryginalnaPozycjaY;
 	private Tween _aktywnaAnimacja;
 	private bool jestZagrywana = false;
 	private CollisionShape2D ksztaltKolizji;
+	private bool czyZaznaczona;
 
 
 	private Dictionary<string, string> mapowanieKolorow = new Dictionary<string, string>(){
@@ -66,10 +67,10 @@ public partial class Karta : Area2D
 	}
 	private void _OnInputEvent(Node viewport, InputEvent @event, long shapeIdx)
 	{
-		if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed && mouseEvent.ButtonIndex == MouseButton.Left && !jestZagrywana)
+		if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed && (mouseEvent.ButtonIndex == MouseButton.Left ||  mouseEvent.ButtonIndex == MouseButton.Right) && !jestZagrywana)
 		{
 			ZatrzymajAktywnaAnimacje();
-			OnKartaKliknieta?.Invoke(this);
+			OnKartaKliknieta?.Invoke(this, (int)mouseEvent.ButtonIndex);
 		}
 	}
 	private void _OnMouseEntered()
@@ -81,10 +82,13 @@ public partial class Karta : Area2D
 	}
 	private void _OnMouseExited()
 	{
-		if (jestZagrywana) return;
-		ZatrzymajAktywnaAnimacje();
-		_aktywnaAnimacja = CreateTween();
-		_aktywnaAnimacja.TweenProperty(this, "position:y", oryginalnaPozycjaY, 0.1);
+		if (!czyZaznaczona)
+		{
+			if (jestZagrywana) return;
+			ZatrzymajAktywnaAnimacje();
+			_aktywnaAnimacja = CreateTween();
+			_aktywnaAnimacja.TweenProperty(this, "position:y", oryginalnaPozycjaY, 0.1);
+		}
 	}
 	private void ZatrzymajAktywnaAnimacje()
 	{
@@ -111,4 +115,15 @@ public partial class Karta : Area2D
 		Scale = Vector2.One;
 		Show();
 	}
+
+    public void UstawZaznaczenie(bool czyZaznaczona)
+    {
+        this.czyZaznaczona = czyZaznaczona;
+		Tween zaznaczonaKarta = CreateTween();
+		if(this.czyZaznaczona)
+			zaznaczonaKarta.TweenProperty(this, "position:y", oryginalnaPozycjaY - 40f, 0.1);
+		else
+			zaznaczonaKarta.TweenProperty(this, "position:y", oryginalnaPozycjaY, 0.1);
+    }
+
 }

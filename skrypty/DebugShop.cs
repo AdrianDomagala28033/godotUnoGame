@@ -4,10 +4,10 @@ using System;
 public partial class DebugShop : CanvasLayer
 {
     
-    private LogikaGry logikaGry;
+    private GameClient logikaGry;
     private Control grid;
 
-    public void Inicjalizuj(LogikaGry logika)
+    public void Inicjalizuj(GameClient logika)
     {
         this.logikaGry = logika;
         WygenerujPrzyciski();
@@ -19,21 +19,21 @@ public partial class DebugShop : CanvasLayer
     }
     public void WygenerujPrzyciski()
     {
-        var jokery = JokerFactory.StworzJokery();
-        foreach(var joker in jokery)
-        {
-            Button btn = new Button();
-            btn.Text = $"{joker.Nazwa}\n({joker.RzadkoscJokera})";
-            btn.CustomMinimumSize = new Vector2(200, 100);
-            var j = joker;
-            btn.Pressed += () => KupJokera(j);
-            grid.AddChild(btn);
-        }
+        // var jokery = JokerFactory.StworzJokery();
+        // foreach(var joker in jokery)
+        // {
+        //     Button btn = new Button();
+        //     btn.Text = $"{joker.Nazwa}\n({joker.RzadkoscJokera})";
+        //     btn.CustomMinimumSize = new Vector2(200, 100);
+        //     var j = joker;
+        //     btn.Pressed += () => KupJokera(j);
+        //     grid.AddChild(btn);
+        // }
     }
     private void KupJokera(Joker joker)
     {
         GD.Print($"[DEBUG] Dodano jokera: {joker.Nazwa}");
-        logikaGry.PrzyznajJokeraGraczowi(joker);
+        //logikaGry.PrzyznajJokeraGraczowi(joker);
     }
     public override void _UnhandledInput(InputEvent @event)
     {

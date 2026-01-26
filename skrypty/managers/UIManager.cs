@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public partial class UIManager : Control
 {
-	private LogikaGry logikaGry;
+	private GameClient gameClient;
 	[Export] private Label etykietaTuryGracza;
 	[Export] private JokerPanel jokerPanel;
 	private StatusPanel statusPanel;
@@ -38,29 +38,29 @@ public partial class UIManager : Control
 		if (jokerPanel != null)
         	jokerPanel.MouseFilter = Control.MouseFilterEnum.Pass;
 	}
-    public void Inicjalizuj(LogikaGry gra)
+    public void Inicjalizuj(GameClient gra)
 	{
-		logikaGry = gra;
-		logikaGry.OnKartaZagrana += HandleKartaZagrano;
-		logikaGry.OnKartaDobrano += HandleKartaDobrano;
-		logikaGry.OnTaliaPrzetasowano += HandleTaliaPrzetasowano;
-		logikaGry.OnRundaZakoczona += HandleRundaZakonczona;
-		logikaGry.OnKolorZostalWybrany += HandleKolorWybrany;
-		logikaGry.OnKolorZmieniony += UstawKolor;
-		logikaGry.OnKartaZagrana += PokazKarteNaStosie;
-		logikaGry.OnKolorDoUstawienia += HandleKolorDoUstawienia;
-		logikaGry.OnDodajKarteNaStos += DodajKarteNaStos;
-		logikaGry.OnJokerZdobyty += HandleJokerZdobyty;
+		gameClient = gra;
+		gameClient.OnKartaZagrana += HandleKartaZagrano;
+		gameClient.OnKartaDobrano += HandleKartaDobrano;
+		gameClient.OnTaliaPrzetasowano += HandleTaliaPrzetasowano;
+		gameClient.OnRundaZakoczona += HandleRundaZakonczona;
+		gameClient.OnKolorZostalWybrany += HandleKolorWybrany;
+		gameClient.OnKolorZmieniony += UstawKolor;
+		gameClient.OnKartaZagrana += PokazKarteNaStosie;
+		gameClient.OnKolorDoUstawienia += HandleKolorDoUstawienia;
+		gameClient.OnDodajKarteNaStos += DodajKarteNaStos;
+		gameClient.OnJokerZdobyty += HandleJokerZdobyty;
 
-		logikaGry.OnRozmiescKarty += (reka) => RozmiescKartyWRece(reka);
-		logikaGry.OnDodajKarteNaStos += (karta, pos, z, idx) => DodajKarteNaStos(karta, pos, z, idx);
-		logikaGry.OnAktualizujLicznikBota += (idx, count) => AktualizujUILicznikBota(idx, count);
-		logikaGry.OnKolorDoUstawienia += (kolor) => UstawKolor(kolor);
-		logikaGry.OnReceZmienione += () => {
-			if (logikaGry != null && logikaGry.ListaGraczy[0].rekaGracza != null && logikaGry.ListaGraczy[0].rekaGracza.Count > 0)
-				RozmiescKartyWRece(logikaGry.ListaGraczy[0].rekaGracza);
+		gameClient.OnRozmiescKarty += (reka) => RozmiescKartyWRece(reka);
+		gameClient.OnDodajKarteNaStos += (karta, pos, z, idx) => DodajKarteNaStos(karta, pos, z, idx);
+		gameClient.OnAktualizujLicznikBota += (idx, count) => AktualizujUILicznikBota(idx, count);
+		gameClient.OnKolorDoUstawienia += (kolor) => UstawKolor(kolor);
+		gameClient.OnReceZmienione += () => {
+			if (gameClient != null && gameClient.ListaGraczy[0].rekaGracza != null && gameClient.ListaGraczy[0].rekaGracza.Count > 0)
+				RozmiescKartyWRece(gameClient.ListaGraczy[0].rekaGracza);
 		};
-		logikaGry.OnJokerZdobyty += (joker) => jokerPanel.DodajJokeraDoWidoku(joker);
+		gameClient.OnJokerZdobyty += (joker) => jokerPanel.DodajJokeraDoWidoku(joker);
 	}
 	private void HandleJokerZdobyty(Joker joker)
     {
@@ -96,15 +96,15 @@ public partial class UIManager : Control
 		if (statusPanel == null) return;
 		if (karta == null) return;
 		statusPanel.CallDeferred("UstawKolor", karta.Kolor);
-		statusPanel.CallDeferred("UstawDlug", logikaGry.DlugDobierania);
+		statusPanel.CallDeferred("UstawDlug", gameClient.DlugDobierania);
 	}
 
 	private void HandleKartaDobrano(int graczIndex)
 	{
 		if (statusPanel == null) return;
-		statusPanel.CallDeferred("UstawDlug", logikaGry.DlugDobierania);
-		if (logikaGry != null && logikaGry.ListaGraczy[0].rekaGracza != null && logikaGry.ListaGraczy[0].rekaGracza.Count > 0)
-			RozmiescKartyWRece(logikaGry.ListaGraczy[0].rekaGracza);
+		statusPanel.CallDeferred("UstawDlug", gameClient.DlugDobierania);
+		if (gameClient != null && gameClient.ListaGraczy[0].rekaGracza != null && gameClient.ListaGraczy[0].rekaGracza.Count > 0)
+			RozmiescKartyWRece(gameClient.ListaGraczy[0].rekaGracza);
 	}
 
 	private void HandleTaliaPrzetasowano(int ile)
@@ -220,8 +220,8 @@ public partial class UIManager : Control
 
 	private void RozmiescKartyWRece()
 	{
-		if (logikaGry == null) return;
-		if (logikaGry.ListaGraczy[0].rekaGracza == null || logikaGry.ListaGraczy[0].rekaGracza.Count == 0) return;
-			RozmiescKartyWRece(logikaGry.ListaGraczy[0].rekaGracza);
+		if (gameClient == null) return;
+		if (gameClient.ListaGraczy[0].rekaGracza == null || gameClient.ListaGraczy[0].rekaGracza.Count == 0) return;
+			RozmiescKartyWRece(gameClient.ListaGraczy[0].rekaGracza);
 	}
 }

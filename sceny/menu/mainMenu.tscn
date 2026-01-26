@@ -1,0 +1,173 @@
+[gd_scene load_steps=3 format=3 uid="uid://bccn0pjl5jjer"]
+
+[ext_resource type="Script" uid="uid://bdhe554hplyx" path="res://skrypty/MainMenu.cs" id="1_ufdtn"]
+[ext_resource type="PackedScene" uid="uid://dtwfseanxqo1r" path="res://sceny/menu/PasekGracza.tscn" id="2_ber6u"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ufdtn")
+ElementListyGraczaScena = ExtResource("2_ber6u")
+
+[node name="MenuStartowe" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 584.0
+offset_top = 292.0
+offset_right = 696.0
+offset_bottom = 428.0
+
+[node name="HostButton" type="Button" parent="MenuStartowe"]
+layout_mode = 2
+text = "Stwórz grę"
+
+[node name="JoinButton" type="Button" parent="MenuStartowe"]
+layout_mode = 2
+text = "Dołącz do gry"
+
+[node name="OptionsButton" type="Button" parent="MenuStartowe"]
+layout_mode = 2
+text = "Opcje"
+
+[node name="QuitButton" type="Button" parent="MenuStartowe"]
+layout_mode = 2
+text = "Wyjdź"
+
+[node name="PanelHosta" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelHosta"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -82.0
+offset_top = -46.5
+offset_right = 82.0
+offset_bottom = 46.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="KonfiguracjaSerwera" type="Label" parent="PanelHosta/VBoxContainer"]
+layout_mode = 2
+text = "Konfiguracja serwera"
+
+[node name="InputNazwaHosta" type="LineEdit" parent="PanelHosta/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "Podaj swoją nazwę"
+
+[node name="RozpocznijGreButton" type="Button" parent="PanelHosta/VBoxContainer"]
+layout_mode = 2
+text = "Uruchom serwer"
+
+[node name="PowrotButton" type="Button" parent="PanelHosta/VBoxContainer"]
+layout_mode = 2
+text = "Powrót do menu"
+
+[node name="PanelDolaczania" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelDolaczania"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -87.0
+offset_top = -46.5
+offset_right = 87.0
+offset_bottom = 46.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="PanelDolaczania/VBoxContainer"]
+layout_mode = 2
+text = "Dołącz do gry"
+
+[node name="InputNazwaGracza" type="LineEdit" parent="PanelDolaczania/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "Podaj swój nick"
+
+[node name="InputKodDolaczenia" type="LineEdit" parent="PanelDolaczania/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "Podajkod dołączenia"
+
+[node name="DolaczButton" type="Button" parent="PanelDolaczania/VBoxContainer"]
+layout_mode = 2
+text = "Dołącz do gry"
+
+[node name="PowrotButton" type="Button" parent="PanelDolaczania/VBoxContainer"]
+layout_mode = 2
+text = "Powrót do menu"
+
+[node name="PanelLobby" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelLobby"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ListaGraczy" type="VBoxContainer" parent="PanelLobby/HBoxContainer"]
+custom_minimum_size = Vector2(640, 0)
+layout_mode = 2
+
+[node name="ListaGraczy" type="Label" parent="PanelLobby/HBoxContainer/ListaGraczy"]
+layout_mode = 2
+text = "Lista graczy"
+
+[node name="KontenerGraczy" type="VBoxContainer" parent="PanelLobby/HBoxContainer/ListaGraczy"]
+custom_minimum_size = Vector2(0, 650)
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelLobby/HBoxContainer/ListaGraczy"]
+layout_mode = 2
+
+[node name="GotowyButton" type="Button" parent="PanelLobby/HBoxContainer/ListaGraczy/HBoxContainer"]
+layout_mode = 2
+text = "Gotowy"
+
+[node name="StartButton" type="Button" parent="PanelLobby/HBoxContainer/ListaGraczy/HBoxContainer"]
+layout_mode = 2
+text = "Start"
+
+[node name="Chat" type="VBoxContainer" parent="PanelLobby/HBoxContainer"]
+custom_minimum_size = Vector2(640, 0)
+layout_mode = 2
+
+[node name="HistoriaChatu" type="RichTextLabel" parent="PanelLobby/HBoxContainer/Chat"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelLobby/HBoxContainer/Chat"]
+layout_mode = 2
+
+[node name="InputPoleWpisywania" type="LineEdit" parent="PanelLobby/HBoxContainer/Chat/HBoxContainer"]
+layout_mode = 2
+
+[node name="WyslijWiadomoscButton" type="Button" parent="PanelLobby/HBoxContainer/Chat/HBoxContainer"]
+layout_mode = 2
+text = "Wyślij"

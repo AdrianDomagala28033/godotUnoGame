@@ -22,12 +22,12 @@ public class Joker
     public string Opis { get; set; }
     public RzadkoscJokera RzadkoscJokera { get; set; }
     public WarunekAktywacji WarunekAktywacji { get; set; }
-    public Action<LogikaGry> Efekt { get; set; }
+    public Action<GameServer> Efekt { get; set; }
     public string Parametr { get; set; }
-    public Func<Karta, LogikaGry, bool> CzyPozwalaNaZagranie { get; set; } = (karta, logikaGry) => false;
+    public Func<Karta, GameClient, bool> CzyPozwalaNaZagranie { get; set; } = (karta, logikaGry) => false;
     public int IloscUzyc { get; set; }
 
-    public Joker(string nazwa, string opis, RzadkoscJokera rzadkoscJokera, WarunekAktywacji warunekAktywacji, Action<LogikaGry> efekt, string parametr)
+    public Joker(string nazwa, string opis, RzadkoscJokera rzadkoscJokera, WarunekAktywacji warunekAktywacji, Action<GameServer> efekt, string parametr)
     {
         Nazwa = nazwa;
         Opis = opis;
