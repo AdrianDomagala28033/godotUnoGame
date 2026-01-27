@@ -10,6 +10,7 @@ public partial class JokerPanel : PanelContainer
     private Label infoLabel;
     private Control infoPanel;
     private bool jestRozwiniete = false;
+    private NetworkManager NetworkManager {get; set;}
 
     public override void _Ready()
     {
@@ -23,6 +24,9 @@ public partial class JokerPanel : PanelContainer
         infoPanel.Hide();
         przyciskRozwin.Text = "JOKERY ▼";
         jestRozwiniete = false;
+        NetworkManager = GetTree().Root.GetNode<NetworkManager>("NetworkManager");
+        NetworkManager.Connect(NetworkManager.SignalName.JokeryZmienione, Callable.From(OdswiezJokery));
+        OdswiezJokery();
     }
     private void PrzelaczWidok()
     {
@@ -39,7 +43,7 @@ public partial class JokerPanel : PanelContainer
         }
         jestRozwiniete = !jestRozwiniete;
     }
-    public void DodajJokeraDoWidoku(Joker joker)
+    public void DodajJokeraDoWidoku(DaneJokera joker)
     {
         JokerSlot slot = (JokerSlot)szablonSlotu.Instantiate();
         slotyContainer.AddChild(slot);
@@ -57,5 +61,24 @@ public partial class JokerPanel : PanelContainer
     {
         infoPanel.Hide();
     }
-
+    public void OdswiezJokery()
+    {
+        foreach (var joker in slotyContainer.GetChildren())
+        {
+            joker.QueueFree();
+        }
+        long idGracza = Multiplayer.GetUniqueId();
+        var daneGracza = NetworkManager.ListaGraczy.Find(g => g.Id == idGracza);
+        if(daneGracza == null) return;
+        var jokeryGracza = daneGracza.PosiadaneJokery;
+        foreach (var joker in jokeryGracza)
+        {
+            var daneJokera = JokerManager.PobierzJokera(joker);
+            JokerSlot slot = (JokerSlot)szablonSlotu.Instantiate();
+            slot.Inicjalizuj(daneJokera);
+            slot.OnHover += PokazOpis;
+            slot.OnHoverExit += UkryjOpis;
+            slotyContainer.AddChild(slot);
+        }
+    }
 }

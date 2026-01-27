@@ -21,8 +21,24 @@ public partial class UnoRules : Node
 			GD.Print("[RULES] Zestaw niespójny!");
 			return false;
 		}
-		// if (gameServer.JokerManager.CzyJokerPozwalaNaZagranie(kartaDoZagrania, logikaGry, aktualnyGracz))
-		//  	return true;
+		long idGracza = turnManager.AktualnyGraczId;
+		var gracz = gameServer.ListaGraczy[idGracza];
+		var karta = kartyDoZagrania[0];
+		foreach (string idJokera in gracz.PosiadaneJokery)
+		{
+			var daneJokera = JokerManager.PobierzJokera(idJokera);
+			if(daneJokera != null)
+			{
+				foreach (var efekt in daneJokera.Efekty)
+				{
+					if(efekt.CzyPozwalaNaZagranie(gameServer, karta))
+					{
+						GD.Print($"[RULES] Joker {daneJokera.Nazwa} zezwolił na ruch!");
+                    	return true;
+					}
+				}
+			}
+		}
 		if (dlug > 0)
 		{
 			bool wynik = kartyDoZagrania[0].Wartosc == "+2" || kartyDoZagrania[0].Wartosc == "+4";
@@ -44,6 +60,19 @@ public partial class UnoRules : Node
 	{
 		//var popupManager = GetNode<PopupManager>("/root/PopupManager");
 		long idGracza = turnManager.AktualnyGraczId;
+		var gracz = gameServer.ListaGraczy[idGracza];
+		foreach (string idJokera in gracz.PosiadaneJokery)
+		{
+			var daneJokera = JokerManager.PobierzJokera(idJokera);
+			if(daneJokera != null)
+			{
+				foreach (var efekt in daneJokera.Efekty)
+				{
+					efekt.PoZagraniuKarty(gameServer, zagranaKarta);
+					gameServer.ListaGraczy[idGracza].DodajPunkty(1);
+				}
+			}
+		}
 		switch (zagranaKarta.Wartosc)
 		{
 			case "Stop":
@@ -79,11 +108,11 @@ public partial class UnoRules : Node
 		long idGracza = turnManager.ListaGraczyId[indexGracza];
 		if (gameServer.ListaGraczy.ContainsKey(idGracza))
 		{
-			foreach (Joker joker in gameServer.ListaGraczy[idGracza].PosiadaneJokery)
-			{
-				if(joker.WarunekAktywacji == WarunekAktywacji.Pasywny)
-					joker.Efekt(gameServer);
-			}
+			// foreach (DaneJokera joker in gameServer.ListaGraczy[idGracza].PosiadaneJokery)
+			// {
+			// 	if(joker.WarunekAktywacji == WarunekAktywacji.Pasywny)
+			// 		joker.Efekt(gameServer);
+			// }
 		}
     }
 	private bool CzyZestawJestSpojny(List<DaneKarty> karty)

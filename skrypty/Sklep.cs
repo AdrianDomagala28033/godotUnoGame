@@ -54,22 +54,30 @@ public partial class Sklep : Control
     {
         if (NetworkManager.KolejkaDraftu != null && NetworkManager.KolejkaDraftu.Length > 0)
         {
-            bool czyMojaKolej = Multiplayer.GetUniqueId() == NetworkManager.KolejkaDraftu[0];
-            var obecnyGracz = NetworkManager.ListaGraczy.Find(g => g.Id == NetworkManager.KolejkaDraftu[0]);
+            long mojeId = Multiplayer.GetUniqueId();
+            long idWybierajacego = NetworkManager.KolejkaDraftu[0];           
+            bool czyMojaKolej = mojeId == idWybierajacego;
+
+            GD.Print($"[SKLEP DEBUG] Moje ID: {mojeId} vs Wybiera: {idWybierajacego}. Czy moja kolej? {czyMojaKolej}");
+
+            var obecnyGracz = NetworkManager.ListaGraczy.Find(g => g.Id == idWybierajacego);
             if(obecnyGracz != null)
                 KtoWybiera.Text = $"Wybiera gracz {obecnyGracz.Nazwa}";
+            
             foreach (var node in ListaJokerow.GetChildren())
             {
                 if(node is Button btn)
                 {
                     bool czyDostepny = NetworkManager.OfertaJokerow.Contains(btn.Text);
+                    GD.Print($"[SKLEP DEBUG] Joker {btn.Text} - Dostępny: {czyDostepny}, Disabled będzie: {!czyMojaKolej || !czyDostepny}");
                     btn.Disabled = !czyMojaKolej || !czyDostepny;
                 }
             }
         }
         else
         {
-            KtoWybiera.Text = $"Wszyscy gracze wybrali, oczekiwanie na gotowość wszystkich graczy...";
+            GD.Print("[SKLEP ERROR] Kolejka draftu jest pusta lub null!");
+            KtoWybiera.Text = $"Wszyscy gracze wybrali...";
             foreach (var node in ListaJokerow.GetChildren())
             {
                 if(node is Button btn)

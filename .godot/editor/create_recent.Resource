@@ -1,0 +1,2 @@
+DaneJokera
+EfektDobierzKarty

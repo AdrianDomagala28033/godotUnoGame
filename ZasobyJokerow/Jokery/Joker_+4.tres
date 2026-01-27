@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="DaneJokera" load_steps=5 format=3 uid="uid://b6nxi7kqtxvob"]
+
+[ext_resource type="Script" uid="uid://deh6hbonp17uu" path="res://skrypty/Jokery/EfektJokera.cs" id="1_6r82t"]
+[ext_resource type="Script" uid="uid://dfmqegr3x3w7p" path="res://skrypty/Jokery/DaneJokera.cs" id="2_0jypg"]
+[ext_resource type="Resource" uid="uid://qevp4dohmm3t" path="res://ZasobyJokerow/Efekty/Efekt_+4.tres" id="2_xtejf"]
+[ext_resource type="Texture2D" uid="uid://drolva0ipyfxh" path="res://grafika/jokery/IMG_0125.PNG" id="3_nxomu"]
+
+[resource]
+script = ExtResource("2_0jypg")
+Id = "Joker_plus4"
+Nazwa = "Joker +4"
+Ikona = ExtResource("3_nxomu")
+Efekty = Array[ExtResource("1_6r82t")]([ExtResource("2_xtejf")])
+metadata/_custom_type_script = "uid://dfmqegr3x3w7p"

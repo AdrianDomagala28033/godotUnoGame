@@ -19,11 +19,14 @@ public partial class NetworkManager : Node
     public event Action<long> OnKartyOdebrane;
     public event Action<long> OnTuraUstawiona;
     public event Action<string, string> OnStosZaktualizowany;
+    [Signal] public delegate void PokazDraftEventHandler(string[] idJokerow);
+    [Signal] public delegate void JokeryZmienioneEventHandler(string[] aktualneJokery);
 
     public override void _Ready()
     {
         Multiplayer.ConnectedToServer += OnConnectedToServer;
         Multiplayer.PeerConnected += OnPeerConnected;
+        JokerManager.ZaladujJokery();
     }
     #region obsluga lobby i menu
     public void HostujGre(string nazwa)
@@ -276,15 +279,9 @@ public partial class NetworkManager : Node
         {
             var server = GetNode<GameServer>("GameServer");
             if(server != null)
-            {
-                server.KolejkaDraftu = new Queue<long>(ListaGraczy.OrderBy(g => g.Miejsce).Select(g => g.Id));
-                KolejkaDraftu = server.KolejkaDraftu.ToArray();
-            }
+                server.KolejkaDraftu = new Queue<long>(kolejkaDraftu);
             else
-            {
-                GD.PrintErr("[NETWORK] Uwaga: Nie znaleziono GameServer przy przejściu do sklepu!");
-                KolejkaDraftu = kolejkaDraftu;
-            }   
+                GD.PrintErr("[NETWORK] Uwaga: Nie znaleziono GameServer przy przejściu do sklepu!"); 
         }
             GD.Print($"[NETWORK] Zmieniam scenę na: {sciezka}");
             ZmienScene(sciezka);
@@ -298,6 +295,11 @@ public partial class NetworkManager : Node
         if(server.KolejkaDraftu.Count > 0 && server.KolejkaDraftu.Peek() == idNadawcy)
         {
             GD.Print($"Gracz {idNadawcy} wybrał: {nazwa}");
+            if (server.ListaGraczy.ContainsKey(idNadawcy))
+            {
+                server.ListaGraczy[idNadawcy].PosiadaneJokery.Add(nazwa);
+                Rpc(nameof(NadajJokeraGraczowi), idNadawcy, nazwa);
+            }
             List<string> NiewybraneJokery = new List<string>(OfertaJokerow);
             OfertaJokerow = NiewybraneJokery.Where(j => j != nazwa).ToArray();
             server.KolejkaDraftu.Dequeue();
@@ -305,10 +307,23 @@ public partial class NetworkManager : Node
         }
     }
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    public void NadajJokeraGraczowi(long idGracza, string idJokera)
+    {
+        var gracz = ListaGraczy.Find(g => g.Id == idGracza);
+        if(gracz != null)
+        {
+            gracz.PosiadaneJokery.Add(idJokera);
+            EmitSignal(SignalName.JokeryZmienione, gracz.PosiadaneJokery.ToArray());
+            GD.Print($"[NETWORK] Zsynchronizowano: Gracz {gracz.Nazwa} ma teraz jokera {idJokera}");
+        }
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     public void ZaktualizujStanSklepu(long[] kolejka, string[] oferta)
     {
         KolejkaDraftu = kolejka;
         OfertaJokerow = oferta;
+        EmitSignal(SignalName.PokazDraft, oferta);
         var sklep = GetTree().Root.GetNodeOrNull<Sklep>("Sklep");
         if(sklep != null)
             sklep.AktualizujStanPrzyciskow();

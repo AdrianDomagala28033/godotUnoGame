@@ -8,7 +8,7 @@ public class Gracz
     public bool CzyToGraczLokalny { get; set; }
     public List<Karta> rekaGracza { get; set; } = new List<Karta>();
     public int Index { get; set; }
-    public List<Joker> PosiadaneJokery {get; set;} = new List<Joker>();
+    //public List<DaneJokera> PosiadaneJokery {get; set;} = new List<DaneJokera>();
     public bool CzyUkonczyl {get; set;} = false;
     public int Wynik {get; set;}
     public int Miejsce {get; set;}

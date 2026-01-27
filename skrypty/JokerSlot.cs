@@ -3,20 +3,22 @@ using System;
 
 public partial class JokerSlot : TextureRect
 {
-    private Joker joker;
+    private DaneJokera joker;
     public event Action<string, string> OnHover;
     public event Action OnHoverExit;
 
-    public void Inicjalizuj(Joker joker)
+    public override void _Ready()
+    {
+        MouseEntered += OnMouseEntered;
+        MouseExited += OnMouseExited;
+        MouseFilter = MouseFilterEnum.Stop;
+    }
+
+    public void Inicjalizuj(DaneJokera joker)
     {
         this.joker = joker;
-    }
-    public override void _GuiInput(InputEvent @event)
-    {
-        if(@event is InputEventMouseMotion)
-        {
-            
-        }
+        if (joker.Ikona != null) 
+            Texture = joker.Ikona;
     }
     public void OnMouseEntered()
     {

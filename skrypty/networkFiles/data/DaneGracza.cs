@@ -8,7 +8,7 @@ public class DaneGracza
     public bool CzyGotowy {get; set;}
     public List<DaneKarty> RekaGracza {get; set;} = new List<DaneKarty>();
     public int Wynik {get; set;} = 0;
-    public List<Joker> PosiadaneJokery {get; set;} = new List<Joker>();
+    public List<String> PosiadaneJokery {get; set;} = new List<String>();
     public bool CzyUkonczyl {get; set;} = false;
     public int Miejsce {get; set;}
 
@@ -20,9 +20,9 @@ public class DaneGracza
         CzyUkonczyl = false;
 
     }
-    public void DodajJokera(Joker joker)
+    public void DodajJokera(string idJokera)
     {
-        PosiadaneJokery.Add(joker);
+        JokerManager.PobierzJokera(idJokera);
     }
     public void PrzypiszPunktyZaMiejsce(Dictionary<long, DaneGracza> listaGraczy)
     {

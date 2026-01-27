@@ -9,9 +9,6 @@ public partial class UIManager : Control
 	[Export] private JokerPanel jokerPanel;
 	private StatusPanel statusPanel;
 	private Control koniecRundyPanel;
-	private UiBota _uiBot1;
-	private UiBota _uiBot2;
-	private UiBota _uiBot3;
 	private Node2D stosKart;
 
 	public override void _Ready()
@@ -21,15 +18,8 @@ public partial class UIManager : Control
 		if (koniecRundyPanel != null)
 			koniecRundyPanel.Hide();
 
-		_uiBot1 = GetNode<UiBota>("InterfejsGry/UIBota");
-		_uiBot2 = GetNode<UiBota>("InterfejsGry/UIBota2");
-		_uiBot3 = GetNode<UiBota>("InterfejsGry/UIBota3");
 
 		stosKart = GetNode<Node2D>("/root/StolGry/StosKart");
-
-		if (_uiBot1 != null) _uiBot1.MouseFilter = Control.MouseFilterEnum.Ignore;
-    	if (_uiBot2 != null) _uiBot2.MouseFilter = Control.MouseFilterEnum.Ignore;
-		if (_uiBot3 != null) _uiBot3.MouseFilter = Control.MouseFilterEnum.Ignore;
 
 		var interfejs = GetNodeOrNull<Control>("InterfejsGry");
 		if (interfejs != null) 
@@ -50,22 +40,21 @@ public partial class UIManager : Control
 		gameClient.OnKartaZagrana += PokazKarteNaStosie;
 		gameClient.OnKolorDoUstawienia += HandleKolorDoUstawienia;
 		gameClient.OnDodajKarteNaStos += DodajKarteNaStos;
-		gameClient.OnJokerZdobyty += HandleJokerZdobyty;
+		//gameClient.OnJokerZdobyty += HandleJokerZdobyty;
 
 		gameClient.OnRozmiescKarty += (reka) => RozmiescKartyWRece(reka);
 		gameClient.OnDodajKarteNaStos += (karta, pos, z, idx) => DodajKarteNaStos(karta, pos, z, idx);
-		gameClient.OnAktualizujLicznikBota += (idx, count) => AktualizujUILicznikBota(idx, count);
 		gameClient.OnKolorDoUstawienia += (kolor) => UstawKolor(kolor);
 		gameClient.OnReceZmienione += () => {
 			if (gameClient != null && gameClient.ListaGraczy[0].rekaGracza != null && gameClient.ListaGraczy[0].rekaGracza.Count > 0)
 				RozmiescKartyWRece(gameClient.ListaGraczy[0].rekaGracza);
 		};
-		gameClient.OnJokerZdobyty += (joker) => jokerPanel.DodajJokeraDoWidoku(joker);
+		//gameClient.OnJokerZdobyty += (joker) => jokerPanel.DodajJokeraDoWidoku(joker);
 	}
-	private void HandleJokerZdobyty(Joker joker)
-    {
-        GD.Print($"[UI] Dostałem info o jokerze: {joker.Nazwa}. Dodaję do panelu.");
-    }
+	// private void HandleJokerZdobyty(DaneJokera joker)
+    // {
+    //     GD.Print($"[UI] Dostałem info o jokerze: {joker.Nazwa}. Dodaję do panelu.");
+    // }
     private void HandleKolorDoUstawienia(string kolor)
     {
         if (statusPanel != null)
@@ -154,15 +143,6 @@ public partial class UIManager : Control
 		statusPanel?.CallDeferred("UstawKolor", nazwaKoloru);
 	}
 
-	public void AktualizujUILicznikBota(int indexBota, int iloscKart)
-	{
-		switch (indexBota)
-		{
-			case 1: _uiBot1?.AktualizujLicznik(iloscKart); break;
-			case 2: _uiBot2?.AktualizujLicznik(iloscKart); break;
-			case 3: _uiBot3?.AktualizujLicznik(iloscKart); break;
-		}
-	}
 
 	private void RozmiescKartyWRece(List<Karta> rekaGracza)
 	{

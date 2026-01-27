@@ -20,3 +20,16 @@ res://sceny/rozgrywka/stol_gry.tscn
 res://sceny/rozgrywka/scoreboard.tscn
 res://skrypty/Sklep.cs
 res://sceny/rozgrywka/Sklep.tscn
+res://skrypty/networkFiles/data/DaneGracza.cs
+res://skrypty/networkFiles/data/JokerDane.cs
+res://Jokery/JokerPlus4.tres
+res://skrypty/managers/JokerManager.cs
+res://skrypty/networkFiles/data/DaneJokera.cs
+res://Jokery/Joker_+4.tres
+res://skrypty/Jokery/EfektyJokera.cs
+res://skrypty/Gracz.cs
+res://skrypty/Jokery/SkryptyEfektow/EfektDobierzKarty.cs
+res://skrypty/Jokery/EfektJokera.cs
+res://skrypty/Jokery/DaneJokera.cs
+res://ZasobyJokerow/Efekty/Efekt_+4.tres
+res://ZasobyJokerow/Jokery/Joker_+4.tres

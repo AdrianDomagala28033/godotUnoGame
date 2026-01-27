@@ -11,7 +11,6 @@ public partial class GameClient : Node2D
     public NetworkManager NetworkManager {get; set;}
     public UIManager UIManager {get; set;}
     public DeckManager DeckManager {get; set;}
-    // public JokerManager JokerManager {get; set;}
     public List<Gracz> ListaGraczy {get; set;}
     public int DlugDobierania {get; set;}
     public Karta GornaKartaNaStosie {get; set;}
@@ -27,7 +26,7 @@ public partial class GameClient : Node2D
     public event Action<string> OnKolorZostalWybrany;
     public event Action<string> OnKolorZmieniony;
     public event Action<string> OnKolorDoUstawienia;
-    public event Action<Joker> OnJokerZdobyty;
+    //public event Action<DaneJokera> OnJokerZdobyty;
     public event Action<List<Karta>> OnRozmiescKarty;
     public event Action<Karta, int> OnKartaZagrana;
     public event Action<int, int> OnAktualizujLicznikBota;
@@ -55,7 +54,6 @@ public partial class GameClient : Node2D
         UIManager = GetNode<UIManager>("UIManager");
 
         DeckManager = new DeckManager();
-        // JokerManager = new JokerManager();
 
         UIManager.Inicjalizuj(this);
 

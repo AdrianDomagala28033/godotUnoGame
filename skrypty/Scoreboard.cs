@@ -69,15 +69,8 @@ public partial class Scoreboard : Control
             if(wszyscy > 0 && gotowi == wszyscy && !blokadaZmianySceny)
             {
                 blokadaZmianySceny = true;
-                GD.Print("[SERVER] Wszyscy gotowi na Scoreboardzie! Zarządzam przejście do Sklepu.");
-                foreach(var g in gameClient.NetworkManager.ListaGraczy) g.CzyGotowy = false;
-                long[] kolejka = gameClient.NetworkManager.ListaGraczy.OrderBy(g => g.Miejsce).Select(g => g.Id).ToArray();
-                string[] oferta = new string[] { 
-                    "Joker Zmiana Koloru", 
-                    "Joker +4", 
-                    "Joker Blokada" 
-                };
-                gameClient.NetworkManager.Rpc(nameof(NetworkManager.PrzejdzDoSklepu), "res://sceny/rozgrywka/Sklep.tscn", kolejka, oferta);
+                var server = GetTree().Root.GetNode<GameServer>("NetworkManager/GameServer");
+                server.RozpocznijFazeSklepu();
             }
         }
     }

@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="EfektDobierzKarty" load_steps=2 format=3 uid="uid://qevp4dohmm3t"]
+
+[ext_resource type="Script" uid="uid://bi42ch4q5n4gq" path="res://skrypty/Jokery/SkryptyEfektow/EfektDobierzKarty.cs" id="1_m5rce"]
+
+[resource]
+script = ExtResource("1_m5rce")
+Ilosc = 4
+metadata/_custom_type_script = "uid://bi42ch4q5n4gq"

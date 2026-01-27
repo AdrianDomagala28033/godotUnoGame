@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://c0y0bdnpbf4xc"]
+[gd_scene load_steps=11 format=3 uid="uid://c0y0bdnpbf4xc"]
 
 [ext_resource type="Script" uid="uid://cco2uosw6i3gr" path="res://skrypty/GameClient.cs" id="1_4mdl4"]
 [ext_resource type="PackedScene" uid="uid://cpu8louqpydkn" path="res://sceny/rozgrywka/karta.tscn" id="2_8iax1"]
@@ -6,8 +6,6 @@
 [ext_resource type="Texture2D" uid="uid://dd6fo8yyafdto" path="res://grafika/karty_grafika/background.png" id="4_o10b8"]
 [ext_resource type="Texture2D" uid="uid://cw7kkgcgsckqa" path="res://grafika/karty_grafika/back/rewers.png" id="5_2wd8g"]
 [ext_resource type="Script" uid="uid://b8wba46pi72hn" path="res://skrypty/managers/UIManager.cs" id="6_50u0d"]
-[ext_resource type="PackedScene" uid="uid://bhv751evtd0gm" path="res://sceny/rozgrywka/UIBota.tscn" id="7_sy1yg"]
-[ext_resource type="PackedScene" uid="uid://caohktpi46dti" path="res://sceny/rozgrywka/Rewers.tscn" id="8_7u23e"]
 [ext_resource type="PackedScene" uid="uid://dauiutbc7k8r8" path="res://sceny/rozgrywka/StatusPanel.tscn" id="9_5t8w8"]
 [ext_resource type="PackedScene" uid="uid://dp4mbvqxfa7jc" path="res://sceny/rozgrywka/JokerPanel.tscn" id="10_iwafj"]
 [ext_resource type="PackedScene" uid="uid://cjmlf41tyn7in" path="res://sceny/rozgrywka/scoreboard.tscn" id="11_asxmy"]
@@ -50,33 +48,6 @@ jokerPanel = NodePath("../WarstwaUI/JokerPanel")
 
 [node name="InterfejsGry" type="CanvasLayer" parent="UIManager"]
 
-[node name="UIBota" parent="UIManager/InterfejsGry" instance=ExtResource("7_sy1yg")]
-offset_left = 91.0
-offset_top = 326.0
-offset_right = 131.0
-offset_bottom = 366.0
-rotation = 1.5707964
-SzablonRewersu = ExtResource("8_7u23e")
-metadata/_edit_use_anchors_ = true
-
-[node name="UIBota2" parent="UIManager/InterfejsGry" instance=ExtResource("7_sy1yg")]
-offset_left = 683.0
-offset_top = 110.0
-offset_right = 723.0
-offset_bottom = 150.0
-rotation = 3.1415927
-SzablonRewersu = ExtResource("8_7u23e")
-metadata/_edit_use_anchors_ = true
-
-[node name="UIBota3" parent="UIManager/InterfejsGry" instance=ExtResource("7_sy1yg")]
-offset_left = 1184.0
-offset_top = 376.0
-offset_right = 1224.0
-offset_bottom = 416.0
-rotation = -1.5707964
-SzablonRewersu = ExtResource("8_7u23e")
-metadata/_edit_use_anchors_ = true
-
 [node name="EtykietaTuryGracza" type="Label" parent="UIManager/InterfejsGry"]
 anchors_preset = -1
 anchor_left = 0.453125
@@ -111,7 +82,7 @@ offset_right = 4.0
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="Scoreboard" parent="CanvasLayer" node_paths=PackedStringArray("labelOczekiwania") instance=ExtResource("11_asxmy")]
-labelOczekiwania = NodePath("")
+[node name="Scoreboard" parent="CanvasLayer" instance=ExtResource("11_asxmy")]
+visible = false
 
 [connection signal="input_event" from="StosDobierania" to="." method="_OnStosDobieraniaInputEvent"]

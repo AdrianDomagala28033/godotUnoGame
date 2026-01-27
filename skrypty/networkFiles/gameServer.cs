@@ -7,13 +7,13 @@ using Godot;
 public partial class GameServer : Node
 {
     public Dictionary<long, DaneGracza> ListaGraczy = new Dictionary<long, DaneGracza>();
-    private DeckManager deckManager;
-    private List<DaneKarty> stosZagranych = new List<DaneKarty>();
+    public DeckManager deckManager;
+    public List<DaneKarty> stosZagranych = new List<DaneKarty>();
     private long aktualnyGraczId;
     private int kierunekGry = 1;
-    private TurnManager turnManager {get; set;}
-    private UnoRules unoRules {get; set;}
-    private NetworkManager networkManager {get; set;}
+    public TurnManager turnManager {get; set;}
+    public UnoRules unoRules {get; set;}
+    public NetworkManager networkManager {get; set;}
     public string WymuszonyKolor {get; set;} = null;
     public DaneKarty GornaKartaNaStosie
     {
@@ -237,5 +237,21 @@ public partial class GameServer : Node
             networkManager.Rpc(nameof(NetworkManager.ZaktualizujStanGotowosciClienta),gracz.Id, false);
         }
         networkManager.Rpc(nameof(NetworkManager.PokazTabliceWynikow), idGraczy, miejscaGraczy, wynikGraczy, NumerRundy);
+    }
+
+    public void RozpocznijFazeSklepu()
+    {
+        GD.Print("[SERVER] Wszyscy gotowi! Rozpoczynam fazę sklepu.");
+        long[] kolejka = ListaGraczy.Values.OrderBy(g => g.Miejsce).Select(g => g.Id).ToArray();
+        KolejkaDraftu = new Queue<long>(kolejka);
+        string[] oferta = GenerujOferteSklepu(ListaGraczy.Count + 1);
+        networkManager.Rpc(nameof(NetworkManager.PrzejdzDoSklepu), "res://sceny/rozgrywka/Sklep.tscn", kolejka, oferta);
+    }
+    private string[] GenerujOferteSklepu(int ilosc)
+    {
+        string[] pula = JokerManager.PobierzWszystkieId();
+        if(pula.Length == 0) return new string[0];
+        Random rng = new Random();
+        return pula.OrderBy(x => rng.Next()).Take(ilosc).ToArray();
     }
 }

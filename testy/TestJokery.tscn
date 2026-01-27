@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://ki2nv1tqbjdh"]
-
-[ext_resource type="Script" uid="uid://cpq4ifro7emg6" path="res://testy/TestJokery.cs" id="1_b5ccq"]
-
-[node name="TestJokery" type="Node"]
-script = ExtResource("1_b5ccq")
