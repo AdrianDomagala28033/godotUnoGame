@@ -5,11 +5,19 @@ using System.Collections.Generic;
 public partial class UIManager : Control
 {
 	private GameClient gameClient;
-	[Export] private Label etykietaTuryGracza;
 	[Export] private JokerPanel jokerPanel;
+	[Export] private Label3D LewyNapis;
+	[Export] private Label3D PrawyNapis;
+	[Export] private ProfilPrzeciwnika ProfilLewy;
+    [Export] private ProfilPrzeciwnika ProfilGorny;
+    [Export] private ProfilPrzeciwnika ProfilPrawy;
 	private StatusPanel statusPanel;
 	private Control koniecRundyPanel;
-	private Node2D stosKart;
+	private Marker3D stosKart;
+	private float aktualnyScrollIndex = 0.0f;
+	private int docelowyScrollIndex = 0;
+	private float katNaKarte = 6.0f;
+	private int maxWidocznychKart = 7;
 
 	public override void _Ready()
 	{
@@ -19,7 +27,7 @@ public partial class UIManager : Control
 			koniecRundyPanel.Hide();
 
 
-		stosKart = GetNode<Node2D>("/root/StolGry/StosKart");
+		stosKart = GetNode<Marker3D>("/root/StolGry/StosKart");
 
 		var interfejs = GetNodeOrNull<Control>("InterfejsGry");
 		if (interfejs != null) 
@@ -27,6 +35,11 @@ public partial class UIManager : Control
 
 		if (jokerPanel != null)
         	jokerPanel.MouseFilter = Control.MouseFilterEnum.Pass;
+		if(LewyNapis != null && PrawyNapis != null)
+		{
+			LewyNapis.Visible = false;
+			PrawyNapis.Visible = false;
+		}
 	}
     public void Inicjalizuj(GameClient gra)
 	{
@@ -40,21 +53,44 @@ public partial class UIManager : Control
 		gameClient.OnKartaZagrana += PokazKarteNaStosie;
 		gameClient.OnKolorDoUstawienia += HandleKolorDoUstawienia;
 		gameClient.OnDodajKarteNaStos += DodajKarteNaStos;
-		//gameClient.OnJokerZdobyty += HandleJokerZdobyty;
+		gameClient.OnKartaZagrana += (karta, id) => AktualizujPrzeciwnikow();
+		gameClient.OnKartaDobrano += (id) => AktualizujPrzeciwnikow();
+		gameClient.OnTuraUstawiona += (id) => AktualizujPrzeciwnikow();
+		gameClient.OnListaGraczyZmieniona += AktualizujPrzeciwnikow;
 
 		gameClient.OnRozmiescKarty += (reka) => RozmiescKartyWRece(reka);
-		gameClient.OnDodajKarteNaStos += (karta, pos, z, idx) => DodajKarteNaStos(karta, pos, z, idx);
+		gameClient.OnDodajKarteNaStos += (karta, pos, idx) => DodajKarteNaStos(karta, pos, idx);
 		gameClient.OnKolorDoUstawienia += (kolor) => UstawKolor(kolor);
 		gameClient.OnReceZmienione += () => {
 			if (gameClient != null && gameClient.ListaGraczy[0].rekaGracza != null && gameClient.ListaGraczy[0].rekaGracza.Count > 0)
 				RozmiescKartyWRece(gameClient.ListaGraczy[0].rekaGracza);
 		};
-		//gameClient.OnJokerZdobyty += (joker) => jokerPanel.DodajJokeraDoWidoku(joker);
 	}
-	// private void HandleJokerZdobyty(DaneJokera joker)
-    // {
-    //     GD.Print($"[UI] Dostałem info o jokerze: {joker.Nazwa}. Dodaję do panelu.");
-    // }
+
+	public override void _Input(InputEvent @event)
+	{
+		var mojaReka = gameClient.ListaGraczy.Find(g => g.CzyToGraczLokalny)?.rekaGracza;
+		if (mojaReka == null || mojaReka.Count == 0) return;
+
+		if (@event is InputEventMouseButton mb && mb.Pressed)
+		{
+			if (mb.ButtonIndex == MouseButton.WheelDown)
+				docelowyScrollIndex++;
+			else if (mb.ButtonIndex == MouseButton.WheelUp)
+				docelowyScrollIndex--;
+			float polowaReki = (mojaReka.Count - 1) / 2.0f;
+			docelowyScrollIndex = (int)Mathf.Clamp(docelowyScrollIndex, -polowaReki, polowaReki);
+			AktualizujLicznikKart(mojaReka.Count);
+		}
+	}
+	public override void _Process(double delta)
+	{
+		aktualnyScrollIndex = Mathf.Lerp(aktualnyScrollIndex, (float)docelowyScrollIndex, (float)delta * 10.0f);
+
+		var graczLokalny = gameClient.ListaGraczy.Find(g => g.CzyToGraczLokalny);
+		if (graczLokalny != null && graczLokalny.rekaGracza.Count > 0)
+			RozmiescKartyWRece(graczLokalny.rekaGracza);
+	}
     private void HandleKolorDoUstawienia(string kolor)
     {
         if (statusPanel != null)
@@ -70,14 +106,14 @@ public partial class UIManager : Control
 		}
 	}
 
-	public void DodajKarteNaStos(Karta karta, Vector2 pozycjaStosu, int zIndex, int indexGracza)
+	public void DodajKarteNaStos(Karta karta, Vector3 pozycjaStosu, int indexGracza)
 	{
 		if (karta.GetParent() == null)
 			AddChild(karta);
 
+		karta.UstawSkale(0.8f);
 		karta.Show();
-		karta.ZIndex = zIndex;
-		karta.CallDeferred("ZagrajNaStol", pozycjaStosu, zIndex);
+		karta.CallDeferred("ZagrajNaStol", pozycjaStosu);
 	}
 
 	private void HandleKartaZagrano(Karta karta, int graczIndex)
@@ -122,15 +158,7 @@ public partial class UIManager : Control
 
 	public void PokazTureGracza(bool widoczna)
 	{
-		if (etykietaTuryGracza == null)
-		{
-			GD.PrintErr("[UIManager] Brak referencji do etykietaTuryGracza!");
-			return;
-		}
-		if (widoczna)
-			etykietaTuryGracza.Show();
-		else
-			etykietaTuryGracza.Hide();
+		
 	}
 
 	public void UstawDlug(int dlug)
@@ -146,62 +174,173 @@ public partial class UIManager : Control
 
 	private void RozmiescKartyWRece(List<Karta> rekaGracza)
 	{
-		if (rekaGracza == null) return;
+		float stalaPozycjaStrzalek = (maxWidocznychKart / 2.0f) + 0.8f;
+		if (rekaGracza == null || rekaGracza.Count == 0) return;
+		
 		int iloscKart = rekaGracza.Count;
-		float szerokoscKarty = 150;
-		float szerokoscEkranu = GetViewportRect().Size.X;
-		float margines = 100;
+		AktualizujLicznikKart(iloscKart);
+		Vector3 centrumMarkera = gameClient.SpawnGraczGlowny.GlobalPosition;
 
-		float maxDostepnaSzerokosc = szerokoscEkranu - (2 * margines);
-		float wymaganaSzerokosc = iloscKart * szerokoscKarty;
+		float szerokoscLuku = -10.0f;
+		float glebokoscLuku = -15.0f;
 
-		float odstep;
-		float skala;
+		float limitWidocznosciStopnie = (maxWidocznychKart * katNaKarte) / 2.0f;
+		float srodekReki = (iloscKart - 1) / 2.0f;
+		float? lewaKrawedzIndex = null;
+		float? prawaKrawedzIndex = null;
+		int idxPierwszej = -1;
+		int idxOstatniej = -1;
 
-		if (iloscKart == 0) return;
-
-		if (wymaganaSzerokosc > maxDostepnaSzerokosc)
-		{
-			odstep = (maxDostepnaSzerokosc - szerokoscKarty) / (iloscKart - 1);
-			odstep = Mathf.Max(odstep, 20);
-
-			skala = maxDostepnaSzerokosc / wymaganaSzerokosc;
-			skala = Mathf.Min(skala, 1.0f);
-		}
-		else
-		{
-			odstep = szerokoscKarty * 0.9f;
-			skala = 1.0f;
-		}
-
-		float szerokoscCalejReki = (iloscKart - 1) * odstep + szerokoscKarty;
-		float pozycjaStartowaX = (szerokoscEkranu / 2) - (szerokoscCalejReki / 2);
-		float pozycjaY = GetViewportRect().Size.Y + 50;
-
-		for (int i = 0; i < iloscKart; i++)
+		for(int i = 0; i < iloscKart; i++)
 		{
 			Karta karta = rekaGracza[i];
-			if (karta == null) continue;
+			if (karta.CzyPodKursorem) continue;
+			if(karta == null) continue;
+			float wirtualnyIndex = (i - srodekReki) - aktualnyScrollIndex;
+			float aktualnyKatStopnie = wirtualnyIndex * katNaKarte;
 
-			if (karta.GetParent() == null)
+			
+			if (Mathf.Abs(aktualnyKatStopnie) > limitWidocznosciStopnie)
 			{
-				AddChild(karta);
+				if (karta.Visible)
+				{
+					karta.Visible = false;
+					karta.InputRayPickable = false;
+				} 
+				continue; 
 			}
+			if (lewaKrawedzIndex == null)
+			{
+				lewaKrawedzIndex = wirtualnyIndex;
+				idxPierwszej = i;
+			}
+			prawaKrawedzIndex = wirtualnyIndex;
+    		idxOstatniej = i;
+			if (!karta.Visible)
+			{
+				karta.Visible = true;
+				karta.InputRayPickable = true;	
+			}
+			
+			float aktualnyKatRadiany = Mathf.DegToRad(aktualnyKatStopnie);
+			float x = Mathf.Sin(aktualnyKatRadiany) * szerokoscLuku;
+			float z = -(1.0f - Mathf.Cos(aktualnyKatRadiany)) * glebokoscLuku;
 
-			Vector2 nowaPozycja = new Vector2(pozycjaStartowaX + (i * odstep), pozycjaY);
-			karta.UstawSkale(skala);
-			karta.Show();
-			karta.InputPickable = true;
-			karta.CreateTween().TweenProperty(karta, "position", nowaPozycja, 0.2);
-			karta.UstawOryginalnaPozycje(pozycjaY);
-			karta.ZIndex = 10 + i;
+			float y = 0; 
+
+			Vector3 nowaPozycja = centrumMarkera + new Vector3(x, y, z);
+			Vector3 nowaRotacja = new Vector3(-60, aktualnyKatStopnie * 0.5f, 0);
+
+			if(karta.GetParent() == null)
+				gameClient.SpawnGraczGlowny.GetParent().AddChild(karta);
+
+			karta.InputRayPickable = true;
+			karta.GlobalPosition = nowaPozycja;
+			karta.RotationDegrees = nowaRotacja;
+			
+			karta.UstawOryginalnaPozycje(nowaPozycja);
+			karta.DomyslnaRotacja = nowaRotacja;
+			karta.UstawSkale(0.8f);
+		}
+		if (LewyNapis != null)
+		{
+			if (lewaKrawedzIndex.HasValue && idxPierwszej > 0)
+			{
+				LewyNapis.Visible = true;
+				int ileUkrytych = idxPierwszej;
+            	LewyNapis.Text = $"+{ileUkrytych}";
+				UstawObiektNaLuku(LewyNapis, lewaKrawedzIndex.Value - 1.0f, 0f);
+			}
+			else
+				LewyNapis.Visible = false;
+		}
+		if (PrawyNapis != null)
+		{
+			if (prawaKrawedzIndex.HasValue && idxOstatniej < iloscKart - 1)
+			{
+				PrawyNapis.Visible = true;
+				int ileUkrytych = (iloscKart - 1) - idxOstatniej;
+				PrawyNapis.Text = $"+{ileUkrytych}";
+				UstawObiektNaLuku(PrawyNapis, prawaKrawedzIndex.Value + 1.0f, 0f);
+			}
+			else
+				PrawyNapis.Visible = false;
 		}
 	}
-
 	private void RozmiescKartyWRece()
 	{
 		if (gameClient == null) return;
 		if (gameClient.ListaGraczy[0].rekaGracza == null || gameClient.ListaGraczy[0].rekaGracza.Count == 0) return;
-			RozmiescKartyWRece(gameClient.ListaGraczy[0].rekaGracza);
+		RozmiescKartyWRece(gameClient.ListaGraczy[0].rekaGracza);
+	}
+	private void UstawObiektNaLuku(Node3D obiekt, float wirtualnyIndex, float yOffset)
+	{
+		float szerokoscLuku = -10.0f;
+		float glebokoscLuku = -15.0f;
+		float aktualnyKatStopnie = wirtualnyIndex * katNaKarte;
+		float aktualnyKatRadiany = Mathf.DegToRad(aktualnyKatStopnie);
+		float x = Mathf.Sin(aktualnyKatRadiany) * szerokoscLuku;
+		float z = -(1.0f - Mathf.Cos(aktualnyKatRadiany)) * glebokoscLuku;
+		z -= Mathf.Abs(wirtualnyIndex) * 0.15f;
+		Vector3 centrum = gameClient.SpawnGraczGlowny.GlobalPosition;
+		obiekt.GlobalPosition = centrum + new Vector3(x, yOffset, z);
+		obiekt.RotationDegrees = new Vector3(-60, aktualnyKatStopnie * 0.5f, 0);
+	}
+	private void AktualizujLicznikKart(int ilosscKart)
+	{
+		if(LewyNapis == null || PrawyNapis == null) return;
+		if(ilosscKart <= maxWidocznychKart)
+		{
+			LewyNapis.Visible = false;
+			PrawyNapis.Visible = false;
+			return;
+		}
+		float polowaReki = (ilosscKart - 1) / 2.0f;
+		LewyNapis.Visible = docelowyScrollIndex > -polowaReki;
+		PrawyNapis.Visible = docelowyScrollIndex < polowaReki;
+	}
+	public void UstawKierunekStrzalek(bool czyZgodnie)
+    {
+        if (statusPanel != null)
+        {
+            statusPanel.UstawKierunek(czyZgodnie);
+        }
+    }
+	public void AktualizujPrzeciwnikow()
+	{
+		if(gameClient == null || gameClient.ListaGraczy == null) return;
+		var graczLokalny = gameClient.ListaGraczy.Find(g => g.CzyToGraczLokalny);
+		if(graczLokalny == null) return;
+
+		if (ProfilLewy != null) ProfilLewy.Visible = false;
+		if (ProfilGorny != null) ProfilGorny.Visible = false;
+		if (ProfilPrawy != null) ProfilPrawy.Visible = false;
+
+		int mojIndex = gameClient.ListaGraczy.IndexOf(graczLokalny);
+		int liczbaGraczy = gameClient.ListaGraczy.Count;
+		long idGraczaTury = gameClient.AktualnyGraczTuryId;
+
+		for (int i = 0; i < liczbaGraczy; i++)
+		{
+			var innyGracz = gameClient.ListaGraczy[i];
+			if (innyGracz.CzyToGraczLokalny) continue;
+			int offset = (i - mojIndex + liczbaGraczy) % liczbaGraczy;
+			ProfilPrzeciwnika profilPrzeciwnika = null;
+			if(liczbaGraczy == 2)
+				profilPrzeciwnika = ProfilGorny;
+			else 
+			{
+				if (offset == 1) profilPrzeciwnika = ProfilLewy;
+				else if (offset == 2) profilPrzeciwnika = ProfilGorny;
+				else if (offset == 3) profilPrzeciwnika = ProfilPrawy;
+			}
+			if (profilPrzeciwnika != null)
+			{
+				profilPrzeciwnika.Visible = true;
+				bool czyJegoTura = (innyGracz.IdGracza == idGraczaTury);
+				profilPrzeciwnika.UstawDane(innyGracz.Nazwa, czyJegoTura);
+				profilPrzeciwnika.AktualizujKarty(innyGracz.LiczbaKart);
+			}
+		}
 	}
 }

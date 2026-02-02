@@ -12,11 +12,11 @@ public partial class DebugCardMenu : CanvasLayer
     public void Inicjalizuj(GameClient logika)
     {
         logikaGry = logika;
-        WygenerujPrzyciski();
     }
     public override void _Ready()
     {
         grid = GetNode<Control>("ScrollContainer/GridContainer");
+        WygenerujPrzyciski();
         Hide();
     }
     private void WygenerujPrzyciski()
@@ -49,7 +49,8 @@ public partial class DebugCardMenu : CanvasLayer
 
         btn.Pressed += () =>
         {
-            //logikaGry.Debug_DodajKarte(kolor, wartosc);
+            GD.Print($"[DEBUG] Proszę o kartę: {kolor} {wartosc}");
+            logikaGry.NetworkManager.Rpc(nameof(NetworkManager.Debug_PoprosOKarte), kolor, wartosc);
         };
         grid.AddChild(btn);
     }
@@ -60,4 +61,5 @@ public partial class DebugCardMenu : CanvasLayer
             if (Visible) Hide(); else Show();
         }
     }
+    
 }

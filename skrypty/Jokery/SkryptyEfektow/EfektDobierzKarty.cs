@@ -11,9 +11,4 @@ public partial class EfektDobierzKarty : EfektJokera
         server.networkManager.Rpc(nameof(NetworkManager.ZaktualizujDlug), server.turnManager.DlugDobierania);
         GD.Print($"[JokerEffect] Zwiększono dług o {Ilosc}.");
     }
-    public override void PoZagraniuKarty(GameServer server, DaneKarty karta)
-    {
-        if(karta.Kolor == "DzikaKarta")
-            Wykonaj(server);
-    }
 }

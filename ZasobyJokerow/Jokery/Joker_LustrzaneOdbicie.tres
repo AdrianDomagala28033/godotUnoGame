@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="DaneJokera" load_steps=5 format=3 uid="uid://cqvtmxmyv0bxn"]
+
+[ext_resource type="Script" uid="uid://deh6hbonp17uu" path="res://skrypty/Jokery/EfektJokera.cs" id="1_q5tgf"]
+[ext_resource type="Resource" uid="uid://b4f6d1to5jeip" path="res://ZasobyJokerow/Efekty/Efekt_Joker_LustrzaneOdbicie.tres" id="2_3dpue"]
+[ext_resource type="Texture2D" uid="uid://drolva0ipyfxh" path="res://grafika/jokery/IMG_0125.PNG" id="3_4qrrm"]
+[ext_resource type="Script" uid="uid://dfmqegr3x3w7p" path="res://skrypty/Jokery/DaneJokera.cs" id="4_b7084"]
+
+[resource]
+script = ExtResource("4_b7084")
+Id = "Joker_LustrzaneOdbicie"
+Nazwa = "Lustrzane Odbicie"
+Opis = "Gdy masz dług, zagraj kartę odwrócenia aby odbić atak na przeciwnika"
+Ikona = ExtResource("3_4qrrm")
+Efekty = Array[ExtResource("1_q5tgf")]([ExtResource("2_3dpue")])
+metadata/_custom_type_script = "uid://dfmqegr3x3w7p"

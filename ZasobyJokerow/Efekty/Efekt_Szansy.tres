@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="EfektSzansy" load_steps=3 format=3 uid="uid://bkwj7o61h180r"]
+
+[ext_resource type="Script" uid="uid://dg1oj3ly10rh5" path="res://skrypty/Jokery/SkryptyEfektow/EfektSzansy.cs" id="1_gp871"]
+[ext_resource type="Resource" uid="uid://dax4bxuxoqj1q" path="res://ZasobyJokerow/Efekty/Efekt_Joker_UsmiechFortuny.tres" id="1_vaxfw"]
+
+[resource]
+script = ExtResource("1_gp871")
+EfektSukcesu = ExtResource("1_vaxfw")
+metadata/_custom_type_script = "uid://dg1oj3ly10rh5"

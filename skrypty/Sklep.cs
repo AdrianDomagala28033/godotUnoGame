@@ -87,7 +87,7 @@ public partial class Sklep : Control
     }
     public void ZglosGotowosc()
     {
-        NetworkManager.Rpc(nameof(NetworkManager.ZglosGotowosc));
+        NetworkManager.Rpc(nameof(NetworkManager.ObsluzZgloszenieGotowosci));
     }
     private void AktualizujLicznikGotowych()
     {
@@ -102,7 +102,7 @@ public partial class Sklep : Control
                 {
                     GD.Print("[SERVER] Wszyscy gotowi na Scoreboardzie! Zarządzam przejście do Sklepu.");
                     foreach(var g in NetworkManager.ListaGraczy) g.CzyGotowy = false;
-                    NetworkManager.Rpc(nameof(NetworkManager.WyjdzZeSklepu), "res://sceny/rozgrywka/stol_gry.tscn");
+                    NetworkManager.Rpc(nameof(NetworkManager.WyjdzZeSklepu), "res://sceny/rozgrywka/StolGry.tscn");
                 }
             }
         }

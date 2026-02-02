@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="DaneJokera" load_steps=5 format=3 uid="uid://b68b6soxbjky6"]
+
+[ext_resource type="Script" uid="uid://deh6hbonp17uu" path="res://skrypty/Jokery/EfektJokera.cs" id="1_5d0vx"]
+[ext_resource type="Resource" uid="uid://bkwj7o61h180r" path="res://ZasobyJokerow/Efekty/Efekt_Szansy.tres" id="2_sus63"]
+[ext_resource type="Texture2D" uid="uid://drolva0ipyfxh" path="res://grafika/jokery/IMG_0125.PNG" id="3_kcbjp"]
+[ext_resource type="Script" uid="uid://dfmqegr3x3w7p" path="res://skrypty/Jokery/DaneJokera.cs" id="4_s11l5"]
+
+[resource]
+script = ExtResource("4_s11l5")
+Id = "Joker_UsmiechFortuny"
+Nazwa = "Uśmiech fortuny"
+Opis = "Masz 5% szans na wyzerowanie twojego długu"
+Ikona = ExtResource("3_kcbjp")
+RzadkoscJokera = 1
+Efekty = Array[ExtResource("1_5d0vx")]([ExtResource("2_sus63")])
+metadata/_custom_type_script = "uid://dfmqegr3x3w7p"

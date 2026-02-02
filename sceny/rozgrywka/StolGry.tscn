@@ -1,0 +1,94 @@
+[gd_scene load_steps=12 format=3 uid="uid://bfg00o1b177g0"]
+
+[ext_resource type="Texture2D" uid="uid://461pddqncen5" path="res://grafika/background.png" id="1_86uuo"]
+[ext_resource type="Script" uid="uid://cco2uosw6i3gr" path="res://skrypty/GameClient.cs" id="1_i7r0k"]
+[ext_resource type="PackedScene" uid="uid://w0g8vtlxuecf" path="res://sceny/rozgrywka/Karta3D.tscn" id="2_3yl2b"]
+[ext_resource type="Script" uid="uid://b8wba46pi72hn" path="res://skrypty/managers/UIManager.cs" id="2_43gxc"]
+[ext_resource type="PackedScene" uid="uid://cb7mkcvu62nyl" path="res://sceny/rozgrywka/SzablonWyboruKoloru.tscn" id="3_3yl2b"]
+[ext_resource type="PackedScene" uid="uid://dauiutbc7k8r8" path="res://sceny/rozgrywka/StatusPanel.tscn" id="3_tromq"]
+[ext_resource type="PackedScene" uid="uid://dp4mbvqxfa7jc" path="res://sceny/rozgrywka/JokerPanel.tscn" id="4_i7r0k"]
+[ext_resource type="PackedScene" uid="uid://bqiqix6yb01jy" path="res://sceny/rozgrywka/ProfilPrzeciwnika.tscn" id="5_2nla8"]
+[ext_resource type="PackedScene" uid="uid://cjmlf41tyn7in" path="res://sceny/rozgrywka/scoreboard.tscn" id="5_3yl2b"]
+[ext_resource type="PackedScene" uid="uid://gsirdw7aqbdq" path="res://sceny/rozgrywka/StosDobierania.tscn" id="9_4ir6b"]
+
+[sub_resource type="Environment" id="Environment_4ir6b"]
+ssao_enabled = true
+glow_enabled = true
+
+[node name="StolGry" type="Node3D" node_paths=PackedStringArray("PozycjaStosuZagranych", "SpawnGraczGlowny", "UIManager")]
+script = ExtResource("1_i7r0k")
+PozycjaStosuZagranych = NodePath("StosKart")
+SpawnGraczGlowny = NodePath("MiejscaGraczy/SpawnGraczGlowny")
+SzablonKarty = ExtResource("2_3yl2b")
+SzablonWyboruKoloru = ExtResource("3_3yl2b")
+UIManager = NodePath("WarstwaUI/UIManager")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+axis = 1
+texture = ExtResource("1_86uuo")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.57357645, 0.81915206, 0, -0.81915206, 0.57357645, 0, 5.99296, 7)
+environment = SubResource("Environment_4ir6b")
+fov = 60.0
+size = 6.2
+
+[node name="StosKart" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 2.3225214)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.085278414, 0.5095812, -0.8561861, -0.09391692, 0.8513793, 0.51607466, 0.991921, 0.1244204, -0.024745977, -5.2851477, 3.9269748, 0.01765871)
+
+[node name="MiejscaGraczy" type="Node3D" parent="."]
+
+[node name="SpawnGraczGlowny" type="Marker3D" parent="MiejscaGraczy"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.9853764)
+
+[node name="LabelLewo" type="Label3D" parent="MiejscaGraczy/SpawnGraczGlowny"]
+pixel_size = 0.015
+billboard = 1
+
+[node name="LabelPrawo" type="Label3D" parent="MiejscaGraczy/SpawnGraczGlowny"]
+pixel_size = 0.015
+billboard = 1
+
+[node name="PrzeciwnikLewo" parent="MiejscaGraczy" instance=ExtResource("5_2nla8")]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -5.073601, 0, 0)
+
+[node name="PrzeciwnikGora" parent="MiejscaGraczy" instance=ExtResource("5_2nla8")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 2.5354834, -0.3958707)
+
+[node name="PrzeciwnikPrawo" parent="MiejscaGraczy" instance=ExtResource("5_2nla8")]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 7.4468136, 0, 0)
+
+[node name="WarstwaUI" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="JokerPanel" parent="WarstwaUI" instance=ExtResource("4_i7r0k")]
+visible = false
+offset_right = 4.0
+metadata/_edit_use_anchors_ = true
+
+[node name="Scoreboard" parent="WarstwaUI" instance=ExtResource("5_3yl2b")]
+visible = false
+
+[node name="UIManager" type="Control" parent="WarstwaUI" node_paths=PackedStringArray("jokerPanel", "LewyNapis", "PrawyNapis", "ProfilLewy", "ProfilGorny", "ProfilPrawy")]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("2_43gxc")
+jokerPanel = NodePath("../JokerPanel")
+LewyNapis = NodePath("../../MiejscaGraczy/SpawnGraczGlowny/LabelLewo")
+PrawyNapis = NodePath("../../MiejscaGraczy/SpawnGraczGlowny/LabelPrawo")
+ProfilLewy = NodePath("../../MiejscaGraczy/PrzeciwnikLewo")
+ProfilGorny = NodePath("../../MiejscaGraczy/PrzeciwnikGora")
+ProfilPrawy = NodePath("../../MiejscaGraczy/PrzeciwnikPrawo")
+metadata/_edit_use_anchors_ = true
+
+[node name="StatusPanel" parent="WarstwaUI/UIManager" instance=ExtResource("3_tromq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2860377, 1.549797, 2.698408)
+metadata/_edit_use_anchors_ = true
+
+[node name="StosDobierania" parent="." instance=ExtResource("9_4ir6b")]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 3.1558156, 0, 1.5278866)

@@ -98,7 +98,7 @@ public partial class MainMenu : Control
     #region lobby
     private void HandleGotowy()
     {
-        networkManager.Rpc(nameof(NetworkManager.ZglosGotowosc)); 
+        networkManager.Rpc(nameof(NetworkManager.ObsluzZgloszenieGotowosci)); 
     }
     private void PokazLobby()
     {
@@ -144,10 +144,10 @@ public partial class MainMenu : Control
     {
         foreach (var gracz in networkManager.ListaGraczy)
         {
-            gracz.CzyGotowy = false;
-            networkManager.Rpc(nameof(NetworkManager.ZaktualizujStanGotowosciClienta), gracz.Id, false);   
+            gracz.CzyGotowy = false; 
+            networkManager.WyslijGotowosc(); 
         }
-        networkManager.Rpc(nameof(NetworkManager.ZaladujGre), "res://sceny/rozgrywka/stol_gry.tscn");
+        networkManager.Rpc(nameof(NetworkManager.ZaladujGre), "res://sceny/rozgrywka/StolGry.tscn");
     }
 #endregion
 #region widok tworzenia i dolaczania do gry

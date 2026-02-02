@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://w0g8vtlxuecf"]
+
+[ext_resource type="Script" uid="uid://dxe8e5cy06l0j" path="res://skrypty/Karta.cs" id="1_68htb"]
+[ext_resource type="Texture2D" uid="uid://cw7kkgcgsckqa" path="res://grafika/karty_grafika/back/rewers.png" id="1_86dkd"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_86dkd"]
+size = Vector3(1.332283, 2.0906124, 0.20922852)
+
+[node name="Karta3D" type="Area3D"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
+script = ExtResource("1_68htb")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.014110565, 0.005509376, 0.008422851)
+shape = SubResource("BoxShape3D_86dkd")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(0.85, 0, 0, 0, 0.85, 0, 0, 0, 0.85, 0, 0, 0)
+texture = ExtResource("1_86dkd")

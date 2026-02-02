@@ -21,6 +21,7 @@ public partial class NetworkManager : Node
     public event Action<string, string> OnStosZaktualizowany;
     [Signal] public delegate void PokazDraftEventHandler(string[] idJokerow);
     [Signal] public delegate void JokeryZmienioneEventHandler(string[] aktualneJokery);
+    [Signal] public delegate void LiczbaKartZmienionaEventHandler(long idGracza, int nowaIlosc);
 
     public override void _Ready()
     {
@@ -61,17 +62,24 @@ public partial class NetworkManager : Node
     {
         long id = Multiplayer.GetUniqueId();
         string nazwa = NazwaGraczaLokalnego;
-        Rpc(nameof(ZarejestrujNowegoGracza), id, nazwa, false);
+        RpcId(1, nameof(ZadanieDolaczenia), id, nazwa);
         GD.Print("Hurra! Udało się połączyć z serwerem!");
         OnPolaczono?.Invoke();
+    }
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false)]
+    public void ZadanieDolaczenia(long id, string nazwa)
+    {
+        if (!Multiplayer.IsServer()) return;
+        Rpc(nameof(ZarejestrujNowegoGracza), id, nazwa, false);
     }
     
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     public void ZarejestrujNowegoGracza(long id, string nazwa, bool gotowosc)
     {
+        if (ListaGraczy.Any(g => g.Id == id)) return;
         ListaGraczy.Add(new DaneGracza(id, nazwa, gotowosc));
         OnDolaczono?.Invoke();
-        GD.Print("Dodano nowego gracza");
+        GD.Print($"Dodano gracza ID: {id}");
     }
     public void OnPeerConnected(long id)
     {
@@ -100,22 +108,32 @@ public partial class NetworkManager : Node
     }
     #endregion
     #region przesył informacji
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    public void ZglosGotowosc()
+    public void WyslijGotowosc()
     {
-        if(!Multiplayer.IsServer()) return;
-        long idGracza = Multiplayer.GetRemoteSenderId();
-        var gracz = ListaGraczy.FirstOrDefault(g => g.Id == idGracza);
+        RpcId(1, nameof(ObsluzZgloszenieGotowosci));
+    }
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false)]
+    public void ObsluzZgloszenieGotowosci()
+    {
+        long idNadawcy = Multiplayer.GetRemoteSenderId();
+        var gracz = ListaGraczy.FirstOrDefault(g => g.Id == idNadawcy);
         if(gracz != null)
         {
             gracz.CzyGotowy = !gracz.CzyGotowy;
-            Rpc(nameof(ZaktualizujStanGotowosciClienta), idGracza, gracz.CzyGotowy);
+            Rpc(nameof(ZaktualizujStanGotowosciClienta), idNadawcy, gracz.CzyGotowy);
         }
     }
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true)]
     public void ZaktualizujStanGotowosciClienta(long idGracza, bool czyGotowy)
     {
-        ListaGraczy.Find(g => g.Id == idGracza).CzyGotowy = czyGotowy;
+        var gracz = ListaGraczy.FirstOrDefault(g => g.Id == idGracza);
+        if (gracz == null)
+        {
+            GD.PrintErr($"[NetworkManager] Błąd! Próba ustawienia gotowości dla nieznanego gracza ID: {idGracza}");
+            return;
+        }
+
+        gracz.CzyGotowy = czyGotowy;
         OnListaGraczyZmieniona?.Invoke();
     }
 
@@ -226,6 +244,15 @@ public partial class NetworkManager : Node
             client.UIManager.UstawKolor(kolor);
     }
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    public void ZaktualizujKierunekGry(bool czyZgodnie)
+    {
+        var client = GetNodeOrNull<GameClient>("/root/StolGry");
+        if(client != null && client.UIManager != null)
+        {
+            client.UIManager.UstawKierunekStrzalek(czyZgodnie);
+        }
+    }
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     public void DobierzKarty()
     {
         if (Multiplayer.IsServer())
@@ -233,7 +260,20 @@ public partial class NetworkManager : Node
             long idNadawcy = Multiplayer.GetRemoteSenderId();
             if(idNadawcy == 0) idNadawcy = 1;
             var server = GetNode<GameServer>("GameServer");
-            server.ObsluzDobranie(idNadawcy);
+            server.ObsluzDobranie(idNadawcy, server.turnManager.DlugDobierania);
+        }
+    }
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    public void ZaktualizujLiczbeKartGracza(long idGracza, int nowaIlosc)
+    {
+        var gracz = ListaGraczy.FirstOrDefault(g => g.Id == idGracza);
+        if(gracz != null)
+        {
+            gracz.RekaGracza.Clear();
+            for (int i = 0; i < nowaIlosc; i++)
+                gracz.RekaGracza.Add(new DaneKarty("Rewers", "0"));
+            EmitSignal(SignalName.LiczbaKartZmieniona, idGracza, nowaIlosc);
+            GD.Print($"[NETWORK] Zaktualizowano liczbę kart gracza {idGracza} na: {nowaIlosc}");
         }
     }
 #endregion
@@ -345,6 +385,34 @@ public partial class NetworkManager : Node
         }
         ZaladujGre(sciezka);
     }
+    #region debug menu
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    public void Debug_PoprosOJokera(string idJokera)
+    {
+        if (Multiplayer.IsServer())
+        {
+            long idGracza = Multiplayer.GetRemoteSenderId();
+            if(idGracza == 0) idGracza = 1;
+            var server = GetNode<GameServer>("GameServer");
+            server.Debug_PrzyznajJokera(idJokera, idGracza);
+        }
+    }
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    public void Debug_PoprosOKarte(string kolor, string wartosc)
+    {
+        if (Multiplayer.IsServer())
+        {
+            long idNadawcy = Multiplayer.GetRemoteSenderId();
+            if (idNadawcy == 0) idNadawcy = 1; // Fix dla Hosta
+
+            var server = GetNodeOrNull<GameServer>("GameServer");
+            if (server != null)
+            {
+                server.Debug_DodajKarteGraczowi(idNadawcy, kolor, wartosc);
+            }
+        }
+    }
+    #endregion
     #endregion
     #endregion
 }

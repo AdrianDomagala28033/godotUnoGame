@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="DaneJokera" load_steps=5 format=3 uid="uid://b37li850jp2xf"]
+
+[ext_resource type="Script" uid="uid://deh6hbonp17uu" path="res://skrypty/Jokery/EfektJokera.cs" id="1_uasro"]
+[ext_resource type="Resource" uid="uid://dnne5c5byaosv" path="res://ZasobyJokerow/Efekty/Efekt_Joker_WszystkoNaJednaKarte.tres" id="2_c5a0s"]
+[ext_resource type="Texture2D" uid="uid://drolva0ipyfxh" path="res://grafika/jokery/IMG_0125.PNG" id="3_o1nau"]
+[ext_resource type="Script" uid="uid://dfmqegr3x3w7p" path="res://skrypty/Jokery/DaneJokera.cs" id="4_tslkn"]
+
+[resource]
+script = ExtResource("4_tslkn")
+Id = "Joker_WszystkoNaJednaKarte"
+Nazwa = "Wszystko na jedną kartę"
+Opis = "Gdy masz dlug, twój dlug się zmienia na losowa wartość od 0 do 10"
+Ikona = ExtResource("3_o1nau")
+Efekty = Array[ExtResource("1_uasro")]([ExtResource("2_c5a0s")])
+metadata/_custom_type_script = "uid://dfmqegr3x3w7p"
