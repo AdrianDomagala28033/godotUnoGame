@@ -34,7 +34,7 @@ fov = 60.0
 size = 6.2
 
 [node name="StosKart" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 2.3225214)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.65280366, 0.5, 2.3225214)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.085278414, 0.5095812, -0.8561861, -0.09391692, 0.8513793, 0.51607466, 0.991921, 0.1244204, -0.024745977, -5.2851477, 3.9269748, 0.01765871)
@@ -53,13 +53,23 @@ pixel_size = 0.015
 billboard = 1
 
 [node name="PrzeciwnikLewo" parent="MiejscaGraczy" instance=ExtResource("5_2nla8")]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -5.073601, 0, 0)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -4.2610393, 2.4731255, 2.9814992)
+SkalaKarty = 0.7
+OdwrocLicznik = true
+PozycjaNazwy = Vector3(0, 0.4, -0.12)
+PozycjaAwataru = Vector3(0, 0, -0.4)
 
 [node name="PrzeciwnikGora" parent="MiejscaGraczy" instance=ExtResource("5_2nla8")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 2.5354834, -0.3958707)
+transform = Transform3D(-1, 0, -1.509958e-07, 0, 1, 0, 1.509958e-07, 0, -1, -0.10771799, 2.5354834, 1.2584107)
+SkalaKarty = 0.6
+PozycjaNazwy = Vector3(0, 0.4, 0.2)
+PozycjaAwataru = Vector3(0, 0.4, -0.3)
 
 [node name="PrzeciwnikPrawo" parent="MiejscaGraczy" instance=ExtResource("5_2nla8")]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 7.4468136, 0, 0)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 3.8981533, 2.6950474, 3.4246874)
+SkalaKarty = 0.7
+PozycjaNazwy = Vector3(0, 0.4, 0.1)
+PozycjaAwataru = Vector3(0, 0, 0.4)
 
 [node name="WarstwaUI" type="CanvasLayer" parent="."]
 layer = 10
@@ -87,8 +97,8 @@ ProfilPrawy = NodePath("../../MiejscaGraczy/PrzeciwnikPrawo")
 metadata/_edit_use_anchors_ = true
 
 [node name="StatusPanel" parent="WarstwaUI/UIManager" instance=ExtResource("3_tromq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2860377, 1.549797, 2.698408)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6744254, 1.549797, 2.698408)
 metadata/_edit_use_anchors_ = true
 
 [node name="StosDobierania" parent="." instance=ExtResource("9_4ir6b")]
-transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 3.1558156, 0, 1.5278866)
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 2.8245225, 0, 1.5278866)

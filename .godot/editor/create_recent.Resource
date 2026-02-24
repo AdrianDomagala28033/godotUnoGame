@@ -1,7 +1,0 @@
-EfektSzansy
-DaneJokera
-EfektLimituDobierania
-EfektLosowaIloscDobierania
-EfektOdbicia
-EfektDobieraniaZKartWRece
-EfektDobierzKarty

@@ -50,6 +50,7 @@ public partial class GameClient : Node3D
     {
         ListaGraczy = new List<Gracz>();
         NetworkManager = GetNode<NetworkManager>("/root/NetworkManager");
+
         NetworkManager.OnKartyOdebrane += HandleKartyOdebrane;
         NetworkManager.OnTuraUstawiona += HandleTuraUstawiona;
         NetworkManager.OnStosZaktualizowany += HandleStosZaktualizowany;

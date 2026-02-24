@@ -112,18 +112,28 @@ public partial class NetworkManager : Node
     {
         RpcId(1, nameof(ObsluzZgloszenieGotowosci));
     }
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false)]
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     public void ObsluzZgloszenieGotowosci()
     {
         long idNadawcy = Multiplayer.GetRemoteSenderId();
+        if (idNadawcy == 0) idNadawcy = 1;
+
         var gracz = ListaGraczy.FirstOrDefault(g => g.Id == idNadawcy);
         if(gracz != null)
         {
-            gracz.CzyGotowy = !gracz.CzyGotowy;
-            Rpc(nameof(ZaktualizujStanGotowosciClienta), idNadawcy, gracz.CzyGotowy);
+            bool nowyStan = !gracz.CzyGotowy;
+            ZaktualizujStanGotowosciClienta(idNadawcy, nowyStan);
+            Rpc(nameof(ZaktualizujStanGotowosciClienta), idNadawcy, nowyStan);
+            foreach (var peer in Multiplayer.GetPeers())
+                if (peer != 1)
+                    RpcId(peer, nameof(ZaktualizujStanGotowosciClienta), idNadawcy, nowyStan);
+            
+            GD.Print($"[SERVER] Gracz {idNadawcy} zmienił gotowość na: {nowyStan}");
         }
+        else
+            GD.PrintErr($"[SERVER] BŁĄD! Nie znaleziono gracza o ID: {idNadawcy}");
     }
-    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true)]
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false)]
     public void ZaktualizujStanGotowosciClienta(long idGracza, bool czyGotowy)
     {
         var gracz = ListaGraczy.FirstOrDefault(g => g.Id == idGracza);
@@ -282,7 +292,7 @@ public partial class NetworkManager : Node
     public void PokazTabliceWynikow(long[] idGraczy, int[] miejscaGraczy, int[] wynikGraczy, int numerRundy)
     {
         var client = GetTree().Root.GetNode<GameClient>("StolGry");
-        var scoreboard = GetTree().Root.GetNode<Scoreboard>("StolGry/CanvasLayer/Scoreboard");
+        var scoreboard = GetTree().Root.GetNode<Scoreboard>("StolGry/WarstwaUI/Scoreboard");
         for (int i = 0; i < idGraczy.Length; i++)
         {
             long id = idGraczy[i];

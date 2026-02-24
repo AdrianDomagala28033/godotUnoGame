@@ -1,20 +1,22 @@
 [gd_scene load_steps=4 format=3 uid="uid://bqiqix6yb01jy"]
 
-[ext_resource type="Script" uid="uid://2uqv2bt8pety" path="res://ProfilPrzeciwnika.cs" id="1_0htw4"]
+[ext_resource type="Script" uid="uid://2uqv2bt8pety" path="res://skrypty/ProfilPrzeciwnika.cs" id="1_0htw4"]
 [ext_resource type="PackedScene" uid="uid://w0g8vtlxuecf" path="res://sceny/rozgrywka/Karta3D.tscn" id="2_imdk7"]
 [ext_resource type="Texture2D" uid="uid://bekvc6jodgq8n" path="res://grafika/UI/kolor.png" id="2_mmph1"]
 
-[node name="ProfilPrzeciwnika" type="Node3D" node_paths=PackedStringArray("NazwaGracza", "TurnMarker", "KartyContainer")]
+[node name="ProfilPrzeciwnika" type="Node3D" node_paths=PackedStringArray("NazwaGracza", "AwatarGracza", "TurnMarker", "KartyContainer")]
 script = ExtResource("1_0htw4")
 NazwaGracza = NodePath("InfoPanel/NazwaGracza")
+AwatarGracza = NodePath("InfoPanel/TloAwatar")
 TurnMarker = NodePath("InfoPanel/TurnMaker")
 KartyContainer = NodePath("KartyContainer")
 SzablonKarty = ExtResource("2_imdk7")
 
 [node name="InfoPanel" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.1015682, 0, -0.47875857)
 
 [node name="TloAwatar" type="Sprite3D" parent="InfoPanel"]
+transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 0, 0)
+billboard = 1
 texture = ExtResource("2_mmph1")
 
 [node name="Awatar" type="Sprite3D" parent="InfoPanel/TloAwatar"]
@@ -23,7 +25,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.0061091)
 [node name="TurnMaker" type="Sprite3D" parent="InfoPanel"]
 
 [node name="NazwaGracza" type="Label3D" parent="InfoPanel"]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -0.084724426, -0.3483348, -0.36492765)
+transform = Transform3D(0.8571429, 0, 0, 0, 0.8571429, 0, 0, 0, 0.8571429, 0, 0.24000001, 0)
+billboard = 1
+vertical_alignment = 2
 
 [node name="KartyContainer" type="Node3D" parent="."]
-transform = Transform3D(-0.8, -6.9938224e-08, 3.0570967e-15, 0, -3.4969112e-08, -0.8, 6.9938224e-08, -0.8, 3.4969112e-08, 0, 0, -1.0080454)
+transform = Transform3D(-0.8, -6.9938224e-08, 3.0570967e-15, 0, -3.4969112e-08, -0.8, 6.9938224e-08, -0.8, 3.4969112e-08, 0, -0.67388666, 0)
