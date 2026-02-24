@@ -122,11 +122,11 @@ public partial class NetworkManager : Node
         if(gracz != null)
         {
             bool nowyStan = !gracz.CzyGotowy;
-            ZaktualizujStanGotowosciClienta(idNadawcy, nowyStan);
             Rpc(nameof(ZaktualizujStanGotowosciClienta), idNadawcy, nowyStan);
-            foreach (var peer in Multiplayer.GetPeers())
-                if (peer != 1)
-                    RpcId(peer, nameof(ZaktualizujStanGotowosciClienta), idNadawcy, nowyStan);
+            ZaktualizujStanGotowosciClienta(idNadawcy, nowyStan);
+            // foreach (var peer in Multiplayer.GetPeers())
+            //     if (peer != 1)
+            //         RpcId(peer, nameof(ZaktualizujStanGotowosciClienta), idNadawcy, nowyStan);
             
             GD.Print($"[SERVER] Gracz {idNadawcy} zmienił gotowość na: {nowyStan}");
         }

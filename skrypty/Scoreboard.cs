@@ -54,7 +54,7 @@ public partial class Scoreboard : Control
                 przycisk.Disabled = true;
                 przycisk.Text = "Czekaj...";
             }
-            gameClient.NetworkManager.Rpc(nameof(NetworkManager.ObsluzZgloszenieGotowosci));
+            gameClient.NetworkManager.WyslijGotowosc();
         }
     }
     public void AktualizujLicznikGotowych()

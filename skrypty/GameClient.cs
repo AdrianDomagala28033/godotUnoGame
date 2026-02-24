@@ -101,6 +101,16 @@ public partial class GameClient : Node3D
         scoreboard.Inicjalizuj(this);
 
     }
+    public override void _ExitTree()
+    {
+        if (this != null && NetworkManager != null)
+        {
+            NetworkManager.OnKartyOdebrane -= HandleKartyOdebrane;
+            NetworkManager.OnTuraUstawiona -= HandleTuraUstawiona;
+            NetworkManager.OnStosZaktualizowany -= HandleStosZaktualizowany;
+            NetworkManager.LiczbaKartZmieniona -= HandleLiczbaKartZmieniona;
+        }
+    }
 
     private void HandleLiczbaKartZmieniona(long idGracza, int nowaIlosc)
     {

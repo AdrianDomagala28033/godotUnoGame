@@ -34,7 +34,7 @@ fov = 60.0
 size = 6.2
 
 [node name="StosKart" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.65280366, 0.5, 2.3225214)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.39349747, 0.5, 2.3225214)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.085278414, 0.5095812, -0.8561861, -0.09391692, 0.8513793, 0.51607466, 0.991921, 0.1244204, -0.024745977, -5.2851477, 3.9269748, 0.01765871)
