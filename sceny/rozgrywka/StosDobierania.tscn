@@ -1,0 +1,28 @@
+[gd_scene load_steps=6 format=3 uid="uid://gsirdw7aqbdq"]
+
+[ext_resource type="Texture2D" uid="uid://cw7kkgcgsckqa" path="res://grafika/karty_grafika/back/rewers.png" id="1_bsbej"]
+[ext_resource type="Script" uid="uid://dscl5ek81x7ak" path="res://skrypty/StosDobierania.cs" id="2_jv2l0"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_jv2l0"]
+size = Vector3(1.64, 0.4, 2.56)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vi12l"]
+albedo_color = Color(0.6789437, 0.6789437, 0.6789437, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_2lxjc"]
+material = SubResource("StandardMaterial3D_vi12l")
+size = Vector3(1.64, 0.4, 2.56)
+
+[node name="Node3D" type="Area3D"]
+script = ExtResource("2_jv2l0")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_jv2l0")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_2lxjc")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.201, 0)
+axis = 1
+texture = ExtResource("1_bsbej")

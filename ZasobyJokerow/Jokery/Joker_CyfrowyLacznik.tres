@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="DaneJokera" load_steps=5 format=3 uid="uid://cc3slp3u04hcf"]
+
+[ext_resource type="Script" uid="uid://deh6hbonp17uu" path="res://skrypty/Jokery/EfektJokera.cs" id="1_dr4sm"]
+[ext_resource type="Resource" uid="uid://con70a4tp4wax" path="res://ZasobyJokerow/Efekty/Efek_Joker_CyfrowyLacznik.tres" id="2_82gpb"]
+[ext_resource type="Texture2D" uid="uid://drolva0ipyfxh" path="res://grafika/jokery/IMG_0125.PNG" id="3_xxp20"]
+[ext_resource type="Script" uid="uid://dfmqegr3x3w7p" path="res://skrypty/Jokery/DaneJokera.cs" id="4_gx1te"]
+
+[resource]
+script = ExtResource("4_gx1te")
+Id = "Joker_CyfrowyLacznik"
+Nazwa = "Cyfrowy Łącznik"
+Opis = "Dodaje 1 do długu za każde 0 i 1 w ręce"
+Ikona = ExtResource("3_xxp20")
+Efekty = Array[ExtResource("1_dr4sm")]([ExtResource("2_82gpb")])
+metadata/_custom_type_script = "uid://dfmqegr3x3w7p"

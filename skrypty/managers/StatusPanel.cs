@@ -1,43 +1,63 @@
 using Godot;
 using System;
 
-public partial class StatusPanel : PanelContainer
+public partial class StatusPanel : Node3D
 {
-	private Label labelDlug;
-	private Label labelKolor;
-	private ColorRect aktualnyKolor;
+	[Export] private Sprite3D KierunekStrzalki;
+	[Export] private Sprite3D WybranyKolor;
+	[Export] private Label3D Label3D;
+	private float mnoznikKierunku = 1.0f;
+    private float predkoscObrotu = -1.0f;
 
     public override void _Ready()
 	{
-		labelDlug = GetNode<Label>("VBoxContainer/LabelDlug");
-		labelKolor = GetNode<Label>("VBoxContainer/LabelKolor");
-		aktualnyKolor = GetNode<ColorRect>("VBoxContainer/LabelKolor/AktualnyKolor");
-
-		if (labelDlug == null) GD.PrintErr("[StatusPanel] Nie znaleziono LabelDlug pod VBoxContainer!");
-		if (labelKolor == null) GD.PrintErr("[StatusPanel] Nie znaleziono LabelKolor pod VBoxContainer!");
-		if (aktualnyKolor == null) GD.PrintErr("[StatusPanel] Nie znaleziono AktuanyKolor (ColorRect) pod VBoxContainer!");
+		if(Label3D != null) Label3D.Text = "0";
+		UstawKolor("brak");
     }
+    public override void _Process(double delta)
+    {
+		if(KierunekStrzalki != null && KierunekStrzalki.Visible)
+		{
+			KierunekStrzalki.RotateY((float)delta * predkoscObrotu * mnoznikKierunku);
+		}
+	}
+
 	public void UstawDlug(int dlug)
 	{
-		if (labelDlug == null) return;
-		labelDlug.Text = $"Musisz dobrać {dlug} kart";
+		if (Label3D == null) return;
+		if(dlug > 0)
+		{
+			Label3D.Text = $"{dlug}";
+		}
 	}
 	public void UstawKolor(string nazwaKoloru)
 	{
-		if (aktualnyKolor == null)
-		{
-			GD.PrintErr($"[StatusPanel] UstawKolor: brak aktualnyKolor. nazwaKoloru={nazwaKoloru}");
-		}
-		Color kolor;
+		if (WybranyKolor == null)
+        {
+            GD.PrintErr("[StatusPanel] Brak przypisanego Sprite3D 'WybranyKolor'!");
+            return;
+        }
+		Color nowyKolor;
 
 		switch (nazwaKoloru.ToLower())
+        {
+            case "czerwony": nowyKolor = Colors.Red; break;
+            case "zielony": nowyKolor = Colors.Green; break;
+            case "niebieski": nowyKolor = Colors.Blue; break;
+            case "zolty": nowyKolor = Colors.Yellow; break;
+            
+            default: nowyKolor = new Color(0.2f, 0.2f, 0.2f); break;
+        }
+		WybranyKolor.Modulate = nowyKolor;
+	}
+	public void UstawKierunek(bool kierunekLewy)
+	{
+		mnoznikKierunku = kierunekLewy ? 1.0f : -1.0f;
+		if(KierunekStrzalki != null)
 		{
-			case "czerwony": kolor = Colors.Red; break;
-			case "zielony": kolor = Colors.Green; break;
-			case "niebieski": kolor = Colors.Blue; break;
-			case "zolty": kolor = Colors.Yellow; break;
-			default: kolor = Colors.Gray; break;
+			float scaleX = kierunekLewy ? 1 : -1;
+            KierunekStrzalki.Scale = new Vector3(scaleX, 1, 1);
 		}
-		aktualnyKolor.Color = kolor;
+		
 	}
 }

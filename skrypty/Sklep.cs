@@ -9,6 +9,7 @@ public partial class Sklep : Control
     [Export] private HBoxContainer ListaJokerow {get; set;}
     [Export] private Button ButtonGotowosci {get; set;}
     public NetworkManager NetworkManager {get; set;}
+    private bool blokadaZmianySceny = false;
 
     public override void _Ready()
     {
@@ -21,6 +22,7 @@ public partial class Sklep : Control
             ButtonGotowosci.Pressed += ZglosGotowosc;
             NetworkManager.OnListaGraczyZmieniona += AktualizujLicznikGotowych;
             AktualizujLicznikGotowych();
+            ButtonGotowosci.Disabled = true;
         }
     }
     public override void _ExitTree()
@@ -29,6 +31,10 @@ public partial class Sklep : Control
         {
             NetworkManager.OnListaGraczyZmieniona -= AktualizujLicznikGotowych;
         }
+    }
+    public override void _EnterTree()
+    {
+        blokadaZmianySceny = false;
     }
 
     private void GenerujOferte(string[] oferta)
@@ -78,6 +84,7 @@ public partial class Sklep : Control
         {
             GD.Print("[SKLEP ERROR] Kolejka draftu jest pusta lub null!");
             KtoWybiera.Text = $"Wszyscy gracze wybrali...";
+            ButtonGotowosci.Disabled = false;
             foreach (var node in ListaJokerow.GetChildren())
             {
                 if(node is Button btn)
@@ -87,7 +94,7 @@ public partial class Sklep : Control
     }
     public void ZglosGotowosc()
     {
-        NetworkManager.Rpc(nameof(NetworkManager.ZglosGotowosc));
+        NetworkManager.WyslijGotowosc();
     }
     private void AktualizujLicznikGotowych()
     {
@@ -98,11 +105,12 @@ public partial class Sklep : Control
             ButtonGotowosci.Text = $"{gotowi}/{wszyscy}";
             if (Multiplayer.IsServer())
             {
-                if(wszyscy > 0 && gotowi == wszyscy)
+                if(wszyscy > 0 && gotowi == wszyscy && !blokadaZmianySceny)
                 {
+                    blokadaZmianySceny = true;
                     GD.Print("[SERVER] Wszyscy gotowi na Scoreboardzie! Zarządzam przejście do Sklepu.");
                     foreach(var g in NetworkManager.ListaGraczy) g.CzyGotowy = false;
-                    NetworkManager.Rpc(nameof(NetworkManager.WyjdzZeSklepu), "res://sceny/rozgrywka/stol_gry.tscn");
+                    NetworkManager.Rpc(nameof(NetworkManager.WyjdzZeSklepu), "res://sceny/rozgrywka/StolGry.tscn");
                 }
             }
         }

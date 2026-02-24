@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="DaneJokera" load_steps=5 format=3 uid="uid://cfjqogloge2k7"]
+
+[ext_resource type="Script" uid="uid://deh6hbonp17uu" path="res://skrypty/Jokery/EfektJokera.cs" id="1_sxm51"]
+[ext_resource type="Resource" uid="uid://boyibg421kex4" path="res://ZasobyJokerow/Efekty/Efek_Joker_DesperackiManewr.tres" id="2_dics8"]
+[ext_resource type="Texture2D" uid="uid://drolva0ipyfxh" path="res://grafika/jokery/IMG_0125.PNG" id="3_mqe5g"]
+[ext_resource type="Script" uid="uid://dfmqegr3x3w7p" path="res://skrypty/Jokery/DaneJokera.cs" id="4_cy60h"]
+
+[resource]
+script = ExtResource("4_cy60h")
+Id = "Joker_DesperackiManewr"
+Nazwa = "Desperacki Manewr"
+Opis = "Jeśli w ręce masz 3 karty lub mniej, dobierz max 5 kart"
+Ikona = ExtResource("3_mqe5g")
+RzadkoscJokera = 1
+Efekty = Array[ExtResource("1_sxm51")]([ExtResource("2_dics8")])
+metadata/_custom_type_script = "uid://dfmqegr3x3w7p"

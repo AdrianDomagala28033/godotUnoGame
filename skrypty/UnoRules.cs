@@ -51,7 +51,7 @@ public partial class UnoRules : Node
 			return kartyDoZagrania[0].Kolor == gameServer.WymuszonyKolor;
 		if (kartyDoZagrania[0].Kolor == gameServer.GornaKartaNaStosie.Kolor)
 			return true;
-		if (kartyDoZagrania[0].Wartosc == gameServer.GornaKartaNaStosie.Wartosc)
+		if (kartyDoZagrania[0].Wartosc.Trim() == gameServer.GornaKartaNaStosie.Wartosc)
 			return true;
 		GD.Print($"[RULES] Ruch nielegalny! Karta: {kartyDoZagrania[0].Kolor} {kartyDoZagrania[0].Wartosc} vs Stół: {gameServer.GornaKartaNaStosie.Kolor} {gameServer.GornaKartaNaStosie.Wartosc}");
 		return false;
@@ -108,11 +108,7 @@ public partial class UnoRules : Node
 		long idGracza = turnManager.ListaGraczyId[indexGracza];
 		if (gameServer.ListaGraczy.ContainsKey(idGracza))
 		{
-			// foreach (DaneJokera joker in gameServer.ListaGraczy[idGracza].PosiadaneJokery)
-			// {
-			// 	if(joker.WarunekAktywacji == WarunekAktywacji.Pasywny)
-			// 		joker.Efekt(gameServer);
-			// }
+			
 		}
     }
 	private bool CzyZestawJestSpojny(List<DaneKarty> karty)

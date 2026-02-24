@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="DaneJokera" load_steps=5 format=3 uid="uid://b8kmdgslkxmpc"]
+
+[ext_resource type="Script" uid="uid://deh6hbonp17uu" path="res://skrypty/Jokery/EfektJokera.cs" id="1_lo83a"]
+[ext_resource type="Resource" uid="uid://c30vrhcoi5ut4" path="res://ZasobyJokerow/Efekty/Efek_Joker_RownowagaSil.tres" id="2_2enwe"]
+[ext_resource type="Texture2D" uid="uid://drolva0ipyfxh" path="res://grafika/jokery/IMG_0125.PNG" id="3_xgrdj"]
+[ext_resource type="Script" uid="uid://dfmqegr3x3w7p" path="res://skrypty/Jokery/DaneJokera.cs" id="4_pspa8"]
+
+[resource]
+script = ExtResource("4_pspa8")
+Id = "Joker_RownowagaSil"
+Nazwa = "Równowaga sił"
+Opis = "Odejmuje 2 z długu za każdą parzystą karte w ręce w przedziale 0-4"
+Ikona = ExtResource("3_xgrdj")
+Efekty = Array[ExtResource("1_lo83a")]([ExtResource("2_2enwe")])
+metadata/_custom_type_script = "uid://dfmqegr3x3w7p"

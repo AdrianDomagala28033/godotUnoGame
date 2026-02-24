@@ -11,7 +11,7 @@ public static class JokerManager
     public static void ZaladujJokery()
     {
         if (zaladowano) return;
-        WczytajZasob("res://ZasobyJokerow/Jokery/Joker_+4.tres");
+        WczytajWszystkieJokery();
         zaladowano = true;
         GD.Print($"[JokerManager] Załadowano {bazaJokerow.Count} jokerów.");
     }
@@ -47,5 +47,22 @@ public static class JokerManager
     {
         if (!zaladowano) ZaladujJokery();
         return bazaJokerow.Keys.ToArray();
+    }
+    public static void WczytajWszystkieJokery()
+    {
+        string sciezkaFolderu = "res://ZasobyJokerow/Jokery";
+        using var dir = DirAccess.Open(sciezkaFolderu);
+        if(dir != null)
+        {
+            dir.ListDirBegin();
+            string[] pliki = dir.GetFiles();
+            foreach (var plik in pliki)
+            {
+                if(plik.EndsWith(".tres"))
+                    WczytajZasob($"{sciezkaFolderu}/{plik}");
+            }
+        }
+        else
+            GD.PrintErr($"Nie udało się otworzyć folderu: {sciezkaFolderu}");
     }
 }

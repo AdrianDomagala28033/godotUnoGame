@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="EfektDobieraniaZKartWRece" load_steps=2 format=3 uid="uid://c30vrhcoi5ut4"]
+
+[ext_resource type="Script" uid="uid://dqj2ltx8j0fci" path="res://skrypty/Jokery/SkryptyEfektow/EfektDobieraniaZKartWRece.cs" id="1_ifwdo"]
+
+[resource]
+script = ExtResource("1_ifwdo")
+Ilosc = -2
+FiltrujWartosci = Array[String](["0", "2", "4"])
+metadata/_custom_type_script = "uid://dqj2ltx8j0fci"

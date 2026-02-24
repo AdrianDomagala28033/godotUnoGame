@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="EfektBlokadyDlugu" load_steps=2 format=3 uid="uid://c1cl3cvmv01j4"]
+
+[ext_resource type="Script" uid="uid://l5nweqbyvded" path="res://skrypty/Jokery/SkryptyEfektow/EfektBlokadyDlugu.cs" id="1_bacqa"]
+
+[resource]
+script = ExtResource("1_bacqa")
+metadata/_custom_type_script = "uid://edgcc4mkkaib"

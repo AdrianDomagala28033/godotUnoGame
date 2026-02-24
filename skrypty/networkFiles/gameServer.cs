@@ -47,6 +47,7 @@ public partial class GameServer : Node
                 ListaGraczy.Add(gracz.Id, kopiaDlaSerwera);
             }
             turnManager = new TurnManager(ListaGraczy);
+            turnManager.OnKierunekZmieniony += HandleKierunekZmieniony;
             unoRules = new UnoRules(this, turnManager);
             AddChild(unoRules);
         }
@@ -74,6 +75,7 @@ public partial class GameServer : Node
         turnManager.UstawWybranegoGracza(aktualnyGraczId);
         networkManager.Rpc(nameof(NetworkManager.UstawTure), aktualnyGraczId);
         networkManager.Rpc(nameof(NetworkManager.ZaktualizujKolor), stosZagranych[stosZagranych.Count - 1].Kolor);
+        AktywujJokeryNaStartTury(aktualnyGraczId);
         GD.Print($"Rozgrywka rozpoczęta! Zaczyna gracz: {aktualnyGraczId}");
     }
 
@@ -84,7 +86,9 @@ public partial class GameServer : Node
             for (int i = 0; i < 7; i++)
                 gracz.RekaGracza.Add(deckManager.WydajKarte());
             WyslijDaneKarty(gracz.Id);
+            networkManager.Rpc(nameof(NetworkManager.ZaktualizujLiczbeKartGracza), gracz.Id, gracz.RekaGracza.Count);
         } 
+        
     }
     private void WyslijDaneKarty(long id)
     {
@@ -122,14 +126,17 @@ public partial class GameServer : Node
         List<DaneKarty> kartyDoZagrania = new List<DaneKarty>();
         for (int i = 0; i < kolory.Length; i++)
         {
-            DaneKarty kartaWRece = kopiaReki.Find(karta => karta.Kolor == kolory[i] && karta.Wartosc == wartosci[i]);
+            DaneKarty kartaWRece = kopiaReki.Find(karta => karta.Kolor == kolory[i] && karta.Wartosc.Trim() == wartosci[i]);
             if(kartaWRece != null)
             {
                 kartyDoZagrania.Add(kartaWRece);
                 kopiaReki.Remove(kartaWRece);   
             }
             else
+            {
+                GD.Print($"[SERVER ERROR] Nie znaleziono karty w ręce gracza! Szukano: {kolory[i]} {wartosci[i]}");
                 return;
+            }
         }
         if (unoRules.CzyRuchJestLegalny(kartyDoZagrania, turnManager.DlugDobierania))
         {
@@ -161,6 +168,7 @@ public partial class GameServer : Node
                     aktualnyGraczId = turnManager.AktualnyGraczId;
                     networkManager.Rpc(nameof(NetworkManager.UstawTure), aktualnyGraczId);
                     WymuszonyKolor = null;
+                    AktywujJokeryNaStartTury(aktualnyGraczId);
                 }
                 else
                 {
@@ -170,6 +178,7 @@ public partial class GameServer : Node
             }
             int ileKartMaHost = ListaGraczy[1].RekaGracza.Count;
             GD.Print($"[DEBUG] Nowa tura dla: {aktualnyGraczId}. Host (ID 1) ma kart: {ileKartMaHost}");
+            networkManager.Rpc(nameof(NetworkManager.ZaktualizujLiczbeKartGracza), idGracza, ListaGraczy[idGracza].RekaGracza.Count);
             networkManager.Rpc(nameof(NetworkManager.ZaktualizujKolor), ostatnia.Kolor);
         }
         networkManager.Rpc(nameof(NetworkManager.ZaktualizujDlug), turnManager.DlugDobierania);
@@ -183,9 +192,19 @@ public partial class GameServer : Node
         turnManager.ZakonczTure();
         aktualnyGraczId = turnManager.AktualnyGraczId;
         networkManager.Rpc(nameof(NetworkManager.UstawTure), aktualnyGraczId);
+        AktywujJokeryNaStartTury(aktualnyGraczId);
+    }
+    private void HandleKierunekZmieniony(int nowyKierunek)
+    {
+        var networkManager = GetParent<NetworkManager>();
+        if(networkManager != null)
+        {
+            bool czyZgodnie = (nowyKierunek == 1);
+            networkManager.Rpc(nameof(NetworkManager.ZaktualizujKierunekGry), czyZgodnie);
+        }
     }
 
-    public void ObsluzDobranie(long idNadawcy)
+    public void ObsluzDobranie(long idNadawcy, int iloscDobierania)
     {
         if(aktualnyGraczId != idNadawcy) return;
         if(turnManager.DlugDobierania == 0)
@@ -195,7 +214,7 @@ public partial class GameServer : Node
         }
         else
         {
-            for (int i = 0; i < turnManager.DlugDobierania; i++)
+            for (int i = 0; i < iloscDobierania; i++)
             {
                 if(deckManager.talia.Count == 0) deckManager.PrzetasujStosZagranych(stosZagranych, stosZagranych[stosZagranych.Count - 1]);  
                 ListaGraczy[aktualnyGraczId].RekaGracza.Add(deckManager.WydajKarte());
@@ -204,9 +223,11 @@ public partial class GameServer : Node
             networkManager.Rpc(nameof(NetworkManager.ZaktualizujDlug), turnManager.DlugDobierania);
         }
         WyslijDaneKarty(idNadawcy);
+        networkManager.Rpc(nameof(NetworkManager.ZaktualizujLiczbeKartGracza), idNadawcy, ListaGraczy[idNadawcy].RekaGracza.Count);
         turnManager.ZakonczTure();
         aktualnyGraczId = turnManager.AktualnyGraczId;
         networkManager.Rpc(nameof(NetworkManager.UstawTure), aktualnyGraczId);
+        AktywujJokeryNaStartTury(aktualnyGraczId);
     }
     private void ZakonczRunde()
     {
@@ -253,5 +274,37 @@ public partial class GameServer : Node
         if(pula.Length == 0) return new string[0];
         Random rng = new Random();
         return pula.OrderBy(x => rng.Next()).Take(ilosc).ToArray();
+    }
+    public void Debug_PrzyznajJokera(string idJokera, long idGracza)
+    {
+        var gracz = ListaGraczy.Values.FirstOrDefault(g => g.Id == idGracza);
+        if(gracz == null) return;
+        gracz.PosiadaneJokery.Add(idJokera);
+        networkManager.Rpc(nameof(NetworkManager.NadajJokeraGraczowi), gracz.Id, idJokera);
+    }
+
+    public void Debug_DodajKarteGraczowi(long idGracza, string kolor, string wartosc)
+    {
+        if (ListaGraczy.ContainsKey(idGracza))
+        {
+            DaneKarty nowaKarta = new DaneKarty(kolor, wartosc);
+            ListaGraczy[idGracza].RekaGracza.Add(nowaKarta);
+            
+            GD.Print($"[SERVER DEBUG] Dodałem kartę {kolor} {wartosc} dla gracza {idGracza}");
+            WyslijDaneKarty(idGracza);
+            networkManager.Rpc(nameof(NetworkManager.ZaktualizujLiczbeKartGracza), idGracza, ListaGraczy[idGracza].RekaGracza.Count);
+        }
+    }
+    public void AktywujJokeryNaStartTury(long idGracza)
+    {
+        if (ListaGraczy.ContainsKey(idGracza))
+        {
+            foreach (string idJokera in ListaGraczy[idGracza].PosiadaneJokery)
+            {
+                var joker = JokerManager.PobierzJokera(idJokera);
+                if(joker.Efekty != null)
+                    joker.Efekty[0].NaPoczatkuTury(this, idGracza);
+            }
+        }
     }
 }

@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="EfektOdbicia" load_steps=2 format=3 uid="uid://b4f6d1to5jeip"]
+
+[ext_resource type="Script" uid="uid://edgcc4mkkaib" path="res://skrypty/Jokery/SkryptyEfektow/EfektOdbicia.cs" id="1_hunop"]
+
+[resource]
+script = ExtResource("1_hunop")
+FiltrujWartosci = Array[String](["12"])
+metadata/_custom_type_script = "uid://edgcc4mkkaib"

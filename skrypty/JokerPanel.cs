@@ -25,8 +25,15 @@ public partial class JokerPanel : PanelContainer
         przyciskRozwin.Text = "JOKERY ▼";
         jestRozwiniete = false;
         NetworkManager = GetTree().Root.GetNode<NetworkManager>("NetworkManager");
-        NetworkManager.Connect(NetworkManager.SignalName.JokeryZmienione, Callable.From(OdswiezJokery));
-        OdswiezJokery();
+        NetworkManager.JokeryZmienione += OdswiezJokery;
+        OdswiezJokery(new string[0]);
+    }
+    public override void _ExitTree()
+    {
+        if (NetworkManager != null)
+        {
+            NetworkManager.JokeryZmienione -= OdswiezJokery;
+        }
     }
     private void PrzelaczWidok()
     {
@@ -61,7 +68,7 @@ public partial class JokerPanel : PanelContainer
     {
         infoPanel.Hide();
     }
-    public void OdswiezJokery()
+    public void OdswiezJokery(string[] noweJokery)
     {
         foreach (var joker in slotyContainer.GetChildren())
         {

@@ -14,6 +14,7 @@ public class Gracz
     public int Miejsce {get; set;}
     public long IdGracza {get; set;}
     public bool CzyGotowy {get; set;} = false;
+    public int LiczbaKart => rekaGracza != null ? rekaGracza.Count : 0;
     public Gracz(string nazwa, long idGracza, bool czyToGraczLokalny, int index)
     {
         Nazwa = nazwa;

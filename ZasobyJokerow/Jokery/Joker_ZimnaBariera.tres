@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="DaneJokera" load_steps=5 format=3 uid="uid://tpkk2l03lerp"]
+
+[ext_resource type="Script" uid="uid://deh6hbonp17uu" path="res://skrypty/Jokery/EfektJokera.cs" id="1_jsbap"]
+[ext_resource type="Resource" uid="uid://c1cl3cvmv01j4" path="res://ZasobyJokerow/Efekty/Efekt_BlokadyDlugu.tres" id="2_xpfbr"]
+[ext_resource type="Texture2D" uid="uid://drolva0ipyfxh" path="res://grafika/jokery/IMG_0125.PNG" id="3_n1eju"]
+[ext_resource type="Script" uid="uid://dfmqegr3x3w7p" path="res://skrypty/Jokery/DaneJokera.cs" id="4_cleju"]
+
+[resource]
+script = ExtResource("4_cleju")
+Id = "Joker_ZimnaBariera"
+Nazwa = "Zimna bariera"
+Opis = "Gdy masz dług, zagraj kartę blokady aby dług przeszedł dalej."
+Ikona = ExtResource("3_n1eju")
+Efekty = Array[ExtResource("1_jsbap")]([ExtResource("2_xpfbr")])
+metadata/_custom_type_script = "uid://dfmqegr3x3w7p"

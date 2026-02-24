@@ -2,21 +2,33 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 
-public partial class GameClient : Node2D
+public partial class GameClient : Node3D
 {
 #region pola
+    [Export] public Marker3D PozycjaStosuDobierania;
+    [Export] public Marker3D PozycjaStosuZagranych;
+    [Export] public Marker3D SpawnGraczGlowny;
     [Export] private PackedScene SzablonKarty;
 	[Export] private PackedScene SzablonWyboruKoloru;
+    // [Export] private PackedScene SzablonDebugShop;
+    // [Export] private PackedScene SzablonDebugCardMenu;
+    [Export] public UIManager UIManager;
     public NetworkManager NetworkManager {get; set;}
-    public UIManager UIManager {get; set;}
     public DeckManager DeckManager {get; set;}
     public List<Gracz> ListaGraczy {get; set;}
     public int DlugDobierania {get; set;}
     public Karta GornaKartaNaStosie {get; set;}
     public string WymuszonyKolor {get; set;}
     public WyborKoloru InstancjaWyboruKoloru {get; set;}
+    public DebugShop InstancjaDebugShop {get; set;}
+    public DebugCardMenu InstancjaDebugCardMenu {get; set;}
     public List<Karta> ZaznaczoneKarty {get; set;} = new List<Karta>();
+    public StosDobierania stosDobierania {get; set;}
+    public List<Karta> WizualnyStosZagrania {get; set;} = new List<Karta>();
+    private int licznikZagranychKart = 0;
+    public long AktualnyGraczTuryId { get; private set; } = -1;
 #endregion
 #region eventy
 	public event Action OnReceZmienione;
@@ -30,15 +42,19 @@ public partial class GameClient : Node2D
     public event Action<List<Karta>> OnRozmiescKarty;
     public event Action<Karta, int> OnKartaZagrana;
     public event Action<int, int> OnAktualizujLicznikBota;
-    public event Action<Karta, Vector2, int, int> OnDodajKarteNaStos;
+    public event Action<Karta, Vector3, int> OnDodajKarteNaStos;
+    public event Action<long> OnTuraUstawiona;
+    public event Action OnListaGraczyZmieniona;
     #endregion
     public override void _Ready()
     {
         ListaGraczy = new List<Gracz>();
         NetworkManager = GetNode<NetworkManager>("/root/NetworkManager");
+
         NetworkManager.OnKartyOdebrane += HandleKartyOdebrane;
         NetworkManager.OnTuraUstawiona += HandleTuraUstawiona;
         NetworkManager.OnStosZaktualizowany += HandleStosZaktualizowany;
+        NetworkManager.LiczbaKartZmieniona += HandleLiczbaKartZmieniona;
         int index = 0;
         bool czyToGraczLokalny = false;
         foreach(DaneGracza gracz in NetworkManager.ListaGraczy)
@@ -51,7 +67,7 @@ public partial class GameClient : Node2D
             index++;
         }
 
-        UIManager = GetNode<UIManager>("UIManager");
+        UIManager = GetNode<UIManager>("WarstwaUI/UIManager");
 
         DeckManager = new DeckManager();
 
@@ -66,13 +82,48 @@ public partial class GameClient : Node2D
             NetworkManager.RpcId(1, nameof(NetworkManager.ObsluzWyborKoloru), wybranyKolor);
         };
 
-        Area2D stosDobierania = GetNode<Area2D>("StosDobierania");
-        stosDobierania.InputEvent += ObsluzKlikniecieStosu;
+        // InstancjaDebugShop = (DebugShop)SzablonDebugShop.Instantiate();
+        // InstancjaDebugShop.Inicjalizuj(this);
+        // AddChild(InstancjaDebugShop);
 
-        var scoreboard = GetNode<Scoreboard>("CanvasLayer/Scoreboard");
+        // if (SzablonDebugCardMenu != null)
+        // {
+        //     InstancjaDebugCardMenu = (DebugCardMenu)SzablonDebugCardMenu.Instantiate();
+        //     InstancjaDebugCardMenu.Inicjalizuj(this);
+        //     AddChild(InstancjaDebugCardMenu);
+        // }
+
+        stosDobierania = GetNode<StosDobierania>("StosDobierania");
+        stosDobierania.InputEvent += ObsluzKlikniecieStosu;
+        stosDobierania.AktualizujWyglad(108);
+
+        var scoreboard = GetNode<Scoreboard>("WarstwaUI/Scoreboard");
         scoreboard.Inicjalizuj(this);
 
     }
+    public override void _ExitTree()
+    {
+        if (this != null && NetworkManager != null)
+        {
+            NetworkManager.OnKartyOdebrane -= HandleKartyOdebrane;
+            NetworkManager.OnTuraUstawiona -= HandleTuraUstawiona;
+            NetworkManager.OnStosZaktualizowany -= HandleStosZaktualizowany;
+            NetworkManager.LiczbaKartZmieniona -= HandleLiczbaKartZmieniona;
+        }
+    }
+
+    private void HandleLiczbaKartZmieniona(long idGracza, int nowaIlosc)
+    {
+        var graczWizualny = ListaGraczy.Find(g => g.IdGracza == idGracza);
+        if(graczWizualny != null && !graczWizualny.CzyToGraczLokalny)
+        {
+            graczWizualny.rekaGracza.Clear();
+            for (int i = 0; i < nowaIlosc; i++)
+                graczWizualny.rekaGracza.Add(new Karta());
+            UIManager?.AktualizujPrzeciwnikow();
+        }
+    }
+
 
     private void HandleKartyOdebrane(long idGracza)
     {
@@ -102,6 +153,7 @@ public partial class GameClient : Node2D
             foreach (var noweDane in daneDoOdhaczenia)
             {
                 Karta nowaKarta = SzablonKarty.Instantiate<Karta>();
+                nowaKarta.Scale = Vector3.One * 0.8f;
                 nowaKarta.Kolor = noweDane.Kolor;
                 nowaKarta.Wartosc = noweDane.Wartosc;
                 nowaKarta.OnKartaKliknieta += ObsluzKlikniecieKarty;
@@ -113,38 +165,65 @@ public partial class GameClient : Node2D
     }
     private void HandleTuraUstawiona(long idGracza)
     {
+        AktualnyGraczTuryId = idGracza;
         if (!IsInstanceValid(this)) return;
-        foreach (Gracz gracz in ListaGraczy)
-        {
-            if(gracz.IdGracza == idGracza)
-            {
-                if(idGracza == Multiplayer.GetUniqueId())
-                    UIManager.PokazTureGracza(true);
-                else
-                    UIManager.PokazTureGracza(false);
-            }
-        }
+        UIManager?.AktualizujPrzeciwnikow(); 
+        UIManager?.PokazTureGracza(idGracza == ListaGraczy.Find(g => g.CzyToGraczLokalny)?.IdGracza);
     }
     private void HandleStosZaktualizowany(string kolor, string wartosc)
+{
+    if (!IsInstanceValid(this)) return;
+
+    licznikZagranychKart++;
+
+    Karta nowaKarta = SzablonKarty.Instantiate<Karta>();
+    nowaKarta.Kolor = kolor;
+    nowaKarta.Wartosc = wartosc;
+    nowaKarta.InputRayPickable = false;
+    AddChild(nowaKarta);
+
+    Vector3 baza = (PozycjaStosuZagranych != null) ? PozycjaStosuZagranych.Position : Vector3.Zero;
+
+    float wysokosc = licznikZagranychKart * 0.001f; 
+    float losowyX = (float)GD.RandRange(-0.05, 0.05);
+    float losowyZ = (float)GD.RandRange(-0.05, 0.05);
+    Vector3 celPozycja = baza + new Vector3(losowyX, wysokosc, losowyZ);
+    float losowyObrot = (float)GD.RandRange(-180, 180);
+    Vector3 celRotacja = new Vector3(90, losowyObrot, 0); 
+
+    nowaKarta.Position = celPozycja + new Vector3(0, 1.0f, 0); 
+
+    nowaKarta.RotationDegrees = new Vector3(-90, losowyObrot + 90, 0);
+
+    var sprite = nowaKarta.GetNodeOrNull<Sprite3D>("Sprite3D");
+    if (sprite != null)
     {
-        if (!IsInstanceValid(this)) return;
-        if(GornaKartaNaStosie != null)
-            GornaKartaNaStosie.QueueFree();
-
-        Karta nowaKarta = SzablonKarty.Instantiate<Karta>();
-        nowaKarta.Kolor = kolor;
-        nowaKarta.Wartosc = wartosc;
-
-        nowaKarta.Position = new Vector2(650, 375); 
-        nowaKarta.ZIndex = 0;
-        nowaKarta.InputPickable = false;
-        AddChild(nowaKarta);
-
-        GornaKartaNaStosie = nowaKarta;
-        if(kolor != "DzikaKArta")
-            WymuszonyKolor = null;
-        GD.Print($"[CLIENT] Nowa karta na stosie: {kolor} {wartosc}");
+        sprite.RenderPriority = licznikZagranychKart; 
+        sprite.NoDepthTest = false; 
     }
+
+    var tween = CreateTween().SetParallel(true);
+    tween.TweenProperty(nowaKarta, "position", celPozycja, 0.4f)
+         .SetTrans(Tween.TransitionType.Bounce).SetEase(Tween.EaseType.Out);
+
+    tween.TweenProperty(nowaKarta, "rotation_degrees", celRotacja, 0.35f)
+         .SetTrans(Tween.TransitionType.Back).SetEase(Tween.EaseType.Out);
+
+    WizualnyStosZagrania.Add(nowaKarta);
+    GornaKartaNaStosie = nowaKarta;
+
+    if (WizualnyStosZagrania.Count > 20)
+    {
+        var kartaNaDnie = WizualnyStosZagrania[0];
+        WizualnyStosZagrania.RemoveAt(0);
+        kartaNaDnie.QueueFree();
+    }
+
+    if (kolor != "DzikaKArta")
+        WymuszonyKolor = null;
+
+    GD.Print($"[CLIENT] Karta na stosie (Index: {licznikZagranychKart})");
+}
     private bool CzyMogeZaznaczyc(Karta karta)
     {
         //TODO: sprawdz jokera
@@ -202,7 +281,7 @@ public partial class GameClient : Node2D
             }
         }
     }
-    private void ObsluzKlikniecieStosu(Node viewport, InputEvent @event, long shapeIdx)
+    private void ObsluzKlikniecieStosu(Node camera, InputEvent @event, Vector3 position, Vector3 normal, long shapeIdx)
     {
         if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed && mouseEvent.ButtonIndex == MouseButton.Left)
         {

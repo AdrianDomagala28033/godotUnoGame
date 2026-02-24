@@ -5,4 +5,5 @@
 [resource]
 script = ExtResource("1_m5rce")
 Ilosc = 4
+FiltrujKolory = Array[String](["DzikaKarta"])
 metadata/_custom_type_script = "uid://bi42ch4q5n4gq"

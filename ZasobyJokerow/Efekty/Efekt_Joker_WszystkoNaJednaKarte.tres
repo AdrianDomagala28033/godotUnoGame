@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="EfektLosowaIloscDobierania" load_steps=2 format=3 uid="uid://dnne5c5byaosv"]
+
+[ext_resource type="Script" uid="uid://dmff6vr7xajgw" path="res://skrypty/Jokery/SkryptyEfektow/EfektLosowaIloscDobierania.cs" id="1_usmxq"]
+
+[resource]
+script = ExtResource("1_usmxq")
+metadata/_custom_type_script = "uid://dmff6vr7xajgw"

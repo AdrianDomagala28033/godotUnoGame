@@ -7,7 +7,7 @@ public class TurnManager
     public List<long> ListaGraczyId { get; private set; }
     private Dictionary<long, DaneGracza> bazaDanychGraczy;
     public int AktualnyGraczIndex { get; private set; }
-    public int KierunekGry { get; private set; } = 1;
+    public int KierunekGry { get; set; } = 1;
     public int IloscGraczy => ListaGraczyId.Count;
     public int DlugDobierania { get; set; }
     public int DodatkoweRuchy { get; set; } = 0;
@@ -15,6 +15,7 @@ public class TurnManager
 
     public event Action<int> OnTuraRozpoczeta;
     public event Action<int> OnTuraZakonczona;
+    public event Action<int> OnKierunekZmieniony;
 
     public TurnManager(Dictionary<long, DaneGracza> bazaDanych)
     {
@@ -36,6 +37,7 @@ public class TurnManager
     public void ZmienKierunek()
     {
         KierunekGry *= -1;
+        OnKierunekZmieniony?.Invoke(KierunekGry);
     }
 
     public void PominTure()

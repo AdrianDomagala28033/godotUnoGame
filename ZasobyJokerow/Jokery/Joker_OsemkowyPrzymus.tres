@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="DaneJokera" load_steps=5 format=3 uid="uid://dge0jd7b1mfwh"]
+
+[ext_resource type="Script" uid="uid://deh6hbonp17uu" path="res://skrypty/Jokery/EfektJokera.cs" id="1_qv4tk"]
+[ext_resource type="Resource" uid="uid://dbnphnyrsvyh7" path="res://ZasobyJokerow/Efekty/Efekt_Joker_OsemkowyPrzymus.tres" id="2_a0gwb"]
+[ext_resource type="Texture2D" uid="uid://drolva0ipyfxh" path="res://grafika/jokery/IMG_0125.PNG" id="3_ogjco"]
+[ext_resource type="Script" uid="uid://dfmqegr3x3w7p" path="res://skrypty/Jokery/DaneJokera.cs" id="4_ctxbd"]
+
+[resource]
+script = ExtResource("4_ctxbd")
+Id = "Joker_OsemkowyPrzymus"
+Nazwa = "Ósemkowy Przymus"
+Opis = "Za każdą zagraną 8 dodaj +2 do długu"
+Ikona = ExtResource("3_ogjco")
+Efekty = Array[ExtResource("1_qv4tk")]([ExtResource("2_a0gwb")])
+metadata/_custom_type_script = "uid://dfmqegr3x3w7p"
