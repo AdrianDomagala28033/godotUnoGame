@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public partial class UIManager : Control
 {
 	private GameClient gameClient;
-	[Export] private JokerPanel jokerPanel;
+	[Export] public JokerPanel jokerPanel;
 	[Export] private Label3D LewyNapis;
 	[Export] private Label3D PrawyNapis;
 	[Export] private ProfilPrzeciwnika ProfilLewy;
@@ -33,14 +33,13 @@ public partial class UIManager : Control
 		if (interfejs != null) 
 			interfejs.MouseFilter = Control.MouseFilterEnum.Ignore;
 
-		if (jokerPanel != null)
-        	jokerPanel.MouseFilter = Control.MouseFilterEnum.Pass;
 		if(LewyNapis != null && PrawyNapis != null)
 		{
 			LewyNapis.Visible = false;
 			PrawyNapis.Visible = false;
 		}
 	}
+
     public void Inicjalizuj(GameClient gra)
 	{
 		gameClient = gra;
@@ -343,4 +342,9 @@ public partial class UIManager : Control
 			}
 		}
 	}
+	public void UkryjPanel()
+	{
+		jokerPanel.Hide();
+	}
+	
 }

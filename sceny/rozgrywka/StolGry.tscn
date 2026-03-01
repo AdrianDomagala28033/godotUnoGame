@@ -74,15 +74,10 @@ PozycjaAwataru = Vector3(0, 0, 0.4)
 [node name="WarstwaUI" type="CanvasLayer" parent="."]
 layer = 10
 
-[node name="JokerPanel" parent="WarstwaUI" instance=ExtResource("4_i7r0k")]
-visible = false
-offset_right = 4.0
-metadata/_edit_use_anchors_ = true
-
 [node name="Scoreboard" parent="WarstwaUI" instance=ExtResource("5_3yl2b")]
 visible = false
 
-[node name="UIManager" type="Control" parent="WarstwaUI" node_paths=PackedStringArray("jokerPanel", "LewyNapis", "PrawyNapis", "ProfilLewy", "ProfilGorny", "ProfilPrawy")]
+[node name="UIManager" type="Control" parent="WarstwaUI" node_paths=PackedStringArray("jokerPanel", "LewyNapis", "PrawyNapis", "ProfilLewy", "ProfilGorny", "ProfilPrawy", "JokerPanelButton")]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
@@ -94,11 +89,14 @@ PrawyNapis = NodePath("../../MiejscaGraczy/SpawnGraczGlowny/LabelPrawo")
 ProfilLewy = NodePath("../../MiejscaGraczy/PrzeciwnikLewo")
 ProfilGorny = NodePath("../../MiejscaGraczy/PrzeciwnikGora")
 ProfilPrawy = NodePath("../../MiejscaGraczy/PrzeciwnikPrawo")
+JokerPanelButton = NodePath("")
 metadata/_edit_use_anchors_ = true
 
 [node name="StatusPanel" parent="WarstwaUI/UIManager" instance=ExtResource("3_tromq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6744254, 1.549797, 2.698408)
 metadata/_edit_use_anchors_ = true
+
+[node name="JokerPanel" parent="WarstwaUI" instance=ExtResource("4_i7r0k")]
 
 [node name="StosDobierania" parent="." instance=ExtResource("9_4ir6b")]
 transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 2.8245225, 0, 1.5278866)

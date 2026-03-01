@@ -283,7 +283,7 @@ public partial class NetworkManager : Node
             for (int i = 0; i < nowaIlosc; i++)
                 gracz.RekaGracza.Add(new DaneKarty("Rewers", "0"));
             EmitSignal(SignalName.LiczbaKartZmieniona, idGracza, nowaIlosc);
-            GD.Print($"[NETWORK] Zaktualizowano liczbę kart gracza {idGracza} na: {nowaIlosc}");
+            
         }
     }
 #endregion
@@ -318,6 +318,7 @@ public partial class NetworkManager : Node
         if(client != null && client.InstancjaWyboruKoloru != null) 
              client.InstancjaWyboruKoloru.Hide();
         scoreboard.WyswietlWyniki();
+        client.UIManager.UkryjPanel();
     }
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     public void PrzejdzDoSklepu(string sciezka, long[] kolejkaDraftu, string[] ofertaJokerow)

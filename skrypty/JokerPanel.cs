@@ -1,32 +1,38 @@
 using Godot;
 using System;
 
-public partial class JokerPanel : PanelContainer
+public partial class JokerPanel : Control
 {
     [Export] private PackedScene szablonSlotu;
-    private HBoxContainer slotyContainer;
-    private Button przyciskRozwin;
-    private AnimationPlayer animacja;
-    private Label infoLabel;
-    private Control infoPanel;
-    private bool jestRozwiniete = false;
+    [Export] private Button buttonWysun;
+    private VBoxContainer slotyContainer;
     private NetworkManager NetworkManager {get; set;}
+    private bool jestWysuniety = false;
+    private Tween aktywnaAnimacja;
 
     public override void _Ready()
     {
-        slotyContainer = GetNode<HBoxContainer>("Uklad/SlotyContainer");
-        przyciskRozwin = GetNode<Button>("Uklad/PrzyciskRozwin");
-        animacja = GetNode<AnimationPlayer>("Uklad/WysunPanel");
-        infoLabel = GetNode<Label>("Uklad/InfoPanel/InfoLabel");
-        infoPanel = GetNode<Control>("Uklad/InfoPanel");
-
-        przyciskRozwin.Pressed += PrzelaczWidok;
-        infoPanel.Hide();
-        przyciskRozwin.Text = "JOKERY ▼";
-        jestRozwiniete = false;
+        slotyContainer = GetNode<VBoxContainer>("SlotyContainer");
         NetworkManager = GetTree().Root.GetNode<NetworkManager>("NetworkManager");
         NetworkManager.JokeryZmienione += OdswiezJokery;
         OdswiezJokery(new string[0]);
+        buttonWysun.Pressed += HandleKliknietoButton;
+    }
+    public void HandleKliknietoButton()
+    {
+        aktywnaAnimacja = CreateTween();
+        if (!jestWysuniety)
+        {
+            aktywnaAnimacja.TweenProperty(this, "global_position",  new Vector2(0, 0), 0.5);
+            buttonWysun.Text = "<\n<\n<\n";
+            jestWysuniety = true;
+        }
+        else
+        {
+            aktywnaAnimacja.TweenProperty(this, "global_position",  new Vector2(-150, 0), 0.5);
+            buttonWysun.Text = ">\n>\n>\n";
+            jestWysuniety = false;
+        }
     }
     public override void _ExitTree()
     {
@@ -35,39 +41,12 @@ public partial class JokerPanel : PanelContainer
             NetworkManager.JokeryZmienione -= OdswiezJokery;
         }
     }
-    private void PrzelaczWidok()
-    {
-        if (jestRozwiniete)
-        {
-            animacja.PlayBackwards("WysunPanel");
-            przyciskRozwin.Text = "JOKERY ▼";
-        }
-        else
-        {
-            animacja.Play("WysunPanel");
-            przyciskRozwin.Text = "JOKERY ▲";
-
-        }
-        jestRozwiniete = !jestRozwiniete;
-    }
     public void DodajJokeraDoWidoku(DaneJokera joker)
     {
         JokerSlot slot = (JokerSlot)szablonSlotu.Instantiate();
         slotyContainer.AddChild(slot);
         slot.Inicjalizuj(joker);
-
-        slot.OnHover += PokazOpis;
-        slot.OnHoverExit += UkryjOpis;
-    }
-    private void PokazOpis(string nazwa, string opis)
-    {
-        infoLabel.Text = $"{nazwa}\n{opis}";
-        infoPanel.Show();
-    }
-    private void UkryjOpis()
-    {
-        infoPanel.Hide();
-    }
+    } 
     public void OdswiezJokery(string[] noweJokery)
     {
         foreach (var joker in slotyContainer.GetChildren())
@@ -83,8 +62,6 @@ public partial class JokerPanel : PanelContainer
             var daneJokera = JokerManager.PobierzJokera(joker);
             JokerSlot slot = (JokerSlot)szablonSlotu.Instantiate();
             slot.Inicjalizuj(daneJokera);
-            slot.OnHover += PokazOpis;
-            slot.OnHoverExit += UkryjOpis;
             slotyContainer.AddChild(slot);
         }
     }
