@@ -40,6 +40,7 @@ public partial class JokerPanel : Control
         {
             NetworkManager.JokeryZmienione -= OdswiezJokery;
         }
+        buttonWysun.Pressed -= HandleKliknietoButton;
     }
     public void DodajJokeraDoWidoku(DaneJokera joker)
     {

@@ -202,6 +202,7 @@ public partial class GameServer : Node
             bool czyZgodnie = (nowyKierunek == 1);
             networkManager.Rpc(nameof(NetworkManager.ZaktualizujKierunekGry), czyZgodnie);
         }
+        
     }
 
     public void ObsluzDobranie(long idNadawcy, int iloscDobierania)

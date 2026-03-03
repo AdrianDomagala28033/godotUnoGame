@@ -8,6 +8,7 @@ public partial class Sklep : Control
     [Export] private Label KtoWybiera {get; set;}
     [Export] private HBoxContainer ListaJokerow {get; set;}
     [Export] private Button ButtonGotowosci {get; set;}
+    [Export] private PackedScene szablonSlotu;
     public NetworkManager NetworkManager {get; set;}
     private bool blokadaZmianySceny = false;
 
@@ -42,11 +43,27 @@ public partial class Sklep : Control
         if (oferta == null) return;
         foreach (string nazwa in oferta)
         {
+            VBoxContainer sekcjaJokera = new VBoxContainer();
+            var daneJokera = JokerManager.PobierzJokera(nazwa);
+
+            Label nazwaJokera = new Label();
+            nazwaJokera.Text = daneJokera.Nazwa;
+            sekcjaJokera.AddChild(nazwaJokera);
+
+            JokerSlot slot = (JokerSlot)szablonSlotu.Instantiate();
+            slot.Inicjalizuj(daneJokera);
+            sekcjaJokera.AddChild(slot);
+            
             Button btn = new Button();
             btn.Pressed += () => OnJokerWybrany(nazwa);
-            btn.Text = nazwa;
+            btn.Text = "Kup";
             btn.CustomMinimumSize = new Vector2(150, 60);
-            ListaJokerow.AddChild(btn);
+
+            sekcjaJokera.AddChild(btn);
+            sekcjaJokera.Name = nazwa;
+            sekcjaJokera.Scale = new Vector2(2.0f, 2.0f);
+            
+            ListaJokerow.AddChild(sekcjaJokera);
         }
     }
 
@@ -72,10 +89,11 @@ public partial class Sklep : Control
             
             foreach (var node in ListaJokerow.GetChildren())
             {
-                if(node is Button btn)
+                if(node is VBoxContainer container)
                 {
-                    bool czyDostepny = NetworkManager.OfertaJokerow.Contains(btn.Text);
-                    GD.Print($"[SKLEP DEBUG] Joker {btn.Text} - Dostępny: {czyDostepny}, Disabled będzie: {!czyMojaKolej || !czyDostepny}");
+                    bool czyDostepny = NetworkManager.OfertaJokerow.Contains((string)container.Name);
+                    GD.Print($"[SKLEP DEBUG] Joker {container.Name} - Dostępny: {czyDostepny}, Disabled będzie: {!czyMojaKolej || !czyDostepny}");
+                    var btn = container.GetChild<Button>(2);
                     btn.Disabled = !czyMojaKolej || !czyDostepny;
                 }
             }

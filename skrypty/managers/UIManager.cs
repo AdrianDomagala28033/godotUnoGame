@@ -168,6 +168,28 @@ public partial class UIManager : Control
 	public void UstawKolor(string nazwaKoloru)
 	{
 		statusPanel?.CallDeferred("UstawKolor", nazwaKoloru);
+		switch (nazwaKoloru)
+		{
+			case "Zielony":
+				TloManager.Instancja.ZmienKolory(new Color(0.1f, 0.4f, 0.1f), new Color(0.2f, 0.8f, 0.2f), 1.0f);
+				TloManager.Instancja.ZmienKolorOka(new Color(0.2f, 0.8f, 0.2f), 1.0f);
+				break;
+			case "Czerwony":
+				TloManager.Instancja.ZmienKolory(new Color(0.4f, 0.05f, 0.05f), new Color(0.8f, 0.1f, 0.1f), 1.0f);
+				TloManager.Instancja.ZmienKolorOka(new Color(0.8f, 0.1f, 0.1f), 1.0f);
+				break;
+			case "Niebieski":
+				TloManager.Instancja.ZmienKolory(new Color(0.05f, 0.1f, 0.4f), new Color(0.1f, 0.3f, 0.8f), 1.0f);
+				TloManager.Instancja.ZmienKolorOka(new Color(0.1f, 0.3f, 0.8f), 1.0f);
+				break;
+			case "Zolty":
+				TloManager.Instancja.ZmienKolory(new Color(0.4f, 0.3f, 0.05f), new Color(0.8f, 0.7f, 0.1f), 1.0f);
+				TloManager.Instancja.ZmienKolorOka(new Color(0.8f, 0.7f, 0.1f), 1.0f);
+				break;
+			default:
+				break;
+		}
+		
 	}
 
 

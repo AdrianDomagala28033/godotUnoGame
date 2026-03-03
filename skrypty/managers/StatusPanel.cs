@@ -13,6 +13,7 @@ public partial class StatusPanel : Node3D
 	{
 		if(Label3D != null) Label3D.Text = "0";
 		UstawKolor("brak");
+		TloManager.Instancja.ZmienKierunek(-mnoznikKierunku, 0.2f);
     }
     public override void _Process(double delta)
     {
@@ -58,6 +59,6 @@ public partial class StatusPanel : Node3D
 			float scaleX = kierunekLewy ? 1 : -1;
             KierunekStrzalki.Scale = new Vector3(scaleX, 1, 1);
 		}
-		
+		TloManager.Instancja.ZmienKierunek(-mnoznikKierunku, 0.2f);
 	}
 }
