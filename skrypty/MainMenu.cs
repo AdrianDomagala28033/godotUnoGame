@@ -13,6 +13,7 @@ public partial class MainMenu : Control
     public LineEdit inputNazwaGracza;
     public LineEdit inputKodDolaczenia;
     public LineEdit inputPoleWpisywania;
+    public LineEdit inputKodDolaczania;
 
     public Button guzikZatwierdzHost;
     public Button guzikZatwierdzDolacz;
@@ -61,6 +62,7 @@ public partial class MainMenu : Control
         guzikStart = GetNode<Button>("PanelLobby/HBoxContainer/ListaGraczy/HBoxContainer/StartButton");
 
         guzikWyslijWiadomosc = GetNode<Button>("PanelLobby/HBoxContainer/Chat/HBoxContainer/WyslijWiadomoscButton");
+        inputKodDolaczania = GetNode<LineEdit>("PanelLobby/HBoxContainer/Chat/KodDolaczania");
 
         kontenerGraczy = GetNode<VBoxContainer>("PanelLobby/HBoxContainer/ListaGraczy/KontenerGraczy");
 
@@ -106,6 +108,7 @@ public partial class MainMenu : Control
         panelDolaczania.Hide();
         menuStartowe.Hide();
         lobby.Show();
+        inputKodDolaczania.Text = $"Kod Dołączania: {networkManager.AktualnyKodPokoju}";
         AktualizujListe();
     }
     public void AktualizujListe()
@@ -168,6 +171,7 @@ public partial class MainMenu : Control
         if(!string.IsNullOrEmpty(nazwaGracza) && !string.IsNullOrEmpty(kodDolaczenia))
         {
             networkManager.DolaczDoGry(kodDolaczenia, nazwaGracza);
+            networkManager.AktualnyKodPokoju = kodDolaczenia;
         }
     }
     private void HandleOtworzPanelHosta()
@@ -193,11 +197,8 @@ public partial class MainMenu : Control
         string nazwaHosta = inputNazwaHosta.Text;
         if(!string.IsNullOrEmpty(nazwaHosta))
         {
-            if(networkManager.Peer == null)
-            {
-                networkManager.HostujGre(nazwaHosta);
-                guzikZatwierdzHost.Text = "Rozpocznij gre";
-            }
+            networkManager.HostujGre(nazwaHosta);
+            guzikZatwierdzHost.Text = "Rozpocznij gre";
         }
     }
     #endregion

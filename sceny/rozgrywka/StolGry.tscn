@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://bfg00o1b177g0"]
+[gd_scene format=3 uid="uid://bfg00o1b177g0"]
 
 [ext_resource type="Texture2D" uid="uid://461pddqncen5" path="res://grafika/background.png" id="1_86uuo"]
 [ext_resource type="Script" uid="uid://cco2uosw6i3gr" path="res://skrypty/GameClient.cs" id="1_i7r0k"]
@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://b8wba46pi72hn" path="res://skrypty/managers/UIManager.cs" id="2_43gxc"]
 [ext_resource type="PackedScene" uid="uid://cb7mkcvu62nyl" path="res://sceny/rozgrywka/SzablonWyboruKoloru.tscn" id="3_3yl2b"]
 [ext_resource type="PackedScene" uid="uid://dauiutbc7k8r8" path="res://sceny/rozgrywka/StatusPanel.tscn" id="3_tromq"]
-[ext_resource type="Shader" uid="uid://beh0uhbl05rcm" path="res://sceny/rozgrywka/StolGryShader.gdshader" id="4_1ayhi"]
+[ext_resource type="Shader" uid="uid://beh0uhbl05rcm" path="res://grafika/shadery/StolGryShader.gdshader" id="4_1ayhi"]
 [ext_resource type="PackedScene" uid="uid://dp4mbvqxfa7jc" path="res://sceny/rozgrywka/JokerPanel.tscn" id="4_i7r0k"]
 [ext_resource type="Script" uid="uid://ce3ab14deqygp" path="res://skrypty/managers/TloManager.cs" id="5_0ui1t"]
 [ext_resource type="PackedScene" uid="uid://bqiqix6yb01jy" path="res://sceny/rozgrywka/ProfilPrzeciwnika.tscn" id="5_2nla8"]
@@ -38,7 +38,7 @@ shader_parameter/kierunek = 1.0
 ssao_enabled = true
 glow_enabled = true
 
-[node name="StolGry" type="Node3D" node_paths=PackedStringArray("PozycjaStosuZagranych", "SpawnGraczGlowny", "UIManager")]
+[node name="StolGry" type="Node3D" unique_id=296304910 node_paths=PackedStringArray("PozycjaStosuZagranych", "SpawnGraczGlowny", "UIManager")]
 script = ExtResource("1_i7r0k")
 PozycjaStosuZagranych = NodePath("StosKart")
 SpawnGraczGlowny = NodePath("MiejscaGraczy/SpawnGraczGlowny")
@@ -46,68 +46,68 @@ SzablonKarty = ExtResource("2_3yl2b")
 SzablonWyboruKoloru = ExtResource("3_3yl2b")
 UIManager = NodePath("WarstwaUI/UIManager")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=740649716]
 transform = Transform3D(30, 0, 0, 0, -1.3113416e-06, 30, 0, -30, -1.3113416e-06, -0.30401897, -1, 0)
 material_override = SubResource("ShaderMaterial_0ui1t")
 mesh = SubResource("QuadMesh_1ayhi")
 script = ExtResource("5_0ui1t")
 
-[node name="Sprite3D" type="Sprite3D" parent="."]
+[node name="Sprite3D" type="Sprite3D" parent="." unique_id=1615721804]
 visible = false
 axis = 1
 texture = ExtResource("1_86uuo")
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1258661387]
 transform = Transform3D(1, 0, 0, 0, 0.57357645, 0.81915206, 0, -0.81915206, 0.57357645, 0, 5.99296, 7)
 environment = SubResource("Environment_4ir6b")
 fov = 60.0
 size = 6.2
 
-[node name="StosKart" type="Marker3D" parent="."]
+[node name="StosKart" type="Marker3D" parent="." unique_id=1647254858]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.39349747, 0.5, 2.3225214)
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1424534212]
 transform = Transform3D(-0.085278414, 0.5095812, -0.8561861, -0.09391692, 0.8513793, 0.51607466, 0.991921, 0.1244204, -0.024745977, -5.2851477, 3.9269748, 0.01765871)
 
-[node name="MiejscaGraczy" type="Node3D" parent="."]
+[node name="MiejscaGraczy" type="Node3D" parent="." unique_id=1877091680]
 
-[node name="SpawnGraczGlowny" type="Marker3D" parent="MiejscaGraczy"]
+[node name="SpawnGraczGlowny" type="Marker3D" parent="MiejscaGraczy" unique_id=1776268210]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.9853764)
 
-[node name="LabelLewo" type="Label3D" parent="MiejscaGraczy/SpawnGraczGlowny"]
+[node name="LabelLewo" type="Label3D" parent="MiejscaGraczy/SpawnGraczGlowny" unique_id=614339948]
 pixel_size = 0.015
 billboard = 1
 
-[node name="LabelPrawo" type="Label3D" parent="MiejscaGraczy/SpawnGraczGlowny"]
+[node name="LabelPrawo" type="Label3D" parent="MiejscaGraczy/SpawnGraczGlowny" unique_id=1200038484]
 pixel_size = 0.015
 billboard = 1
 
-[node name="PrzeciwnikLewo" parent="MiejscaGraczy" instance=ExtResource("5_2nla8")]
+[node name="PrzeciwnikLewo" parent="MiejscaGraczy" unique_id=1108582170 instance=ExtResource("5_2nla8")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -4.2610393, 2.4731255, 2.9814992)
 SkalaKarty = 0.7
 OdwrocLicznik = true
 PozycjaNazwy = Vector3(0, 0.4, -0.12)
 PozycjaAwataru = Vector3(0, 0, -0.4)
 
-[node name="PrzeciwnikGora" parent="MiejscaGraczy" instance=ExtResource("5_2nla8")]
+[node name="PrzeciwnikGora" parent="MiejscaGraczy" unique_id=1369485639 instance=ExtResource("5_2nla8")]
 transform = Transform3D(-1, 0, -1.509958e-07, 0, 1, 0, 1.509958e-07, 0, -1, -0.10771799, 2.5354834, 1.2584107)
 SkalaKarty = 0.6
 PozycjaNazwy = Vector3(0, 0.4, 0.2)
 PozycjaAwataru = Vector3(0, 0.4, -0.3)
 
-[node name="PrzeciwnikPrawo" parent="MiejscaGraczy" instance=ExtResource("5_2nla8")]
+[node name="PrzeciwnikPrawo" parent="MiejscaGraczy" unique_id=870390641 instance=ExtResource("5_2nla8")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 3.8981533, 2.6950474, 3.4246874)
 SkalaKarty = 0.7
 PozycjaNazwy = Vector3(0, 0.4, 0.1)
 PozycjaAwataru = Vector3(0, 0, 0.4)
 
-[node name="WarstwaUI" type="CanvasLayer" parent="."]
+[node name="WarstwaUI" type="CanvasLayer" parent="." unique_id=1371528336]
 layer = 10
 
-[node name="Scoreboard" parent="WarstwaUI" instance=ExtResource("5_3yl2b")]
+[node name="Scoreboard" parent="WarstwaUI" unique_id=1191890692 instance=ExtResource("5_3yl2b")]
 visible = false
 
-[node name="UIManager" type="Control" parent="WarstwaUI" node_paths=PackedStringArray("jokerPanel", "LewyNapis", "PrawyNapis", "ProfilLewy", "ProfilGorny", "ProfilPrawy")]
+[node name="UIManager" type="Control" parent="WarstwaUI" unique_id=333863305 node_paths=PackedStringArray("jokerPanel", "LewyNapis", "PrawyNapis", "ProfilLewy", "ProfilGorny", "ProfilPrawy")]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
@@ -121,11 +121,11 @@ ProfilGorny = NodePath("../../MiejscaGraczy/PrzeciwnikGora")
 ProfilPrawy = NodePath("../../MiejscaGraczy/PrzeciwnikPrawo")
 metadata/_edit_use_anchors_ = true
 
-[node name="StatusPanel" parent="WarstwaUI/UIManager" instance=ExtResource("3_tromq")]
+[node name="StatusPanel" parent="WarstwaUI/UIManager" unique_id=550108334 instance=ExtResource("3_tromq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6744254, 1.549797, 2.698408)
 metadata/_edit_use_anchors_ = true
 
-[node name="JokerPanel" parent="WarstwaUI" instance=ExtResource("4_i7r0k")]
+[node name="JokerPanel" parent="WarstwaUI" unique_id=1620479647 instance=ExtResource("4_i7r0k")]
 
-[node name="StosDobierania" parent="." instance=ExtResource("9_4ir6b")]
+[node name="StosDobierania" parent="." unique_id=694010078 instance=ExtResource("9_4ir6b")]
 transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 2.8245225, 0, 1.5278866)

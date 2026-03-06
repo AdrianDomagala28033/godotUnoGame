@@ -8,9 +8,9 @@ public partial class NetworkManager : Node
 {
     public string Adres {get; set;} = "127.0.0.1";
     public int Port {get; set;} = 8910;
-    public ENetMultiplayerPeer Peer {get; set;}
     public List<DaneGracza> ListaGraczy = new List<DaneGracza>();
     public string NazwaGraczaLokalnego = "gracz";
+    public string AktualnyKodPokoju;
     public long[] KolejkaDraftu {get; set;}
     public string[] OfertaJokerow {get; set;}
     public event Action OnPolaczono;
@@ -29,34 +29,21 @@ public partial class NetworkManager : Node
         Multiplayer.PeerConnected += OnPeerConnected;
         JokerManager.ZaladujJokery();
     }
+
     #region obsluga lobby i menu
     public void HostujGre(string nazwa)
     {
         if(GetNodeOrNull<Node>("GameServer") != null)
             GetNode<Node>("GameServer").QueueFree();
-        Peer = new ENetMultiplayerPeer();
-        var wynik = Peer.CreateServer(Port);
-        if (wynik == Error.Ok)
-        {
-            OnPolaczono?.Invoke();
-            GD.Print("Udało sie hostować gre");
-            Multiplayer.MultiplayerPeer = Peer;
-            Rpc(nameof(ZarejestrujNowegoGracza), 1, nazwa, false);
-            GameServer gameServer = new GameServer();
-            gameServer.Name = "GameServer";
-            gameServer.NumerRundy = 1;
-            this.AddChild(gameServer);
-        }
+        GetNode<Signaling>("/root/Signaling").UtworzPokoj();
+        NazwaGraczaLokalnego = nazwa;
+        OnPolaczono?.Invoke();
+        GD.Print("Oczekuję na kod pokoju od serwera...");
     }
     public void DolaczDoGry(string kodDolaczenia, string nazwaGracza)
     {
-        Peer = new ENetMultiplayerPeer();
         NazwaGraczaLokalnego = nazwaGracza;
-        var wynik = Peer.CreateClient(kodDolaczenia, Port);
-        if(wynik == Error.Ok)
-        {
-            Multiplayer.MultiplayerPeer = Peer; 
-        }
+        GetNode<Signaling>("/root/Signaling").DolaczDoPokoju(kodDolaczenia);
     }
     private void OnConnectedToServer()
     {
@@ -81,17 +68,6 @@ public partial class NetworkManager : Node
         OnDolaczono?.Invoke();
         GD.Print($"Dodano gracza ID: {id}");
     }
-    public void OnPeerConnected(long id)
-    {
-        if (Multiplayer.IsServer())
-        {
-            foreach (DaneGracza gracz in ListaGraczy)
-            {
-                RpcId(id, nameof(ZarejestrujNowegoGracza), gracz.Id, gracz.Nazwa, gracz.CzyGotowy);
-            }
-        }
-        GD.Print("Dołączył gracz o ID: " + id);
-    }
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     public void ZaladujGre(string sciezka)
     {
@@ -105,6 +81,21 @@ public partial class NetworkManager : Node
                 server.PrzygotujRozgrywke(ListaGraczy);
             };
         }
+    }
+    public void ZglosPolaczenie()
+    {
+        OnPolaczono?.Invoke();
+    }
+    private void OnPeerConnected(long id)
+    {
+        if (Multiplayer.IsServer())
+        {
+            foreach (DaneGracza gracz in ListaGraczy)
+            {
+                RpcId(id, nameof(ZarejestrujNowegoGracza), gracz.Id, gracz.Nazwa, gracz.CzyGotowy);
+            }
+        }
+        GD.Print("Dołączył gracz o ID: " + id);
     }
     #endregion
     #region przesył informacji

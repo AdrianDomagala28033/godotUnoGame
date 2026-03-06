@@ -1,7 +1,7 @@
-[gd_scene load_steps=9 format=3 uid="uid://ck6hga721qdop"]
+[gd_scene format=3 uid="uid://ck6hga721qdop"]
 
 [ext_resource type="Script" uid="uid://byh5cbeqjxyq7" path="res://skrypty/Sklep.cs" id="1_vk1p6"]
-[ext_resource type="Shader" uid="uid://ck5nf7igeh3s7" path="res://sceny/rozgrywka/SklepTloShader.gdshader" id="2_5g0mr"]
+[ext_resource type="Shader" uid="uid://ck5nf7igeh3s7" path="res://grafika/shadery/SklepTloShader.gdshader" id="2_5g0mr"]
 [ext_resource type="PackedScene" uid="uid://cdm7ryq3coem0" path="res://sceny/rozgrywka/JokerSlot.tscn" id="2_gpymd"]
 [ext_resource type="Texture2D" uid="uid://bwvt82fepil3r" path="res://grafika/SklepTlo.png" id="3_gpymd"]
 
